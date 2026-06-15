@@ -1715,7 +1715,13 @@
     const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
     // rows array সহ save করো যাতে পরে load করা যায়
     const validRows = rows.filter(r => parseFloat(r.l) || parseFloat(r.w) || parseFloat(r.t));
-    const serializedRows = validRows.map((r, i) => ({...r, sn: r.sn || String(i+1)}));
+    // SN অনুযায়ী sort করো, তারপর 1,2,3... নম্বর দাও
+    const sortedRows = [...validRows].sort((a, b) => {
+      const snA = parseFloat(a.sn) || 9999;
+      const snB = parseFloat(b.sn) || 9999;
+      return snA - snB;
+    });
+    const serializedRows = sortedRows.map((r, i) => ({...r, sn: String(i+1)}));
     saved.unshift({ name: custName, note: custNote, date: dateStr, total, rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
     store.setItem('woodCalcSaved', JSON.stringify(saved.slice(0, 50)));
     alert('✅ হিসাব সেভ হয়েছে!\nক্রেতা: ' + custName + '\nমোট: ' + total + ' CFT');
@@ -1886,8 +1892,14 @@
     const now = new Date();
     const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
     const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
-    const serializedRows = validRows.map((r, i) => ({...r, sn: String(i+1)}));
-    saved.unshift({ name: custName, date: dateStr, total: grandTotal.toFixed(4), rowCount: validRows.length, timestamp: Date.now(), rows: serializedRows });
+    // SN অনুযায়ী sort করো, তারপর 1,2,3... নম্বর দাও
+    const sortedRows = [...validRows].sort((a, b) => {
+      const snA = parseFloat(a.sn) || 9999;
+      const snB = parseFloat(b.sn) || 9999;
+      return snA - snB;
+    });
+    const serializedRows = sortedRows.map((r, i) => ({...r, sn: String(i+1)}));
+    saved.unshift({ name: custName, date: dateStr, total: grandTotal.toFixed(4), rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
     store.setItem('woodCalcSaved', JSON.stringify(saved.slice(0, 50)));
     alert(`✅ হিসাব সেভ হয়েছে!\nক্রেতা: ${custName}\nমোট: ${grandTotal.toFixed(4)} CFT`);
   }
