@@ -1706,15 +1706,17 @@
   }
 
   function saveSummary() {
-    // Save current summary to customer list
+    // Save current summary to customer list (rows data সহ)
     const custName = document.getElementById('custName').value.trim() || 'অজ্ঞাত';
     const custNote = document.getElementById('custNote').value.trim();
     const total = document.getElementById('prTotal').textContent;
-    const rowCount = document.getElementById('prBody').querySelectorAll('tr').length;
     const now = new Date();
     const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
     const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
-    saved.unshift({ name: custName, note: custNote, date: dateStr, total, rowCount, timestamp: Date.now() });
+    // rows array সহ save করো যাতে পরে load করা যায়
+    const validRows = rows.filter(r => parseFloat(r.l) || parseFloat(r.w) || parseFloat(r.t));
+    const serializedRows = validRows.map((r, i) => ({...r, sn: r.sn || String(i+1)}));
+    saved.unshift({ name: custName, note: custNote, date: dateStr, total, rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
     store.setItem('woodCalcSaved', JSON.stringify(saved.slice(0, 50)));
     alert('✅ হিসাব সেভ হয়েছে!\nক্রেতা: ' + custName + '\nমোট: ' + total + ' CFT');
   }
@@ -1977,7 +1979,11 @@
   function loadToCalc() {
     const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
     const item = saved[currentViewIdx];
-    if (!item || !item.rows) { alert('লোড করার মতো data নেই।'); return; }
+    if (!item) { alert('হিসাব খুঁজে পাওয়া যায়নি।'); return; }
+    if (!item.rows || item.rows.length === 0) {
+      alert('এই হিসাবে বিস্তারিত সারি data নেই।\n(পুরনো সেভ — নতুন করে হিসাব করে সেভ করুন।)');
+      return;
+    }
     if (!confirm('বর্তমান হিসাব মুছে এই হিসাব লোড করবেন?')) return;
     rows = item.rows.map(r => ({...r}));
     closeDetailModal();
@@ -2208,7 +2214,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js');
+      navigator.serviceWorker.register('./sw.js');
     });
   }
 </script>
