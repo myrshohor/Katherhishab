@@ -1986,6 +1986,9 @@
     }
     if (!confirm('বর্তমান হিসাব মুছে এই হিসাব লোড করবেন?')) return;
     rows = item.rows.map(r => ({...r}));
+    rows.push(newRowData()); // লোডের পরে নতুন খালি row
+    activeRow = rows.length - 1;
+    activeField = 0;
     closeDetailModal();
     closeCustomerPage();
     render();
