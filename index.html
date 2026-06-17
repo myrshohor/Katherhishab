@@ -751,6 +751,232 @@
     font-size: 14px;
   }
 
+  .pr-totals {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pr-total-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--brick), var(--brick-dark));
+    box-shadow: 0 2px 6px rgba(140, 74, 54, 0.25);
+  }
+
+  .pr-total-card .pr-total-label {
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .pr-total-card .pr-total-value {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pr-total-card.pr-total-price {
+    background: linear-gradient(135deg, #2e7d4f, #1f5c38);
+    box-shadow: 0 2px 6px rgba(31, 92, 56, 0.25);
+  }
+
+  .pr-total-card.pr-total-paid {
+    background: linear-gradient(135deg, #3a7ca8, #2a5d80);
+    box-shadow: 0 2px 6px rgba(42, 93, 128, 0.25);
+  }
+
+  .pr-total-card.pr-total-due {
+    background: linear-gradient(135deg, #c0392b, #962d22);
+    box-shadow: 0 2px 6px rgba(150, 45, 34, 0.25);
+  }
+
+  .pr-total-input {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    text-align: right;
+    width: 110px;
+    padding: 4px 10px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pr-total-input::placeholder {
+    color: rgba(255,255,255,0.6);
+  }
+
+  .pr-sign-section {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .pr-sign-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .pr-sign-tab {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border);
+    background: var(--sand-light);
+    color: var(--brick-dark);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .pr-sign-tab.active {
+    background: var(--brick);
+    color: #fff;
+    border-color: var(--brick);
+  }
+
+  .pr-sign-box {
+    position: relative;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    min-height: 110px;
+  }
+
+  .pr-sign-canvas {
+    width: 100%;
+    height: 110px;
+    display: block;
+    border-radius: 10px;
+    touch-action: none;
+  }
+
+  .pr-sign-clear {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: var(--sand-light);
+    border: 1px solid var(--border);
+    color: var(--brick-dark);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .pr-sign-type-input {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--text-dark);
+    background: transparent;
+    border-radius: 10px 10px 0 0;
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: isolate-override;
+  }
+
+  .pr-sign-display {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 12px;
+    font-size: 15px;
+    color: var(--text-dark);
+    background: transparent;
+    border-radius: 10px 10px 0 0;
+    min-height: 22px;
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+
+  .pr-sign-cursor {
+    color: var(--brick);
+    animation: blink-cursor 1s step-start infinite;
+  }
+
+  @keyframes blink-cursor {
+    50% { opacity: 0; }
+  }
+
+  .pr-sign-kb {
+    padding: 8px;
+    background: var(--sand-light);
+    border-radius: 0 0 10px 10px;
+  }
+
+  .pr-sign-kb-row {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+    justify-content: center;
+  }
+
+  .pr-sign-key {
+    flex: 1;
+    min-width: 0;
+    max-width: 32px;
+    height: 34px;
+    border: none;
+    border-radius: 6px;
+    background: #fff;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .pr-sign-key:active {
+    background: var(--sand);
+  }
+
+  .pr-sign-key.wide {
+    max-width: 70px;
+    flex: 1.8;
+    background: var(--brick);
+    color: #fff;
+    font-size: 12px;
+  }
+
+  .pr-sign-key.space-key {
+    max-width: none;
+    flex: 5;
+    background: #fff;
+  }
+
+  .pr-sign-preview {
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    padding: 4px 14px;
+    font-family: 'Caveat', 'Segoe Script', cursive;
+    font-size: 34px;
+    color: #2b3a55;
+    direction: ltr !important;
+    text-align: left !important;
+    unicode-bidi: isolate-override;
+  }
+
+  .pr-sign-label {
+    text-align: center;
+    font-size: 11px;
+    color: #8a7a68;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+  }
+
   .summary-actions {
     flex-shrink: 0;
     display: flex;
@@ -1246,7 +1472,6 @@
         <div class="pr-shop-name" id="prShopName"></div>
         <div class="pr-shop-sub" id="prShopSub"></div>
       </div>
-      <div class="pr-title">কাঠের সাইজের হিসাব</div>
       <div class="pr-meta" id="prMeta"></div>
       <table>
         <thead>
@@ -1260,17 +1485,51 @@
           </tr>
         </thead>
         <tbody id="prBody"></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="5">সর্বমোট CFT</td>
-            <td id="prTotal">0.0000</td>
-          </tr>
-          <tr id="priceTotalRow" style="display:none">
-            <td colspan="5">মোট টাকা (৳)</td>
-            <td id="prTotalPrice">০</td>
-          </tr>
-        </tfoot>
       </table>
+      <div class="pr-totals">
+        <div class="pr-total-card">
+          <span class="pr-total-label">সর্বমোট CFT</span>
+          <span class="pr-total-value" id="prTotal">0.0000</span>
+        </div>
+        <div class="pr-total-card pr-total-price" id="perCftRow" style="display:none">
+          <span class="pr-total-label">প্রতি CFT দাম (৳)</span>
+          <span class="pr-total-value" id="prPerCft">০</span>
+        </div>
+        <div class="pr-total-card pr-total-price" id="priceTotalRow" style="display:none">
+          <span class="pr-total-label">মোট টাকা (৳)</span>
+          <span class="pr-total-value" id="prTotalPrice">০</span>
+        </div>
+        <div class="pr-total-card pr-total-paid" id="paidRow" style="display:none">
+          <span class="pr-total-label">জমা (৳)</span>
+          <input type="number" id="prPaidInput" class="pr-total-input" placeholder="০" min="0" inputmode="numeric" oninput="calcDue()">
+        </div>
+        <div class="pr-total-card pr-total-due" id="dueRow" style="display:none">
+          <span class="pr-total-label">বাকি (৳)</span>
+          <span class="pr-total-value" id="prDueValue">০</span>
+        </div>
+      </div>
+
+      <div class="pr-sign-section">
+        <div class="pr-sign-tabs">
+          <button type="button" class="pr-sign-tab active" id="signTabDraw" onclick="switchSignMode('draw')">✍️ হাতে আঁকুন</button>
+          <button type="button" class="pr-sign-tab" id="signTabType" onclick="switchSignMode('type')">⌨️ টাইপ করুন</button>
+        </div>
+
+        <div class="pr-sign-box" id="signDrawBox">
+          <canvas id="signCanvas" class="pr-sign-canvas"></canvas>
+          <button type="button" class="pr-sign-clear" onclick="clearSignature()">✕ মুছুন</button>
+        </div>
+
+        <div class="pr-sign-box" id="signTypeBox" style="display:none">
+          <div class="pr-sign-display" id="signTypeDisplay">
+            <span id="signTypeText"></span><span class="pr-sign-cursor">|</span>
+          </div>
+          <div class="pr-sign-preview" id="signTypePreview" dir="ltr"></div>
+          <div class="pr-sign-kb" id="signKeyboard"></div>
+        </div>
+
+        <div class="pr-sign-label">গ্রাহকের স্বাক্ষর</div>
+      </div>
     </div>
   </div>
 
@@ -1660,10 +1919,25 @@
     document.getElementById('pricePerCft').value = '';
     document.getElementById('priceTotalBox').style.display = 'none';
     document.getElementById('priceTotalRow').style.display = 'none';
+    document.getElementById('perCftRow').style.display = 'none';
+    document.getElementById('paidRow').style.display = 'none';
+    document.getElementById('dueRow').style.display = 'none';
+    document.getElementById('prPaidInput').value = '';
 
     applyProfile();
     document.getElementById('calcPage').classList.add('hidden');
     document.getElementById('summaryPage').classList.add('active');
+
+    // Reset & init signature pad (after layout is visible so size is correct)
+    signTypedValue = '';
+    signShiftOn = true;
+    document.getElementById('signTypeText').textContent = '';
+    document.getElementById('signTypePreview').textContent = '';
+    switchSignMode('draw');
+    setTimeout(() => {
+      initSignatureCanvas();
+      clearSignature();
+    }, 50);
   }
 
   function closeSummary() {
@@ -1685,9 +1959,159 @@
     const moneyStr = Math.round(money).toLocaleString('en-IN');
     document.getElementById('totalPrice').textContent = '৳ ' + moneyStr;
     document.getElementById('prTotalPrice').textContent = moneyStr;
+    document.getElementById('prPerCft').textContent = Math.round(price).toLocaleString('en-IN');
     const show = price > 0;
     document.getElementById('priceTotalBox').style.display = show ? 'flex' : 'none';
     document.getElementById('priceTotalRow').style.display = show ? '' : 'none';
+    document.getElementById('perCftRow').style.display = show ? '' : 'none';
+    document.getElementById('paidRow').style.display = show ? '' : 'none';
+    document.getElementById('dueRow').style.display = show ? '' : 'none';
+    calcDue();
+  }
+
+  function calcDue() {
+    const total = Math.round((parseFloat(document.getElementById('pricePerCft').value) || 0) * (parseFloat(document.getElementById('prTotal').textContent) || 0));
+    const paid = parseFloat(document.getElementById('prPaidInput').value) || 0;
+    const due = Math.max(total - paid, 0);
+    document.getElementById('prDueValue').textContent = due.toLocaleString('en-IN');
+  }
+
+  // ===== Signature (draw + type) =====
+  let signCanvas, signCtx, signDrawing = false, signHasDrawing = false;
+  let signLastX = 0, signLastY = 0;
+
+  function initSignatureCanvas() {
+    signCanvas = document.getElementById('signCanvas');
+    if (!signCanvas) return;
+    const rect = signCanvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    signCanvas.width = rect.width * dpr;
+    signCanvas.height = rect.height * dpr;
+    signCtx = signCanvas.getContext('2d');
+    signCtx.scale(dpr, dpr);
+    signCtx.lineWidth = 2.2;
+    signCtx.lineCap = 'round';
+    signCtx.lineJoin = 'round';
+    signCtx.strokeStyle = '#2b3a55';
+
+    const getPos = (e) => {
+      const r = signCanvas.getBoundingClientRect();
+      if (e.touches && e.touches[0]) {
+        return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+      }
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+
+    const start = (e) => {
+      e.preventDefault();
+      signDrawing = true;
+      const p = getPos(e);
+      signLastX = p.x; signLastY = p.y;
+    };
+    const move = (e) => {
+      if (!signDrawing) return;
+      e.preventDefault();
+      const p = getPos(e);
+      signCtx.beginPath();
+      signCtx.moveTo(signLastX, signLastY);
+      signCtx.lineTo(p.x, p.y);
+      signCtx.stroke();
+      signLastX = p.x; signLastY = p.y;
+      signHasDrawing = true;
+    };
+    const end = () => { signDrawing = false; };
+
+    signCanvas.addEventListener('mousedown', start);
+    signCanvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    signCanvas.addEventListener('touchstart', start, { passive: false });
+    signCanvas.addEventListener('touchmove', move, { passive: false });
+    signCanvas.addEventListener('touchend', end);
+  }
+
+  function clearSignature() {
+    if (signCtx && signCanvas) {
+      signCtx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+      signHasDrawing = false;
+    }
+  }
+
+  function switchSignMode(mode) {
+    const drawBox = document.getElementById('signDrawBox');
+    const typeBox = document.getElementById('signTypeBox');
+    const tabDraw = document.getElementById('signTabDraw');
+    const tabType = document.getElementById('signTabType');
+    if (mode === 'draw') {
+      drawBox.style.display = '';
+      typeBox.style.display = 'none';
+      tabDraw.classList.add('active');
+      tabType.classList.remove('active');
+    } else {
+      drawBox.style.display = 'none';
+      typeBox.style.display = '';
+      tabDraw.classList.remove('active');
+      tabType.classList.add('active');
+      buildSignKeyboard();
+    }
+  }
+
+  // ===== Custom on-screen keyboard for signature (bypasses buggy phone keyboards) =====
+  let signTypedValue = '';
+  let signShiftOn = true; // start capitalized for names
+
+  function buildSignKeyboard() {
+    const kb = document.getElementById('signKeyboard');
+    if (kb.dataset.built) return;
+    kb.dataset.built = '1';
+    const rows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+    let html = '';
+    rows.forEach((row, ri) => {
+      html += '<div class="pr-sign-kb-row">';
+      if (ri === 2) html += '<button type="button" class="pr-sign-key wide" onclick="signShiftToggle()">⇧</button>';
+      row.split('').forEach(ch => {
+        html += `<button type="button" class="pr-sign-key" onclick="signKeyPress('${ch}')">${ch}</button>`;
+      });
+      if (ri === 2) html += '<button type="button" class="pr-sign-key wide" onclick="signBackspace()">⌫</button>';
+      html += '</div>';
+    });
+    html += '<div class="pr-sign-kb-row">';
+    html += '<button type="button" class="pr-sign-key space-key" onclick="signKeyPress(\' \')">স্পেস</button>';
+    html += '<button type="button" class="pr-sign-key wide" onclick="signClearAll()">✕ মুছুন</button>';
+    html += '</div>';
+    kb.innerHTML = html;
+  }
+
+  function signRender() {
+    document.getElementById('signTypeText').textContent = signTypedValue;
+    document.getElementById('signTypePreview').textContent = signTypedValue;
+  }
+
+  function signKeyPress(ch) {
+    if (signShiftOn && ch !== ' ') ch = ch.toUpperCase();
+    signTypedValue += ch;
+    // auto-disable shift after first letter, re-enable after space
+    if (ch === ' ') signShiftOn = true;
+    else signShiftOn = false;
+    signRender();
+  }
+
+  function signShiftToggle() {
+    signShiftOn = !signShiftOn;
+  }
+
+  function signBackspace() {
+    signTypedValue = signTypedValue.slice(0, -1);
+    signRender();
+  }
+
+  function signClearAll() {
+    signTypedValue = '';
+    signRender();
+  }
+
+  function updateTypedSignature() {
+    // kept for backward compatibility; rendering now handled by signRender()
+    signRender();
   }
 
   function updateMeta() {
@@ -1729,21 +2153,28 @@
 
   function saveAsPhoto() {
     const area = document.getElementById('printArea');
-    const rows = area.querySelectorAll('table tr');
-    const title = area.querySelector('.pr-title') ? area.querySelector('.pr-title').textContent : 'কাঠের হিসাব';
-    const meta = area.querySelector('.pr-meta') ? area.querySelector('.pr-meta').textContent : '';
+    const meta = document.getElementById('prMeta') ? document.getElementById('prMeta').textContent : '';
 
     const canvas = document.createElement('canvas');
     const scale = 2;
     const W = area.offsetWidth || 340;
 
-    // Collect table data
+    // Collect table data (header + body rows only — totals are separate now)
     const tableRows = [];
     area.querySelectorAll('table tr').forEach(tr => {
       const cells = [];
       tr.querySelectorAll('th, td').forEach(td => cells.push(td.textContent.trim()));
-      if (cells.length) tableRows.push({ cells, isHead: !!tr.querySelector('th'), isFoot: tr.closest('tfoot') !== null });
+      if (cells.length) tableRows.push({ cells, isHead: !!tr.querySelector('th') });
     });
+
+    // Collect totals from the new card-based layout
+    const totalCFT = document.getElementById('prTotal') ? document.getElementById('prTotal').textContent : '0.0000';
+    const priceRowVisible = document.getElementById('priceTotalRow') && document.getElementById('priceTotalRow').style.display !== 'none';
+    const totalPrice = document.getElementById('prTotalPrice') ? document.getElementById('prTotalPrice').textContent : '০';
+    const perCftPrice = document.getElementById('prPerCft') ? document.getElementById('prPerCft').textContent : '০';
+    const paidVal = document.getElementById('prPaidInput') ? (document.getElementById('prPaidInput').value || '0') : '0';
+    const paidStr = Math.round(parseFloat(paidVal) || 0).toLocaleString('en-IN');
+    const dueStr = document.getElementById('prDueValue') ? document.getElementById('prDueValue').textContent : '০';
 
     const profile = getProfile();
     const shopName = profile ? profile.name : '';
@@ -1753,8 +2184,16 @@
     const cellW = Math.floor((W - 32) / colCount);
     const rowH = 28;
     const shopHeaderH = shopName ? (shopSub ? 54 : 36) : 0;
-    const headerH = shopHeaderH + 80;
-    const totalH = headerH + tableRows.length * rowH + 24;
+    const metaH = 30;
+    const headerH = shopHeaderH + metaH;
+    const totalsCardH = 46;
+    const totalsGap = 8;
+    const numCards = 1 + (priceRowVisible ? 4 : 0);
+    const totalsBlockH = numCards * totalsCardH + (numCards - 1) * totalsGap + 16;
+    const signMode = document.getElementById('signTypeBox') && document.getElementById('signTypeBox').style.display !== 'none' ? 'type' : 'draw';
+    const hasSignature = signMode === 'draw' ? signHasDrawing : (signTypedValue.trim().length > 0);
+    const signBlockH = hasSignature ? 130 : 0;
+    const totalH = headerH + tableRows.length * rowH + totalsBlockH + signBlockH + 24;
 
     canvas.width = W * scale;
     canvas.height = totalH * scale;
@@ -1790,26 +2229,20 @@
       drawY = shopHeaderH;
     }
 
-    // Title
-    ctx.fillStyle = '#8C4A36';
-    ctx.font = 'bold 16px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(title, W / 2, drawY + 28);
-
-    // Meta
+    // Meta (date / customer / note) — no title line
     ctx.fillStyle = '#8a7a68';
     ctx.font = '11px Arial';
-    ctx.fillText(meta, W / 2, drawY + 46);
+    ctx.textAlign = 'center';
+    ctx.fillText(meta, W / 2, drawY + 18);
 
     // Table
     const startX = 16;
-    let y = drawY + 80;
+    let y = drawY + metaH;
 
     tableRows.forEach((row, ri) => {
       // Row background
       if (row.isHead) ctx.fillStyle = '#E8DCC8';
-      else if (row.isFoot) ctx.fillStyle = '#F5EDE2';
-      else ctx.fillStyle = ri % 2 === 0 ? '#ffffff' : '#fdf9f5';
+      else ctx.fillStyle = ri % 2 === 0 ? '#fdf9f5' : '#ffffff';
       ctx.fillRect(startX, y, W - 32, rowH);
 
       // Border
@@ -1818,8 +2251,8 @@
       ctx.strokeRect(startX, y, W - 32, rowH);
 
       // Cell text
-      ctx.fillStyle = row.isHead ? '#8C4A36' : (row.isFoot ? '#8C4A36' : '#3E2F26');
-      ctx.font = row.isHead || row.isFoot ? 'bold 11px Arial' : '11px Arial';
+      ctx.fillStyle = row.isHead ? '#8C4A36' : '#3E2F26';
+      ctx.font = row.isHead ? 'bold 11px Arial' : '11px Arial';
 
       row.cells.forEach((cell, ci) => {
         ctx.textAlign = 'center';
@@ -1837,11 +2270,90 @@
       y += rowH;
     });
 
+    // Totals — gradient cards
+    y += 14;
+    function drawTotalCard(label, value, colorTop, colorBottom) {
+      const cardX = startX;
+      const cardW = W - 32;
+      const grad = ctx.createLinearGradient(cardX, y, cardX + cardW, y + totalsCardH);
+      grad.addColorStop(0, colorTop);
+      grad.addColorStop(1, colorBottom);
+      ctx.fillStyle = grad;
+      // rounded rect
+      const r = 10;
+      ctx.beginPath();
+      ctx.moveTo(cardX + r, y);
+      ctx.arcTo(cardX + cardW, y, cardX + cardW, y + totalsCardH, r);
+      ctx.arcTo(cardX + cardW, y + totalsCardH, cardX, y + totalsCardH, r);
+      ctx.arcTo(cardX, y + totalsCardH, cardX, y, r);
+      ctx.arcTo(cardX, y, cardX + cardW, y, r);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, cardX + 14, y + totalsCardH / 2 + 4);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 18px Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText(value, cardX + cardW - 14, y + totalsCardH / 2 + 6);
+
+      y += totalsCardH + totalsGap;
+    }
+
+    drawTotalCard('সর্বমোট CFT', totalCFT, '#A85D45', '#8C4A36');
+    if (priceRowVisible) {
+      drawTotalCard('প্রতি CFT দাম (৳)', perCftPrice, '#3D9468', '#1F5C38');
+      drawTotalCard('মোট টাকা (৳)', totalPrice, '#3D9468', '#1F5C38');
+      drawTotalCard('জমা (৳)', paidStr, '#4A8FBF', '#2A5D80');
+      drawTotalCard('বাকি (৳)', dueStr, '#D14B3B', '#962D22');
+    }
+
+    // Signature
+    if (hasSignature) {
+      y += 8;
+      ctx.strokeStyle = '#D6C5AD';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(startX, y);
+      ctx.lineTo(W - startX, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      y += 14;
+
+      const sigBoxH = 80;
+      ctx.strokeStyle = '#D6C5AD';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(startX, y, W - 32, sigBoxH);
+
+      if (signMode === 'draw' && signCanvas) {
+        const sw = W - 32 - 16;
+        const sh = sigBoxH - 16;
+        ctx.drawImage(signCanvas, startX + 8, y + 8, sw, sh);
+      } else {
+        const typedName = signTypedValue.trim();
+        ctx.fillStyle = '#2b3a55';
+        ctx.font = '32px cursive';
+        ctx.textAlign = 'center';
+        ctx.fillText(typedName, W / 2, y + sigBoxH / 2 + 10);
+      }
+
+      y += sigBoxH + 6;
+      ctx.fillStyle = '#8a7a68';
+      ctx.font = '10px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('গ্রাহকের স্বাক্ষর', W / 2, y);
+      y += 10;
+    }
+
     // Footer text
     ctx.fillStyle = '#b3a18b';
     ctx.font = '10px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Developed by Zahin', W / 2, y + 16);
+    ctx.fillText('Developed by Zahin', W / 2, y + 4);
 
     // Download
     const link = document.createElement('a');
