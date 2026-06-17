@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kath-cft-v10';
+const CACHE_NAME = 'kath-cft-v12';
 const ASSETS = [
   './',
   './index.html',
