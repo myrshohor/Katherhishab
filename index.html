@@ -1288,6 +1288,81 @@
     border-color: var(--brick);
   }
 
+  .memo-calc-toggle-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 6px;
+  }
+
+  .memo-calc-toggle-btn {
+    background: var(--sand-light);
+    border: 1px solid var(--border);
+    color: var(--brick-dark);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 8px;
+  }
+
+  .memo-calc-panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(140, 74, 54, 0.1);
+  }
+
+  .memo-calc-display {
+    background: var(--sand-light);
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: right;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--brick-dark);
+    margin-bottom: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .memo-calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .mc-btn {
+    border: none;
+    border-radius: 8px;
+    background: var(--sand-light);
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 0;
+  }
+
+  .mc-btn:active {
+    background: var(--sand);
+  }
+
+  .mc-btn.mc-op {
+    background: var(--sand);
+    color: var(--brick-dark);
+  }
+
+  .mc-btn.mc-eq {
+    background: var(--brick);
+    color: #fff;
+  }
+
+  .mc-btn.mc-insert {
+    grid-column: span 1;
+    background: #2e7d4f;
+    color: #fff;
+    font-size: 13px;
+  }
+
   #memoPrintArea {
     background: var(--white);
     border-radius: 12px;
@@ -1561,12 +1636,48 @@
     <h2>📝 মেমো লিখুন</h2>
   </div>
   <div class="summary-content">
+    <div class="memo-calc-toggle-row">
+      <button type="button" class="memo-calc-toggle-btn" onclick="toggleMemoCalc()">🧮 ক্যালকুলেটর</button>
+    </div>
+
+    <div id="memoCalcPanel" class="memo-calc-panel" style="display:none">
+      <div class="memo-calc-display" id="memoCalcDisplay">0</div>
+      <div class="memo-calc-grid">
+        <button type="button" class="mc-btn mc-op" onclick="memoCalcClear()">C</button>
+        <button type="button" class="mc-btn mc-op" onclick="memoCalcBackspace()">⌫</button>
+        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('%')">%</button>
+        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('/')">÷</button>
+
+        <button type="button" class="mc-btn" onclick="memoCalcInput('7')">৭</button>
+        <button type="button" class="mc-btn" onclick="memoCalcInput('8')">৮</button>
+        <button type="button" class="mc-btn" onclick="memoCalcInput('9')">৯</button>
+        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('*')">×</button>
+
+        <button type="button" class="mc-btn" onclick="memoCalcInput('4')">৪</button>
+        <button type="button" class="mc-btn" onclick="memoCalcInput('5')">৫</button>
+        <button type="button" class="mc-btn" onclick="memoCalcInput('6')">৬</button>
+        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('-')">−</button>
+
+        <button type="button" class="mc-btn" onclick="memoCalcInput('1')">১</button>
+        <button type="button" class="mc-btn" onclick="memoCalcInput('2')">২</button>
+        <button type="button" class="mc-btn" onclick="memoCalcInput('3')">৩</button>
+        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('+')">+</button>
+
+        <button type="button" class="mc-btn" onclick="memoCalcInput('0')">০</button>
+        <button type="button" class="mc-btn" onclick="memoCalcInput('.')">.</button>
+        <button type="button" class="mc-btn mc-eq" onclick="memoCalcEquals()">=</button>
+        <button type="button" class="mc-btn mc-insert" onclick="memoCalcInsert()">✅ বসান</button>
+      </div>
+    </div>
+
     <div class="summary-header" style="padding:10px 0 12px;">
       <div class="memo-meta">
         <input type="text" id="memoCustName" placeholder="👤 ক্রেতার নাম (ঐচ্ছিক)" maxlength="50">
         <input type="text" id="memoDate" placeholder="📅 তারিখ" maxlength="30">
       </div>
     </div>
+
+
     <textarea class="memo-textarea" id="memoText" placeholder="এখানে মেমো লিখুন..." rows="10"></textarea>
 
     <!-- Hidden print/photo area -->
@@ -2558,11 +2669,91 @@
       const now = new Date();
       dateEl.value = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
     }
+
+    // Reset mini calculator
+    document.getElementById('memoCalcPanel').style.display = 'none';
+    memoCalcExpr = '0';
+    memoCalcJustEvaled = false;
+    memoCalcRender();
   }
 
   function closeMemoPage() {
     document.getElementById('memoPage').classList.remove('active');
     document.getElementById('calcPage').classList.remove('hidden');
+  }
+
+  // ===== Mini calculator inside Memo page =====
+  let memoCalcExpr = '0';
+  let memoCalcJustEvaled = false;
+
+  function toggleMemoCalc() {
+    const panel = document.getElementById('memoCalcPanel');
+    panel.style.display = panel.style.display === 'none' ? '' : 'none';
+  }
+
+  function memoCalcRender() {
+    // Show with familiar operator symbols
+    const shown = memoCalcExpr.replace(/\*/g, '×').replace(/\//g, '÷');
+    document.getElementById('memoCalcDisplay').textContent = shown;
+  }
+
+  function memoCalcInput(val) {
+    if (memoCalcJustEvaled && !'+-*/%'.includes(val)) {
+      memoCalcExpr = '0';
+    }
+    memoCalcJustEvaled = false;
+    if (memoCalcExpr === '0' && !'+-*/%.'.includes(val)) {
+      memoCalcExpr = val;
+    } else {
+      memoCalcExpr += val;
+    }
+    memoCalcRender();
+  }
+
+  function memoCalcBackspace() {
+    memoCalcExpr = memoCalcExpr.slice(0, -1) || '0';
+    memoCalcJustEvaled = false;
+    memoCalcRender();
+  }
+
+  function memoCalcClear() {
+    memoCalcExpr = '0';
+    memoCalcJustEvaled = false;
+    memoCalcRender();
+  }
+
+  function memoCalcEquals() {
+    try {
+      let expr = memoCalcExpr.replace(/%/g, '/100');
+      if (!/^[0-9+\-*/().]+$/.test(expr)) throw new Error('invalid');
+      let result = Function('"use strict"; return (' + expr + ')')();
+      if (!isFinite(result)) throw new Error('invalid');
+      result = Math.round(result * 10000) / 10000;
+      memoCalcExpr = String(result);
+      memoCalcJustEvaled = true;
+      memoCalcRender();
+    } catch (e) {
+      memoCalcExpr = '0';
+      memoCalcRender();
+    }
+  }
+
+  function memoCalcInsert() {
+    // Evaluate first if there's an unfinished expression
+    if (!memoCalcJustEvaled) memoCalcEquals();
+    const textarea = document.getElementById('memoText');
+    const value = memoCalcExpr;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(end);
+    textarea.value = before + value + after;
+    const newPos = start + value.length;
+    textarea.focus();
+    textarea.setSelectionRange(newPos, newPos);
+    memoCalcExpr = '0';
+    memoCalcJustEvaled = false;
+    memoCalcRender();
   }
 
   function buildMemoPrintArea() {
