@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kath-cft-v14';
+const CACHE_NAME = 'kath-cft-v16';
 const ASSETS = [
   './',
   './index.html',
@@ -31,6 +31,9 @@ self.addEventListener('activate', event => {
 
 // Fetch: আগে Network থেকে নাও, না পেলে Cache থেকে দাও
 self.addEventListener('fetch', event => {
+  // GET ছাড়া অন্য রিকোয়েস্ট (POST ইত্যাদি) ক্যাশ করার চেষ্টা করলে এরর হয়, তাই স্কিপ করো
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
