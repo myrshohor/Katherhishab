@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kath-cft-v12';
+const CACHE_NAME = 'kath-cft-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -29,14 +29,23 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: অফলাইনে ক্যাশ থেকে দাও
+// Fetch: আগে Network থেকে নাও, না পেলে Cache থেকে দাও
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request).catch(() => {
-        // নেটওয়ার্ক না থাকলে index.html দাও
-        return caches.match('./index.html');
-      });
-    })
+    fetch(event.request)
+      .then(response => {
+        // Network থেকে পেলে Cache-ও update করো
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+        return response;
+      })
+      .catch(() => {
+        // Network না থাকলে Cache থেকে দাও
+        return caches.match(event.request).then(cached => {
+          return cached || caches.match('./index.html');
+        });
+      })
   );
 });
