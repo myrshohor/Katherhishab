@@ -1602,10 +1602,22 @@
             </tr>
           </table>
         </div>
-        <!-- Row 2 -->
-        <div id="priceTotalRow" style="display:none;justify-content:space-between;align-items:center;padding:8px 14px;border-radius:8px;background:linear-gradient(135deg,#2e7d4f,#1f5c38);box-shadow:0 2px 6px rgba(31,92,56,0.25);">
-          <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">মোট টাকা (৳)</div>
-          <div style="color:#fff;font-size:16px;font-weight:800;" id="prTotalPrice">০</div>
+        <!-- Row 2: সবুজ box -->
+        <div id="priceTotalRow" style="display:none;border-radius:8px;background:linear-gradient(135deg,#2e7d4f,#1f5c38);box-shadow:0 2px 6px rgba(31,92,56,0.25);overflow:hidden;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">মোট টাকা (৳)</div>
+            <div style="color:#fff;font-size:16px;font-weight:800;" id="prTotalPrice">০</div>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.25);margin:0 14px;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">বকেয়া (৳)</div>
+            <input type="number" id="prBokeyaInput" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:6px;color:#fff;font-size:15px;font-weight:800;width:110px;padding:3px 8px;text-align:right;box-sizing:border-box;" placeholder="০" min="0" inputmode="numeric" oninput="calcAll();">
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.25);margin:0 14px;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">+ মোট টাকা (৳)</div>
+            <div style="color:#fff;font-size:16px;font-weight:800;" id="prTotalPriceBottom">০</div>
+          </div>
         </div>
         <!-- Row 3: জমা | বাকি -->
         <div id="paidDueRow" style="display:none;border-radius:8px;background:linear-gradient(135deg,#3a7ca8,#2a5d80);box-shadow:0 2px 6px rgba(42,93,128,0.25);overflow:hidden;">
@@ -2074,6 +2086,8 @@
     document.getElementById('prPerCft').style.display = '';
     document.getElementById('perCftRow').style.opacity = '0';
     document.getElementById('prPaidInput').value = '';
+    if (document.getElementById('prBokeyaInput')) document.getElementById('prBokeyaInput').value = '';
+    if (document.getElementById('prTotalPriceBottom')) document.getElementById('prTotalPriceBottom').textContent = '০';
 
     applyProfile();
     document.getElementById('calcPage').classList.add('hidden');
@@ -2114,7 +2128,8 @@
     perCftEl.textContent = Math.round(price).toLocaleString('en-IN');
     const show = price > 0;
     document.getElementById('priceTotalBox').style.display = show ? 'flex' : 'none';
-    document.getElementById('priceTotalRow').style.display = show ? 'flex' : 'none';
+    document.getElementById('priceTotalRow').style.display = show ? 'block' : 'none';
+    if (show) { document.getElementById('prTotalPriceBottom').textContent = moneyStr; }
     document.getElementById('perCftRow').style.opacity = show ? '1' : '0';
     document.getElementById('perCftRow').style.flexDirection = '';
     document.getElementById('perCftRow').style.textAlign = '';
@@ -2122,12 +2137,17 @@
     calcDue();
   }
 
-  function calcDue() {
+  function calcAll() {
     const total = Math.round((parseFloat(document.getElementById('pricePerCft').value) || 0) * (parseFloat(document.getElementById('prTotal').textContent) || 0));
+    const bokeya = parseFloat(document.getElementById('prBokeyaInput') ? document.getElementById('prBokeyaInput').value : 0) || 0;
     const paid = parseFloat(document.getElementById('prPaidInput').value) || 0;
-    const due = Math.max(total - paid, 0);
+    const grandTotal = total + bokeya;
+    document.getElementById('prTotalPriceBottom').textContent = grandTotal.toLocaleString('en-IN');
+    const due = Math.max(grandTotal - paid, 0);
     document.getElementById('prDueValue').textContent = due.toLocaleString('en-IN');
   }
+
+  function calcDue() { calcAll(); }
 
   // ===== Signature (draw + type) =====
   let signCanvas, signCtx, signDrawing = false, signHasDrawing = false;
