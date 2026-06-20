@@ -592,6 +592,66 @@
     line-height: 1;
   }
 
+  /* Wood type toggle */
+  .wtype-btn {
+    font-size: 10px;
+    font-weight: 700;
+    border: none;
+    border-radius: 5px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    flex: 0 0 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sand);
+    color: #8a7a68;
+    transition: background 0.15s, color 0.15s;
+  }
+  .wtype-btn.wt-U2 { background: #d4efdf; color: #1e8449; }
+  .wtype-btn.wt-BL { background: #d6eaf8; color: #1a5276; }
+  .wtype-btn.wt-OV { background: #fdebd0; color: #a04000; }
+
+  /* Type subtotals in summary */
+  .type-subtotal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .type-subtotal-row.ts-U2 { background: #d4efdf; color: #1e8449; }
+  .type-subtotal-row.ts-BL { background: #d6eaf8; color: #1a5276; }
+  .type-subtotal-row.ts-OV { background: #fdebd0; color: #a04000; }
+
+  .type-price-input {
+    background: rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    width: 80px;
+    padding: 2px 6px;
+    text-align: right;
+    color: inherit;
+  }
+  .type-price-input::placeholder { opacity: 0.6; font-weight: 400; }
+  .type-grand-total {
+    margin-top: 4px;
+    background: linear-gradient(135deg, #2e7d4f, #1f5c38);
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
   /* Number pad */
   .numpad {
     flex-shrink: 0;
@@ -642,6 +702,121 @@
 
   .numpad .del-key {
     font-size: 18px;
+  }
+
+  /* ===== Digital Calculator ===== */
+  #digitalCalcPage {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  #digitalCalcPage.active {
+    display: flex;
+  }
+
+  .dc-screen {
+    flex-shrink: 0;
+    margin: 14px 16px 10px;
+    background: linear-gradient(160deg, var(--brick-dark), #6e3826);
+    border-radius: 18px;
+    padding: 22px 18px 18px;
+    box-shadow: 0 8px 22px rgba(140, 74, 54, 0.28), inset 0 1px 0 rgba(255,255,255,0.08);
+    text-align: right;
+    min-height: 108px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .dc-expression {
+    color: rgba(255,255,255,0.55);
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 18px;
+    word-break: break-all;
+    letter-spacing: 0.3px;
+  }
+
+  .dc-result {
+    color: var(--white);
+    font-size: 38px;
+    font-weight: 700;
+    word-break: break-all;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dc-grid-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 6px 16px max(18px, env(safe-area-inset-bottom));
+  }
+
+  .dc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .dc-grid button {
+    border: none;
+    border-radius: 16px;
+    font-size: 22px;
+    font-weight: 600;
+    padding: 0;
+    aspect-ratio: 1 / 0.8;
+    background: var(--key-bg);
+    color: var(--text-dark);
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(140, 74, 54, 0.10);
+    transition: transform 0.06s ease;
+  }
+
+  .dc-grid button:active {
+    background: var(--sand);
+    transform: scale(0.96);
+  }
+
+  .dc-grid button.dc-op {
+    background: var(--sand);
+    color: var(--brick-dark);
+    font-size: 24px;
+  }
+
+  .dc-grid button.dc-op:active {
+    background: #ddc7ab;
+  }
+
+  .dc-grid button.dc-func {
+    background: #f0ddd5;
+    color: var(--brick-dark);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .dc-grid button.dc-func:active {
+    background: #e6c3b6;
+  }
+
+  .dc-grid button.dc-equals {
+    background: var(--brick);
+    color: var(--white);
+    grid-row: span 2;
+    aspect-ratio: auto;
+  }
+
+  .dc-grid button.dc-equals:active {
+    background: var(--brick-dark);
+  }
+
+  .dc-grid button.dc-zero {
+    grid-column: span 2;
+    aspect-ratio: auto;
   }
 
   /* Summary / Report page */
@@ -1269,24 +1444,117 @@
     margin-top: 2px;
   }
 
-  /* Memo Page */
-  #memoPage {
+  .dual-mat-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px 0;
+    flex-shrink: 0;
+  }
+  .dual-mat-tab {
+    flex: 1;
+    border: none;
+    border-radius: 10px 10px 0 0;
+    padding: 9px 0;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--sand);
+    color: var(--brick-dark);
+    opacity: 0.7;
+  }
+  .dual-mat-tab.active {
+    background: var(--brick);
+    color: #fff;
+    opacity: 1;
+  }
+  .d-rows {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 4px 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dual-summary-section {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .dual-summary-section.active {
+    display: flex;
+  }
+  .dual-summary-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 16px;
+  }
+  .dual-summary-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .dual-summary-content th, .dual-summary-content td {
+    border: 1px solid var(--border);
+    padding: 6px 4px;
+    text-align: center;
+  }
+  .dual-summary-content th {
+    background: var(--sand);
+    color: var(--brick-dark);
+    font-size: 12px;
+  }
+  .dual-summary-content tfoot td {
+    font-weight: bold;
+    background: var(--sand-light);
+    color: var(--brick-dark);
+  }
+  .dual-mat-label {
+    font-weight: 700;
+    color: var(--brick-dark);
+  }
+  .dual-summary-insert {
+    background: #2e7d4f;
+    color: #fff;
+  }
+
+  /* Dual CFT Calculator Page (standalone, accessed from home menu) */
+  #dualCalcPage {
     display: none;
     flex-direction: column;
     height: 100%;
   }
 
-  #memoPage.active {
+  #dualCalcPage.active {
     display: flex;
   }
 
-  .memo-meta {
+  .dual-mat-name-row {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+
+  .dual-mat-name-row input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    background: var(--white);
+    color: var(--text-dark);
+  }
+
+  .summary-meta-row {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    margin-bottom: 10px;
   }
 
-  .memo-meta input {
+  .summary-meta-row input {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 8px 10px;
@@ -1295,108 +1563,14 @@
     color: var(--text-dark);
   }
 
-  .memo-textarea {
-    flex: 1;
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px;
-    font-size: 14px;
-    line-height: 1.6;
-    background: var(--white);
-    color: var(--text-dark);
-    resize: none;
-    box-shadow: 0 2px 8px rgba(140, 74, 54, 0.1);
-  }
-
-  .memo-textarea:focus {
-    outline: none;
-    border-color: var(--brick);
-  }
-
-  .memo-calc-toggle-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 6px;
-  }
-
-  .memo-calc-toggle-btn {
-    background: var(--sand-light);
-    border: 1px solid var(--border);
-    color: var(--brick-dark);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 7px 14px;
-    border-radius: 8px;
-  }
-
-  .memo-calc-panel {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 8px rgba(140, 74, 54, 0.1);
-  }
-
-  .memo-calc-display {
-    background: var(--sand-light);
-    border-radius: 8px;
-    padding: 12px 14px;
-    text-align: right;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--brick-dark);
-    margin-bottom: 8px;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  .memo-calc-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-
-  .mc-btn {
-    border: none;
-    border-radius: 8px;
-    background: var(--sand-light);
-    color: var(--text-dark);
-    font-size: 16px;
-    font-weight: 600;
-    padding: 12px 0;
-  }
-
-  .mc-btn:active {
-    background: var(--sand);
-  }
-
-  .mc-btn.mc-op {
-    background: var(--sand);
-    color: var(--brick-dark);
-  }
-
-  .mc-btn.mc-eq {
-    background: var(--brick);
-    color: #fff;
-  }
-
-  .mc-btn.mc-insert {
-    grid-column: span 1;
-    background: #2e7d4f;
-    color: #fff;
-    font-size: 13px;
-  }
-
-  #memoPrintArea {
+  #dPrintArea {
     background: var(--white);
     border-radius: 12px;
     padding: 16px;
     box-shadow: 0 2px 8px rgba(140, 74, 54, 0.1);
   }
 
-  #memoPrintArea .pr-title {
+  #dPrintArea .pr-title {
     text-align: center;
     font-size: 17px;
     font-weight: bold;
@@ -1404,14 +1578,14 @@
     margin-bottom: 4px;
   }
 
-  #memoPrintArea .pr-meta {
+  #dPrintArea .pr-meta {
     text-align: center;
     font-size: 12px;
     color: #8a7a68;
     margin-bottom: 10px;
   }
 
-  #memoPrintArea .memo-print-body {
+  #dPrintArea .memo-print-body {
     font-size: 14px;
     line-height: 1.7;
     white-space: pre-wrap;
@@ -1421,14 +1595,19 @@
 
   @media print {
     body * { visibility: hidden; }
-    #printArea, #printArea *, #memoPrintArea, #memoPrintArea * { visibility: visible; }
-    #printArea, #memoPrintArea {
+    #printArea, #printArea *, #dPrintArea, #dPrintArea * { visibility: visible; }
+    #printArea, #dPrintArea {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       box-shadow: none;
       border-radius: 0;
+    }
+    #woodTypeSubtotals, #typePriceExtra, #typePaidDueRow,
+    #dWoodTypeSubtotals, #dTypePriceExtra, #dTypePaidDueRow {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
   }
 </style>
@@ -1498,8 +1677,9 @@
       <button onclick="goHome()">
         <span class="icon">🏠</span> Home
       </button>
-      <button onclick="openCustomerPage()"><span class="icon">👤</span> কাস্টমার হিসাব</button>
-      <button onclick="openMemoPage()"><span class="icon">📝</span> মেমো লিখুন</button>
+      <button onclick="openCustomerPage()"><span class="icon">👤</span> সেভ লিস্ট</button>
+      <button onclick="openDualCalcPage()"><span class="icon">🪵</span> দুই হিসাব</button>
+      <button onclick="openDigitalCalcPage()"><span class="icon">🔢</span> ক্যালকুলেটর</button>
       <button onclick="openProfileEdit()"><span class="icon">⚙️</span> আমার প্রোফাইল</button>
       <a id="apkDownloadBtn" href="https://github.com/myrshohor/Katherhishab/raw/main/kathcft.apk" download="kathcft.apk" style="width:100%;background:none;border:none;padding:14px 20px;text-align:left;font-size:15px;font-weight:600;color:#1e8449;cursor:pointer;display:flex;align-items:center;gap:10px;text-decoration:none;transition:background 0.2s;" onmousedown="this.style.background='#eafaf1'" ontouchstart="this.style.background='#eafaf1'" ontouchend="this.style.background=''" onmouseup="this.style.background=''">
         <span class="icon">📲</span> APK ডাউনলোড
@@ -1554,7 +1734,11 @@
 
 <div id="summaryPage">
   <div class="summary-header">
-    <h2>📋 হিসাবের কপি</h2>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <button class="btn-back-sm" onclick="closeSummary()" style="background:#2e7d32;color:#fff;padding:7px 12px;font-size:12px;font-weight:600;border-radius:8px;flex-shrink:0;box-shadow:0 2px 5px rgba(46,125,50,0.35);">◀ ফিরে যান</button>
+      <h2 style="flex:1;text-align:center;margin-bottom:0;">📋 হিসাবের কপি</h2>
+      <div style="width:74px;flex-shrink:0;"></div>
+    </div>
     <div class="summary-meta">
       <input type="text" id="custName" placeholder="ক্রেতার নাম (ঐচ্ছিক)">
       <input type="text" id="custNote" placeholder="নোট / ঠিকানা (ঐচ্ছিক)">
@@ -1590,6 +1774,34 @@
         <tbody id="prBody"></tbody>
       </table>
       <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;">
+        <!-- Wood type subtotals -->
+        <div id="woodTypeSubtotals" style="display:none;flex-direction:column;gap:4px;margin-bottom:2px;"></div>
+        <!-- Type price bokeya/joma/baki -->
+        <div id="typePriceExtra" style="display:none;border-radius:8px;background:linear-gradient(135deg,#2e7d4f,#1f5c38);box-shadow:0 2px 6px rgba(31,92,56,0.25);overflow:hidden;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">বকেয়া (৳)</div>
+            <input type="number" id="typeBokeyaInput" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:6px;color:#fff;font-size:15px;font-weight:800;width:110px;padding:3px 8px;text-align:right;box-sizing:border-box;" placeholder="০" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()">
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.25);margin:0 14px;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">+ মোট টাকা (৳)</div>
+            <div style="color:#fff;font-size:16px;font-weight:800;" id="typeGrandPlusBokeya">০</div>
+          </div>
+        </div>
+        <div id="typePaidDueRow" style="display:none;border-radius:8px;background:linear-gradient(135deg,#3a7ca8,#2a5d80);box-shadow:0 2px 6px rgba(42,93,128,0.25);overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:8px 14px;width:50%;">
+                <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">জমা (৳)</div>
+                <input type="number" id="typePaidInput" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:6px;color:#fff;font-size:15px;font-weight:800;width:100%;padding:3px 8px;box-sizing:border-box;" placeholder="০" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()">
+              </td>
+              <td style="padding:8px 14px;width:50%;text-align:right;border-left:1px solid rgba(255,255,255,0.25);">
+                <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">বাকি (৳)</div>
+                <div style="color:#fff;font-size:16px;font-weight:800;" id="typeDueValue">০</div>
+              </td>
+            </tr>
+          </table>
+        </div>
         <!-- Row 1: table layout - guaranteed to work -->
         <div style="border-radius:8px;background:linear-gradient(135deg,#B5634A,#8C4A36);box-shadow:0 2px 6px rgba(140,74,54,0.25);overflow:hidden;">
           <table style="width:100%;border-collapse:collapse;">
@@ -1664,7 +1876,6 @@
   </div>
 
   <div class="summary-actions">
-    <button class="btn-back" onclick="closeSummary()">◀ হিসাবে ফিরে যান</button>
     <div class="summary-actions-row" style="grid-template-columns:1fr 1fr 1fr;">
       <button class="btn-print" onclick="printSummary()">🖨️ প্রিন্ট করুন</button>
       <button class="btn-photo" onclick="saveAsPhoto()">📥 ফটো ডাউনলোড</button>
@@ -1677,84 +1888,277 @@
 <div id="customerPage">
   <div class="customer-header">
     <button class="btn-back-sm" onclick="closeCustomerPage()">◀ ফিরে যান</button>
-    <h2>👤 কাস্টমার হিসাব</h2>
+    <h2>👤 সেভ লিস্ট</h2>
   </div>
   <div class="customer-list" id="customerList">
     <div class="customer-empty">এখনো কোনো হিসাব সেভ করা হয়নি।<br>হিসাব শেষে মেনু থেকে "হিসাব সেভ" করুন।</div>
   </div>
 </div>
 
-<!-- Memo Page -->
-<div id="memoPage">
+<!-- Dual CFT Calculator Page (standalone, for two materials at once) -->
+<div id="dualCalcPage">
   <div class="customer-header">
-    <button class="btn-back-sm" onclick="closeMemoPage()">◀ ফিরে যান</button>
-    <h2>📝 মেমো লিখুন</h2>
-  </div>
-  <div class="summary-content">
-    <div class="memo-calc-toggle-row">
-      <button type="button" class="memo-calc-toggle-btn" onclick="toggleMemoCalc()">🧮 ক্যালকুলেটর</button>
-    </div>
-
-    <div id="memoCalcPanel" class="memo-calc-panel" style="display:none">
-      <div class="memo-calc-display" id="memoCalcDisplay">0</div>
-      <div class="memo-calc-grid">
-        <button type="button" class="mc-btn mc-op" onclick="memoCalcClear()">C</button>
-        <button type="button" class="mc-btn mc-op" onclick="memoCalcBackspace()">⌫</button>
-        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('%')">%</button>
-        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('/')">÷</button>
-
-        <button type="button" class="mc-btn" onclick="memoCalcInput('7')">৭</button>
-        <button type="button" class="mc-btn" onclick="memoCalcInput('8')">৮</button>
-        <button type="button" class="mc-btn" onclick="memoCalcInput('9')">৯</button>
-        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('*')">×</button>
-
-        <button type="button" class="mc-btn" onclick="memoCalcInput('4')">৪</button>
-        <button type="button" class="mc-btn" onclick="memoCalcInput('5')">৫</button>
-        <button type="button" class="mc-btn" onclick="memoCalcInput('6')">৬</button>
-        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('-')">−</button>
-
-        <button type="button" class="mc-btn" onclick="memoCalcInput('1')">১</button>
-        <button type="button" class="mc-btn" onclick="memoCalcInput('2')">২</button>
-        <button type="button" class="mc-btn" onclick="memoCalcInput('3')">৩</button>
-        <button type="button" class="mc-btn mc-op" onclick="memoCalcInput('+')">+</button>
-
-        <button type="button" class="mc-btn" onclick="memoCalcInput('0')">০</button>
-        <button type="button" class="mc-btn" onclick="memoCalcInput('.')">.</button>
-        <button type="button" class="mc-btn mc-eq" onclick="memoCalcEquals()">=</button>
-        <button type="button" class="mc-btn mc-insert" onclick="memoCalcInsert()">✅ বসান</button>
-      </div>
-    </div>
-
-    <div class="summary-header" style="padding:10px 0 12px;">
-      <div class="memo-meta">
-        <input type="text" id="memoCustName" placeholder="👤 ক্রেতার নাম (ঐচ্ছিক)" maxlength="50">
-        <input type="text" id="memoDate" placeholder="📅 তারিখ" maxlength="30">
-      </div>
-    </div>
-
-
-    <textarea class="memo-textarea" id="memoText" placeholder="এখানে মেমো লিখুন..." rows="10"></textarea>
-
-    <!-- Hidden print/photo area -->
-    <div id="memoPrintArea" style="display:none">
-      <div class="pr-shop-header" id="memoShopHeader" style="display:none">
-        <div class="pr-shop-name" id="memoShopName"></div>
-        <div class="pr-shop-sub" id="memoShopSub"></div>
-      </div>
-      <div class="pr-title">মেমো</div>
-      <div class="pr-meta" id="memoPrMeta"></div>
-      <div class="memo-print-body" id="memoPrintBody"></div>
-    </div>
+    <button class="btn-back-sm" id="dBackToCalcHeaderBtn" onclick="dBackToCalc()" style="background:#2e7d32;color:#fff;display:none;padding:7px 12px;font-size:12px;font-weight:700;border-radius:8px;box-shadow:0 2px 5px rgba(46,125,50,0.35);">◀ ফিরে যান</button>
+    <h2>🪵 দুই হিসাব</h2>
+    <button class="btn-back-sm" onclick="closeDualCalcPage()" style="background:#c0392b;color:#fff;padding:5px 9px;font-size:11px;">◀ হোমে ফিরে যান</button>
   </div>
 
-  <div class="summary-actions">
-    <div class="summary-actions-row" style="grid-template-columns:1fr 1fr 1fr;">
-      <button class="btn-print" onclick="printMemo()">🖨️ প্রিন্ট করুন</button>
-      <button class="btn-photo" onclick="memoSaveAsPhoto()">📥 ফটো ডাউনলোড</button>
-      <button class="btn-save" onclick="saveMemo()">💾 সেভ করুন</button>
+  <!-- Material tabs -->
+  <div class="dual-mat-tabs" id="dualMatTabs">
+    <button class="dual-mat-tab active" id="dMatTabA" onclick="dSwitchMaterial('A')">🪵 মাল ১</button>
+    <button class="dual-mat-tab" id="dMatTabB" onclick="dSwitchMaterial('B')">🪵 মাল ২</button>
+  </div>
+
+  <!-- Material name inputs -->
+  <div class="dual-mat-name-row">
+    <input type="text" id="dNameA" placeholder="🪵 মাল ১ এর নাম (ঐচ্ছিক)" maxlength="40" oninput="dSetName('A', this.value)">
+    <input type="text" id="dNameB" placeholder="🪵 মাল ২ এর নাম (ঐচ্ছিক)" maxlength="40" oninput="dSetName('B', this.value)">
+  </div>
+
+  <!-- Single material calculator (exact same UI as main calculator) -->
+  <div id="dualCalcBody" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
+    <div class="total-box">
+      <div class="label">সর্বমোট</div>
+      <div class="value"><span id="dGrandTotal">0.0000</span> <span>CFT</span></div>
+    </div>
+
+    <div class="header-labels">
+      <span class="num-space"></span>
+      <span>চওড়া</span>
+      <span>পুরুত্ব</span>
+      <span>লম্বা</span>
+      <span>পরিমাণ</span>
+      <span class="result-space">CFT</span>
+      <span class="del-space"></span>
+    </div>
+
+    <div class="d-rows" id="dRows"></div>
+
+    <div class="numpad">
+      <div class="numpad-grid">
+        <button onclick="dPress('1')">১</button>
+        <button onclick="dPress('2')">২</button>
+        <button onclick="dPress('3')">৩</button>
+        <button class="clear-btn" onclick="dClearField()">মুছুন</button>
+
+        <button onclick="dPress('4')">৪</button>
+        <button onclick="dPress('5')">৫</button>
+        <button onclick="dPress('6')">৬</button>
+        <button class="del-key" onclick="dBackspace()">⌫</button>
+
+        <button onclick="dPress('7')">৭</button>
+        <button onclick="dPress('8')">৮</button>
+        <button onclick="dPress('9')">৯</button>
+        <button onclick="dPress('.')">.</button>
+
+        <button class="op-btn" onclick="dGoField(-1)">◀ আগের</button>
+        <button onclick="dPress('0')">০</button>
+        <button class="op-btn" onclick="dGoField(1)">পরের ▶</button>
+        <button class="next-btn" id="dNextBtn" onclick="dFinishMaterial()">✅ মাল ২ এ যান</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Combined summary (looks like হিসাবের কপি) -->
+  <div class="dual-summary-section" id="dualSummaryView">
+    <div class="summary-header">
+      <div id="dShopBadge" style="display:none;background:var(--sand);border-radius:10px;padding:8px 12px;margin-bottom:8px;text-align:center;">
+        <div id="dShopBadgeName" style="font-size:15px;font-weight:bold;color:var(--brick-dark);"></div>
+        <div id="dShopBadgeSub" style="font-size:11px;color:#8a7a68;margin-top:2px;"></div>
+      </div>
+      <div class="summary-meta-row">
+        <input type="text" id="dCustName" placeholder="👤 ক্রেতার নাম (ঐচ্ছিক)" maxlength="50">
+        <input type="text" id="dCustDate" placeholder="📅 তারিখ" maxlength="30">
+      </div>
+      <div class="summary-meta">
+        <div class="price-row">
+          <label>🪵 <span id="dPriceLabelA">মাল ১</span> - প্রতি CFT দাম (৳)</label>
+          <input type="number" id="dPriceA" placeholder="০" min="0" oninput="dCalcSummaryPrice()" inputmode="numeric">
+        </div>
+        <div class="price-total-box" id="dPriceBoxA" style="display:none;">
+          <span><span id="dTotalLabelA">মাল ১</span> মোট টাকা</span>
+          <span id="dTotalPriceA" class="price-amount">৳ ০</span>
+        </div>
+        <div class="price-row">
+          <label>🪵 <span id="dPriceLabelB">মাল ২</span> - প্রতি CFT দাম (৳)</label>
+          <input type="number" id="dPriceB" placeholder="০" min="0" oninput="dCalcSummaryPrice()" inputmode="numeric">
+        </div>
+        <div class="price-total-box" id="dPriceBoxB" style="display:none;background:var(--brick-dark);">
+          <span><span id="dTotalLabelB">মাল ২</span> মোট টাকা</span>
+          <span id="dTotalPriceB" class="price-amount">৳ ০</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dual-summary-content">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>মাল</th>
+            <th>চওড়া</th>
+            <th>পুরুত্ব</th>
+            <th>লম্বা</th>
+            <th>পরিমাণ</th>
+            <th>CFT</th>
+          </tr>
+        </thead>
+        <tbody id="dSummaryBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6">সর্বমোট CFT</td>
+            <td id="dSummaryGrandTotal">0.0000</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;">
+        <div id="dWoodTypeSubtotals" style="display:none;flex-direction:column;gap:4px;margin-bottom:2px;"></div>
+        <!-- Dual type price bokeya/joma/baki -->
+        <div id="dTypePriceExtra" style="display:none;border-radius:8px;background:linear-gradient(135deg,#2e7d4f,#1f5c38);box-shadow:0 2px 6px rgba(31,92,56,0.25);overflow:hidden;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">বকেয়া (৳)</div>
+            <input type="number" id="dTypeBokeyaInput" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:6px;color:#fff;font-size:15px;font-weight:800;width:110px;padding:3px 8px;text-align:right;box-sizing:border-box;" placeholder="০" min="0" inputmode="numeric" oninput="calcDTypeTotal()">
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.25);margin:0 14px;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">+ মোট টাকা (৳)</div>
+            <div style="color:#fff;font-size:16px;font-weight:800;" id="dTypeGrandPlusBokeya">০</div>
+          </div>
+        </div>
+        <div id="dTypePaidDueRow" style="display:none;border-radius:8px;background:linear-gradient(135deg,#3a7ca8,#2a5d80);box-shadow:0 2px 6px rgba(42,93,128,0.25);overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:8px 14px;width:50%;">
+                <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">জমা (৳)</div>
+                <input type="number" id="dTypePaidInput" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:6px;color:#fff;font-size:15px;font-weight:800;width:100%;padding:3px 8px;box-sizing:border-box;" placeholder="০" min="0" inputmode="numeric" oninput="calcDTypeTotal()">
+              </td>
+              <td style="padding:8px 14px;width:50%;text-align:right;border-left:1px solid rgba(255,255,255,0.25);">
+                <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">বাকি (৳)</div>
+                <div style="color:#fff;font-size:16px;font-weight:800;" id="dTypeDueValue">০</div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div id="dGrandCombo" style="display:none;border-radius:8px;background:linear-gradient(135deg,#2e7d4f,#1f5c38);box-shadow:0 2px 6px rgba(31,92,56,0.25);overflow:hidden;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">সর্বমোট টাকা (৳)</div>
+            <div style="color:#fff;font-size:16px;font-weight:800;" id="dGrandTakaDisplay">০</div>
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.25);margin:0 14px;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">বকেয়া (৳)</div>
+            <input type="number" id="dBokeyaInput" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:6px;color:#fff;font-size:15px;font-weight:800;width:110px;padding:3px 8px;text-align:right;box-sizing:border-box;" placeholder="০" min="0" inputmode="numeric" oninput="dCalcAll();">
+          </div>
+          <div style="height:1px;background:rgba(255,255,255,0.25);margin:0 14px;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;">
+            <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">+ মোট টাকা (৳)</div>
+            <div style="color:#fff;font-size:16px;font-weight:800;" id="dGrandTotalDisplay">০</div>
+          </div>
+        </div>
+        <div id="dPaidDueRow" style="display:none;border-radius:8px;background:linear-gradient(135deg,#3a7ca8,#2a5d80);box-shadow:0 2px 6px rgba(42,93,128,0.25);overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:8px 14px;width:50%;">
+                <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">জমা (৳)</div>
+                <input type="number" id="dPaidInput" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);border-radius:6px;color:#fff;font-size:15px;font-weight:800;width:100%;padding:3px 8px;box-sizing:border-box;" placeholder="০" min="0" inputmode="numeric" oninput="dCalcAll()">
+              </td>
+              <td style="padding:8px 14px;width:50%;text-align:right;border-left:1px solid rgba(255,255,255,0.25);">
+                <div style="color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;">বাকি (৳)</div>
+                <div style="color:#fff;font-size:16px;font-weight:800;" id="dDueValue">০</div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="pr-sign-section">
+        <div class="pr-sign-tabs">
+          <button type="button" class="pr-sign-tab active" id="dSignTabDraw" onclick="dSwitchSignMode('draw')">✍️ হাতে আঁকুন</button>
+          <button type="button" class="pr-sign-tab" id="dSignTabType" onclick="dSwitchSignMode('type')">⌨️ টাইপ করুন</button>
+        </div>
+
+        <div class="pr-sign-box" id="dSignDrawBox">
+          <canvas id="dSignCanvas" class="pr-sign-canvas"></canvas>
+          <button type="button" class="pr-sign-clear" onclick="dClearSignature()">✕ মুছুন</button>
+        </div>
+
+        <div class="pr-sign-box" id="dSignTypeBox" style="display:none">
+          <div class="pr-sign-display" id="dSignTypeDisplay">
+            <span id="dSignTypeText"></span><span class="pr-sign-cursor">|</span>
+          </div>
+          <div class="pr-sign-preview" id="dSignTypePreview" dir="ltr"></div>
+          <div class="pr-sign-kb" id="dSignKeyboard"></div>
+        </div>
+
+        <div class="pr-sign-label">স্বাক্ষর</div>
+      </div>
+
+      <!-- Hidden print/photo area -->
+      <div id="dPrintArea" style="display:none">
+        <div class="pr-shop-header" id="dShopHeader" style="display:none">
+          <div class="pr-shop-name" id="dShopName"></div>
+          <div class="pr-shop-sub" id="dShopSub"></div>
+        </div>
+        <div class="pr-title">মেমো</div>
+        <div class="pr-meta" id="dPrMeta"></div>
+        <div class="memo-print-body" id="dPrintBody"></div>
+        <div id="dPrintSign" style="margin-top:14px;text-align:center;"></div>
+      </div>
+    </div>
+
+    <div class="summary-actions">
+      <div class="summary-actions-row" style="grid-template-columns:1fr 1fr 1fr;">
+        <button class="btn-print" onclick="dPrintSummary()">🖨️ প্রিন্ট করুন</button>
+        <button class="btn-photo" onclick="dSaveAsPhoto()">📥 ফটো ডাউনলোড</button>
+        <button class="btn-save" onclick="dSaveSummary()">💾 সেভ করুন</button>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- Digital Calculator Page -->
+<div id="digitalCalcPage">
+  <div class="customer-header">
+    <button class="btn-back-sm" onclick="closeDigitalCalcPage()" style="background:#2e7d32;color:#fff;padding:7px 12px;font-size:12px;font-weight:600;border-radius:8px;box-shadow:0 2px 5px rgba(46,125,50,0.35);">◀ ফিরে যান</button>
+    <h2>🔢 ক্যালকুলেটর</h2>
+  </div>
+
+  <div class="dc-screen">
+    <div class="dc-expression" id="dcExpression">&nbsp;</div>
+    <div class="dc-result" id="dcResult">0</div>
+  </div>
+
+  <div class="dc-grid-wrap">
+    <div class="dc-grid">
+      <button class="dc-func" onclick="dcClearAll()">AC</button>
+      <button class="dc-func" onclick="dcBackspace()">⌫</button>
+      <button class="dc-func" onclick="dcPercent()">%</button>
+      <button class="dc-op" onclick="dcOperator('÷')">÷</button>
+
+      <button onclick="dcDigit('7')">৭</button>
+      <button onclick="dcDigit('8')">৮</button>
+      <button onclick="dcDigit('9')">৯</button>
+      <button class="dc-op" onclick="dcOperator('×')">×</button>
+
+      <button onclick="dcDigit('4')">৪</button>
+      <button onclick="dcDigit('5')">৫</button>
+      <button onclick="dcDigit('6')">৬</button>
+      <button class="dc-op" onclick="dcOperator('−')">−</button>
+
+      <button onclick="dcDigit('1')">১</button>
+      <button onclick="dcDigit('2')">২</button>
+      <button onclick="dcDigit('3')">৩</button>
+      <button class="dc-op" onclick="dcOperator('+')">+</button>
+
+      <button class="dc-zero" onclick="dcDigit('0')">০</button>
+      <button onclick="dcDecimal()">.</button>
+      <button class="dc-equals" onclick="dcEquals()">=</button>
+    </div>
+  </div>
+</div>
+
+
 
 </div>
 
@@ -1851,7 +2255,22 @@
   }
 
   function newRowData() {
-    return { l: '', w: '', t: '', q: '', sn: '' };
+    return { l: '', w: '', t: '', q: '', sn: '', woodType: '' };
+  }
+
+  function woodTypeClass(t) {
+    if (t === 'U/2') return 'U2';
+    if (t === 'BL') return 'BL';
+    if (t === 'O/V') return 'OV';
+    return '';
+  }
+
+  function cycleWoodType(rIdx) {
+    const types = ['', 'U/2', 'BL', 'O/V'];
+    const cur = rows[rIdx].woodType || '';
+    const next = types[(types.indexOf(cur) + 1) % types.length];
+    rows[rIdx].woodType = next;
+    render();
   }
 
 
@@ -1926,6 +2345,7 @@
 
       rowEl.innerHTML = `
         <div class="sn-input${rIdx === activeRow && activeField === -1 ? ' sn-active' : ''}" onclick="focusSN(${rIdx})">${snLabels[rIdx]}</div>
+        <button class="wtype-btn${row.woodType ? ' wt-' + woodTypeClass(row.woodType) : ''}" onclick="cycleWoodType(${rIdx})">${row.woodType || '—'}</button>
         ${fieldsHtml}
         <div class="result">${cft.toFixed(4)}</div>
         <button class="delete-btn" onclick="deleteRow(${rIdx})">✕</button>
@@ -2109,8 +2529,9 @@
       const cft = (l * w * t * q) / 2304;
 
       const tr = document.createElement('tr');
+      const typeBadge = row.woodType ? `<span style="font-size:10px;font-weight:700;padding:1px 4px;border-radius:3px;${row.woodType==='U/2'?'background:#d4efdf;color:#1e8449':row.woodType==='BL'?'background:#d6eaf8;color:#1a5276':'background:#fdebd0;color:#a04000'}">${row.woodType}</span>` : '';
       tr.innerHTML = `
-        <td>${snLabel}</td>
+        <td>${snLabel}${typeBadge ? '<br>' + typeBadge : ''}</td>
         <td>${row.l || '-'}</td>
         <td>${row.w || '-'}</td>
         <td>${row.t || '-'}</td>
@@ -2121,6 +2542,30 @@
     });
 
     document.getElementById('prTotal').textContent = grandTotal.toFixed(4);
+
+    // Wood type subtotals
+    const typeBlock = document.getElementById('woodTypeSubtotals');
+    if (typeBlock) {
+      const totals = { 'U/2': 0, 'BL': 0, 'O/V': 0 };
+      validRows.forEach(({ row }) => {
+        const l = parseFloat(row.l)||0, w = parseFloat(row.w)||0, t = parseFloat(row.t)||0, q = parseFloat(row.q)||1;
+        const cft = (l*w*t*q)/2304;
+        if (row.woodType === 'U/2') totals['U/2'] += cft;
+        else if (row.woodType === 'BL') totals['BL'] += cft;
+        else if (row.woodType === 'O/V') totals['O/V'] += cft;
+      });
+      const hasTypes = totals['U/2'] > 0 || totals['BL'] > 0 || totals['O/V'] > 0;
+      typeBlock.style.display = hasTypes ? 'flex' : 'none';
+      typeBlock.innerHTML = '';
+      if (totals['U/2'] > 0) typeBlock.innerHTML += `<div class="type-subtotal-row ts-U2"><span>U/2 — ${totals['U/2'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="priceU2" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()"></div>`;
+      if (totals['BL'] > 0) typeBlock.innerHTML += `<div class="type-subtotal-row ts-BL"><span>BL — ${totals['BL'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="priceBL" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()"></div>`;
+      if (totals['O/V'] > 0) typeBlock.innerHTML += `<div class="type-subtotal-row ts-OV"><span>O/V — ${totals['O/V'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="priceOV" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()"></div>`;
+      if (hasTypes) typeBlock.innerHTML += `<div class="type-grand-total" id="typeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="typeGrandTotalVal">০</span></div>`;
+      // store totals for price calc
+      typeBlock.dataset.u2 = totals['U/2'];
+      typeBlock.dataset.bl = totals['BL'];
+      typeBlock.dataset.ov = totals['O/V'];
+    }
 
     // Date/time + optional name/note
     const now = new Date();
@@ -2163,6 +2608,40 @@
       updateMeta();
     }
   });
+
+  function calcTypeTotalPrice() {
+    const block = document.getElementById('woodTypeSubtotals');
+    if (!block) return;
+    const u2 = parseFloat(block.dataset.u2) || 0;
+    const bl = parseFloat(block.dataset.bl) || 0;
+    const ov = parseFloat(block.dataset.ov) || 0;
+    const pu2 = parseFloat((document.getElementById('priceU2') || {}).value) || 0;
+    const pbl = parseFloat((document.getElementById('priceBL') || {}).value) || 0;
+    const pov = parseFloat((document.getElementById('priceOV') || {}).value) || 0;
+    const typeTotal = Math.round(u2 * pu2 + bl * pbl + ov * pov);
+    const el = document.getElementById('typeGrandTotal');
+    const valEl = document.getElementById('typeGrandTotalVal');
+    const show = (pu2 > 0 || pbl > 0 || pov > 0);
+    if (el && valEl) {
+      el.style.display = show ? 'flex' : 'none';
+      valEl.textContent = typeTotal.toLocaleString('en-IN');
+    }
+    // bokeya / joma / baki
+    const extraEl = document.getElementById('typePriceExtra');
+    const paidDueEl = document.getElementById('typePaidDueRow');
+    if (extraEl) extraEl.style.display = show ? 'block' : 'none';
+    if (paidDueEl) paidDueEl.style.display = show ? 'block' : 'none';
+    if (show) {
+      const bokeya = parseFloat((document.getElementById('typeBokeyaInput') || {}).value) || 0;
+      const paid = parseFloat((document.getElementById('typePaidInput') || {}).value) || 0;
+      const grandTotal = typeTotal + bokeya;
+      const due = Math.max(grandTotal - paid, 0);
+      const gpbEl = document.getElementById('typeGrandPlusBokeya');
+      const dueEl = document.getElementById('typeDueValue');
+      if (gpbEl) gpbEl.textContent = grandTotal.toLocaleString('en-IN');
+      if (dueEl) dueEl.textContent = due.toLocaleString('en-IN');
+    }
+  }
 
   function calcTotalPrice() {
     const price = parseFloat(document.getElementById('pricePerCft').value) || 0;
@@ -2408,6 +2887,28 @@
     const bokeyaStr = Math.round(bokeyaNum).toLocaleString('en-IN');
     const grandTotalStr = document.getElementById('prTotalPriceBottom') ? document.getElementById('prTotalPriceBottom').textContent : totalPrice;
 
+    // Collect wood type subtotal data
+    const typeBlock = document.getElementById('woodTypeSubtotals');
+    const typeVisible = typeBlock && typeBlock.style.display !== 'none';
+    const typeRows = []; // {label, cft, price, taka}
+    if (typeVisible && typeBlock) {
+      const u2 = parseFloat(typeBlock.dataset.u2) || 0;
+      const bl = parseFloat(typeBlock.dataset.bl) || 0;
+      const ov = parseFloat(typeBlock.dataset.ov) || 0;
+      const pu2 = parseFloat((document.getElementById('priceU2') || {}).value) || 0;
+      const pbl = parseFloat((document.getElementById('priceBL') || {}).value) || 0;
+      const pov = parseFloat((document.getElementById('priceOV') || {}).value) || 0;
+      if (u2 > 0) typeRows.push({ label: 'U/2', cft: u2, price: pu2, taka: Math.round(u2 * pu2) });
+      if (bl > 0) typeRows.push({ label: 'BL', cft: bl, price: pbl, taka: Math.round(bl * pbl) });
+      if (ov > 0) typeRows.push({ label: 'O/V', cft: ov, price: pov, taka: Math.round(ov * pov) });
+    }
+    const typeGrandTotal = typeRows.reduce((s, r) => s + r.taka, 0);
+    const typeBokeyaNum = parseFloat((document.getElementById('typeBokeyaInput') || {}).value) || 0;
+    const typePaidNum = parseFloat((document.getElementById('typePaidInput') || {}).value) || 0;
+    const typeGrandPlusBokeya = typeGrandTotal + typeBokeyaNum;
+    const typeDue = Math.max(typeGrandPlusBokeya - typePaidNum, 0);
+    const hasTypePrices = typeRows.some(r => r.price > 0);
+
     const profile = getProfile();
     const shopName = profile ? profile.name : '';
     const shopSub = profile ? [profile.phone ? '📞 '+profile.phone : '', profile.address ? '📍 '+profile.address : ''].filter(Boolean).join('  |  ') : '';
@@ -2427,11 +2928,19 @@
     const blueCardH = priceRowVisible ? twoColCardH : 0;
     const cardHeights = [cftCardH];
     if (priceRowVisible) { cardHeights.push(greenCardH, blueCardH); }
+    // type subtotal cards height
+    const typeRowH = 34;
+    const typeBlockH = typeVisible && typeRows.length > 0 ? (typeRows.length * (typeRowH + totalsGap)) : 0;
+    const typeExtraH = hasTypePrices ? (
+      totalsCardH + totalsGap + // মোট টাকা
+      (typeBokeyaNum > 0 ? (3 * comboLineH + 12 + totalsGap) : 0) + // বকেয়া combo
+      twoColCardH + totalsGap // জমা/বাকি
+    ) : 0;
     const totalsBlockH = cardHeights.reduce((a, b) => a + b, 0) + (cardHeights.length - 1) * totalsGap + 12;
     const signMode = document.getElementById('signTypeBox') && document.getElementById('signTypeBox').style.display !== 'none' ? 'type' : 'draw';
     const hasSignature = signMode === 'draw' ? signHasDrawing : (signTypedValue.trim().length > 0);
     const signBlockH = hasSignature ? 130 : 0;
-    const totalH = headerH + tableRows.length * rowH + totalsBlockH + signBlockH + 24;
+    const totalH = headerH + tableRows.length * rowH + typeBlockH + typeExtraH + totalsBlockH + signBlockH + 24;
 
     canvas.width = W * scale;
     canvas.height = totalH * scale;
@@ -2510,6 +3019,42 @@
 
     // Totals — gradient cards (3 cards)
     y += 10;
+
+    // === Wood type subtotals ===
+    if (typeVisible && typeRows.length > 0) {
+      const typeColors = { 'U/2': ['#2ea862','#1e8449'], 'BL': ['#3a8fc0','#1a5276'], 'O/V': ['#d68910','#a04000'] };
+      typeRows.forEach(tr => {
+        const cardX = startX, cardW = W - 32;
+        const [c1, c2] = typeColors[tr.label] || ['#888','#555'];
+        const grad = ctx.createLinearGradient(cardX, y, cardX + cardW, y + typeRowH);
+        grad.addColorStop(0, c1); grad.addColorStop(1, c2);
+        ctx.fillStyle = grad;
+        const r = 7;
+        ctx.beginPath();
+        ctx.moveTo(cardX+r,y); ctx.arcTo(cardX+cardW,y,cardX+cardW,y+typeRowH,r);
+        ctx.arcTo(cardX+cardW,y+typeRowH,cardX,y+typeRowH,r); ctx.arcTo(cardX,y+typeRowH,cardX,y,r);
+        ctx.arcTo(cardX,y,cardX+cardW,y,r); ctx.closePath(); ctx.fill();
+        ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.font='bold 11px Arial'; ctx.textAlign='left';
+        ctx.fillText(tr.label + ' — ' + tr.cft.toFixed(4) + ' CFT', cardX+12, y+typeRowH/2+4);
+        if (tr.price > 0) {
+          ctx.fillStyle='#fff'; ctx.font='bold 13px Arial'; ctx.textAlign='right';
+          ctx.fillText('৳' + tr.taka.toLocaleString('en-IN'), cardX+cardW-12, y+typeRowH/2+4);
+        }
+        y += typeRowH + totalsGap;
+      });
+
+      // type মোট টাকা card
+      if (hasTypePrices) {
+        const lines = [{ label: 'মোট টাকা (৳)', value: typeGrandTotal.toLocaleString('en-IN') }];
+        if (typeBokeyaNum > 0) {
+          lines.push({ label: 'বকেয়া (৳)', value: Math.round(typeBokeyaNum).toLocaleString('en-IN') });
+          lines.push({ label: '+ মোট টাকা (৳)', value: typeGrandPlusBokeya.toLocaleString('en-IN') });
+        }
+        drawComboCard(lines, '#3D9468', '#1F5C38');
+        const typePaidStr = Math.round(typePaidNum).toLocaleString('en-IN');
+        drawTwoColCard('জমা (৳)', typePaidStr, 'বাকি (৳)', typeDue.toLocaleString('en-IN'), '#4A8FBF', '#2A5D80', twoColCardH);
+      }
+    }
     function drawTotalCard(label, value, colorTop, colorBottom) {
       const cardX = startX;
       const cardW = W - 32;
@@ -2713,7 +3258,8 @@
     // Close any open pages, go back to calc
     document.getElementById('summaryPage').classList.remove('active');
     document.getElementById('customerPage').classList.remove('active');
-    document.getElementById('memoPage').classList.remove('active');
+    document.getElementById('dualCalcPage').classList.remove('active');
+    document.getElementById('digitalCalcPage').classList.remove('active');
     document.getElementById('calcPage').classList.remove('hidden');
   }
 
@@ -2762,6 +3308,173 @@
     document.getElementById('customerPage').classList.remove('active');
     document.getElementById('calcPage').classList.remove('hidden');
   }
+
+  // ===== Digital Calculator =====
+  function openDigitalCalcPage() {
+    closeMenu();
+    document.getElementById('calcPage').classList.add('hidden');
+    document.getElementById('summaryPage').classList.remove('active');
+    document.getElementById('customerPage').classList.remove('active');
+    document.getElementById('dualCalcPage').classList.remove('active');
+    document.getElementById('digitalCalcPage').classList.add('active');
+    dcClearAll();
+  }
+
+  function closeDigitalCalcPage() {
+    document.getElementById('digitalCalcPage').classList.remove('active');
+    document.getElementById('calcPage').classList.remove('hidden');
+  }
+
+  const dcBnDigits = { '0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯','.':'.' };
+  function dcToBn(str) {
+    return String(str).split('').map(ch => dcBnDigits[ch] !== undefined ? dcBnDigits[ch] : ch).join('');
+  }
+  function dcFormatNum(n) {
+    if (!isFinite(n)) return 'ত্রুটি';
+    // trim floating point noise, max 8 decimal places
+    let s = Number(n.toFixed(8)).toString();
+    // add thousands separators on the integer part
+    const parts = s.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    s = parts.join('.');
+    return dcToBn(s);
+  }
+
+  let dcCurrent = '0';      // value being typed/shown
+  let dcPrevValue = null;   // stored left-hand operand
+  let dcPendingOp = null;   // '+', '−', '×', '÷'
+  let dcExpr = '';          // expression trail shown above result
+  let dcJustEvaluated = false;
+
+  function dcUpdateScreen() {
+    let display;
+    if (dcCurrent === 'ত্রুটি') {
+      display = dcCurrent;
+    } else if (dcCurrent.endsWith('.')) {
+      // মাঝখানে দশমিক বিন্দু থাকলে সেটা যোগ করেই দেখাও (যেমন "12.")
+      display = dcFormatNum(parseFloat(dcCurrent) || 0) + '.';
+    } else {
+      display = dcFormatNum(parseFloat(dcCurrent) || 0);
+    }
+    document.getElementById('dcResult').textContent = display;
+    document.getElementById('dcExpression').innerHTML = dcExpr || '&nbsp;';
+  }
+
+  function dcClearAll() {
+    dcCurrent = '0';
+    dcPrevValue = null;
+    dcPendingOp = null;
+    dcExpr = '';
+    dcJustEvaluated = false;
+    dcUpdateScreen();
+  }
+
+  function dcDigit(d) {
+    if (dcCurrent === 'ত্রুটি' || dcJustEvaluated) {
+      dcCurrent = '0';
+      dcExpr = '';
+      dcJustEvaluated = false;
+    }
+    if (dcCurrent === '0') {
+      dcCurrent = d;
+    } else {
+      if (dcCurrent.replace('.', '').replace('-', '').length >= 14) return; // sane length cap
+      dcCurrent += d;
+    }
+    dcUpdateScreen();
+  }
+
+  function dcDecimal() {
+    if (dcCurrent === 'ত্রুটি' || dcJustEvaluated) {
+      dcCurrent = '0';
+      dcExpr = '';
+      dcJustEvaluated = false;
+    }
+    if (!dcCurrent.includes('.')) {
+      dcCurrent += '.';
+      dcUpdateScreen();
+    }
+  }
+
+  function dcBackspace() {
+    if (dcCurrent === 'ত্রুটি' || dcJustEvaluated) {
+      dcClearAll();
+      return;
+    }
+    dcCurrent = dcCurrent.slice(0, -1);
+    if (dcCurrent === '' || dcCurrent === '-') dcCurrent = '0';
+    dcUpdateScreen();
+  }
+
+  function dcApplyOp(a, op, b) {
+    switch (op) {
+      case '+': return a + b;
+      case '−': return a - b;
+      case '×': return a * b;
+      case '÷': return b === 0 ? NaN : a / b;
+      default: return b;
+    }
+  }
+
+  function dcOperator(op) {
+    const cur = parseFloat(dcCurrent);
+    if (dcCurrent === 'ত্রুটি') { dcClearAll(); return; }
+
+    if (dcPendingOp !== null && !dcJustEvaluated) {
+      // chain: evaluate the pending operation first
+      const result = dcApplyOp(dcPrevValue, dcPendingOp, cur);
+      if (!isFinite(result)) {
+        dcCurrent = 'ত্রুটি';
+        dcPrevValue = null;
+        dcPendingOp = null;
+        dcExpr = '';
+        dcUpdateScreen();
+        return;
+      }
+      dcPrevValue = result;
+    } else {
+      dcPrevValue = cur;
+    }
+
+    dcPendingOp = op;
+    dcExpr = dcFormatNum(dcPrevValue) + ' ' + op;
+    dcCurrent = String(dcPrevValue);
+    dcJustEvaluated = false;
+    // show the running total while choosing the next number
+    document.getElementById('dcResult').textContent = dcFormatNum(dcPrevValue);
+    document.getElementById('dcExpression').innerHTML = dcExpr;
+    dcCurrent = '0';
+  }
+
+  function dcPercent() {
+    if (dcCurrent === 'ত্রুটি') { dcClearAll(); return; }
+    const cur = parseFloat(dcCurrent) || 0;
+    if (dcPendingOp !== null && dcPrevValue !== null) {
+      // percentage relative to the left-hand operand, e.g. 200 + 10% = 220
+      dcCurrent = String((dcPrevValue * cur) / 100);
+    } else {
+      dcCurrent = String(cur / 100);
+    }
+    dcUpdateScreen();
+  }
+
+  function dcEquals() {
+    if (dcCurrent === 'ত্রুটি') { dcClearAll(); return; }
+    if (dcPendingOp === null) return;
+    const cur = parseFloat(dcCurrent) || 0;
+    const result = dcApplyOp(dcPrevValue, dcPendingOp, cur);
+    dcExpr = dcFormatNum(dcPrevValue) + ' ' + dcPendingOp + ' ' + dcFormatNum(cur) + ' =';
+    if (!isFinite(result)) {
+      dcCurrent = 'ত্রুটি';
+    } else {
+      dcCurrent = String(result);
+    }
+    dcPrevValue = null;
+    dcPendingOp = null;
+    dcJustEvaluated = true;
+    dcUpdateScreen();
+  }
+
 
   function deleteCustomer(idx) {
     if (!confirm("এই হিসাব ডিলেট করবেন?")) return;
@@ -2878,145 +3591,683 @@
     renderCustomerList();
   }
 
-  // ===== Memo Page =====
-  function openMemoPage() {
+  // ===== Dual CFT Calculator Page =====
+  function openDualCalcPage() {
     closeMenu();
     document.getElementById('calcPage').classList.add('hidden');
     document.getElementById('summaryPage').classList.remove('active');
     document.getElementById('customerPage').classList.remove('active');
-    document.getElementById('memoPage').classList.add('active');
+    document.getElementById('dualCalcPage').classList.add('active');
 
-    // Default date if empty
-    const dateEl = document.getElementById('memoDate');
+    // Fresh start every time the page opens
+    dState.A = { rows: [dNewRowData()], activeRow: 0, activeField: 0, name: '' };
+    dState.B = { rows: [dNewRowData()], activeRow: 0, activeField: 0, name: '' };
+    document.getElementById('dNameA').value = '';
+    document.getElementById('dNameB').value = '';
+    dActiveCalc = 'A';
+    document.getElementById('dMatTabA').classList.add('active');
+    document.getElementById('dMatTabB').classList.remove('active');
+    document.getElementById('dNextBtn').textContent = '✅ মাল ২ এ যান';
+    dShowCalcView();
+    dRenderRows();
+  }
+
+  function closeDualCalcPage() {
+    document.getElementById('dualCalcPage').classList.remove('active');
+    document.getElementById('calcPage').classList.remove('hidden');
+  }
+
+  // ===== Dual CFT Calculator logic =====
+  let dActiveCalc = 'A';
+
+  function dNewRowData() { return { l: '', w: '', t: '', q: '', sn: '', woodType: '' }; }
+
+  function dCycleWoodType(rIdx) {
+    const s = dState[dActiveCalc];
+    const types = ['', 'U/2', 'BL', 'O/V'];
+    const cur = s.rows[rIdx].woodType || '';
+    s.rows[rIdx].woodType = types[(types.indexOf(cur) + 1) % types.length];
+    dRenderRows();
+  }
+
+  let dActiveSN = -1;
+
+  function dFocusSN(rIdx) {
+    const s = dState[dActiveCalc];
+    dActiveSN = rIdx;
+    s.activeRow = rIdx;
+    s.activeField = -1;
+    dRenderRows();
+  }
+
+  const dState = {
+    A: { rows: [dNewRowData()], activeRow: 0, activeField: 0, name: '' },
+    B: { rows: [dNewRowData()], activeRow: 0, activeField: 0, name: '' },
+  };
+
+  function dSetName(which, value) {
+    dState[which].name = value.trim();
+  }
+
+  function dLabel(which) {
+    return dState[which].name || (which === 'A' ? 'মাল ১' : 'মাল ২');
+  }
+
+  function dShowCalcView() {
+    document.getElementById('dualCalcBody').style.display = 'flex';
+    document.getElementById('dualSummaryView').classList.remove('active');
+    document.getElementById('dualMatTabs').style.display = 'flex';
+    document.querySelector('.dual-mat-name-row').style.display = 'flex';
+    document.getElementById('dBackToCalcHeaderBtn').style.display = 'none';
+  }
+
+  function dSwitchMaterial(which) {
+    dActiveCalc = which;
+    document.getElementById('dMatTabA').classList.toggle('active', which === 'A');
+    document.getElementById('dMatTabB').classList.toggle('active', which === 'B');
+    document.getElementById('dNextBtn').textContent = which === 'A' ? '✅ মাল ২ এ যান' : '✅ হিসাব শেষ';
+    dRenderRows();
+  }
+
+  const dAutoJump = [2, 2, 1, null];
+  const dFieldKeys = ['l', 'w', 't', 'q'];
+
+  function dRenderRows() {
+    const s = dState[dActiveCalc];
+    const rowsEl = document.getElementById('dRows');
+    rowsEl.innerHTML = '';
+    let total = 0;
+
+    const snLabels = buildSnLabels(s.rows);
+
+    s.rows.forEach(function (row, rIdx) {
+      const l = parseFloat(row.l) || 0, w = parseFloat(row.w) || 0,
+            t = parseFloat(row.t) || 0, q = parseFloat(row.q) || 1;
+      const cft = (l * w * t * q) / 2304;
+      total += cft;
+
+      const rowEl = document.createElement('div');
+      rowEl.className = 'row' + (rIdx === s.activeRow ? ' active-row' : '');
+
+      let fieldsHtml = '';
+      dFieldKeys.forEach(function (key, fIdx) {
+        const val = row[key];
+        const isFocused = rIdx === s.activeRow && fIdx === s.activeField;
+        const isEmpty = val === '';
+        const display = isEmpty ? '–' : val;
+        fieldsHtml += '<div class="field' + (isFocused ? ' focused' : '') + (isEmpty ? ' empty' : '') + '" onclick="dFocusField(' + rIdx + ',' + fIdx + ')">' + display + '</div>';
+        if (fIdx < 3) fieldsHtml += '<div class="x">×</div>';
+      });
+
+      const snActive = rIdx === s.activeRow && s.activeField === -1;
+      rowEl.innerHTML =
+        '<div class="sn-input' + (snActive ? ' sn-active' : '') + '" onclick="dFocusSN(' + rIdx + ')">' + snLabels[rIdx] + '</div>' +
+        '<button class="wtype-btn' + (row.woodType ? ' wt-' + woodTypeClass(row.woodType) : '') + '" onclick="dCycleWoodType(' + rIdx + ')">' + (row.woodType || '—') + '</button>' +
+        fieldsHtml +
+        '<div class="result">' + cft.toFixed(4) + '</div>' +
+        '<button class="delete-btn" onclick="dDeleteRow(' + rIdx + ')">✕</button>';
+      rowsEl.appendChild(rowEl);
+    });
+
+    document.getElementById('dGrandTotal').textContent = total.toFixed(4);
+
+    const activeEl = rowsEl.children[s.activeRow];
+    if (activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function dFocusField(rIdx, fIdx) {
+    const s = dState[dActiveCalc];
+    s.activeRow = rIdx;
+    s.activeField = fIdx;
+    dRenderRows();
+  }
+
+  function dDeleteRow(idx) {
+    const s = dState[dActiveCalc];
+    s.rows.splice(idx, 1);
+    if (s.rows.length === 0) s.rows.push(dNewRowData());
+    if (s.activeRow >= s.rows.length) s.activeRow = s.rows.length - 1;
+    dRenderRows();
+  }
+
+  // ফ্রন্ট ক্যালকুলেটরের press() এর সাথে হুবহু সেম লজিক (SN ফিল্ড সহ)
+  function dPress(digit) {
+    const s = dState[dActiveCalc];
+    if (s.activeField === -1) {
+      // typing into SN field via numpad - append digit
+      const cur = s.rows[s.activeRow].sn || '';
+      if (digit !== '.' && cur.length < 4) {
+        s.rows[s.activeRow].sn = cur + digit;
+        dRenderRows();
+      }
+      return;
+    }
+    const key = dFieldKeys[s.activeField];
+    let current = s.rows[s.activeRow][key];
+
+    if (digit === '.') {
+      if (current.includes('.')) return;
+      current = current === '' ? '0.' : current + '.';
+      s.rows[s.activeRow][key] = current;
+      dRenderRows();
+      return;
+    }
+
+    if (current === '0') {
+      current = digit;
+    } else {
+      current = current + digit;
+    }
+    s.rows[s.activeRow][key] = current;
+
+    // Auto-jump after reaching target digit count (only if no decimal point used)
+    const limit = dAutoJump[s.activeField];
+    if (limit !== null && !current.includes('.') && current.length >= limit) {
+      dAutoAdvance();
+      return;
+    }
+
+    dRenderRows();
+  }
+
+  function dAutoAdvance() {
+    const s = dState[dActiveCalc];
+    if (s.activeField === 2) {
+      if (s.activeRow === s.rows.length - 1) {
+        s.rows.push(dNewRowData());
+        s.activeRow++;
+      } else {
+        s.activeRow++;
+      }
+      s.activeField = 0;
+    } else {
+      s.activeField++;
+    }
+    dRenderRows();
+  }
+
+  function dBackspace() {
+    const s = dState[dActiveCalc];
+    if (s.activeField === -1) {
+      s.rows[s.activeRow].sn = (s.rows[s.activeRow].sn || '').slice(0, -1);
+      dRenderRows();
+      return;
+    }
+    const key = dFieldKeys[s.activeField];
+    s.rows[s.activeRow][key] = s.rows[s.activeRow][key].slice(0, -1);
+    dRenderRows();
+  }
+
+  function dClearField() {
+    const s = dState[dActiveCalc];
+    if (s.activeField === -1) {
+      s.rows[s.activeRow].sn = '';
+      dRenderRows();
+      return;
+    }
+    const key = dFieldKeys[s.activeField];
+    s.rows[s.activeRow][key] = '';
+    dRenderRows();
+  }
+
+  function dGoField(dir) {
+    const s = dState[dActiveCalc];
+    let nf = s.activeField + dir, nr = s.activeRow;
+    if (nf > 3) { nf = 0; if (nr < s.rows.length - 1) nr++; }
+    else if (nf < 0) { nf = 3; if (nr > 0) nr--; }
+    s.activeRow = nr; s.activeField = nf;
+    dRenderRows();
+  }
+
+  // "✅ মাল ২ এ যান" / "✅ হিসাব শেষ" button
+  function dFinishMaterial() {
+    if (dActiveCalc === 'A') {
+      dSwitchMaterial('B');
+    } else {
+      dOpenSummary();
+    }
+  }
+
+  function dMaterialTotal(which) {
+    const s = dState[which];
+    let total = 0;
+    s.rows.forEach(function (row) {
+      const l = parseFloat(row.l) || 0, w = parseFloat(row.w) || 0,
+            t = parseFloat(row.t) || 0, q = parseFloat(row.q) || 1;
+      if (l === 0 && w === 0 && t === 0) return;
+      total += (l * w * t * q) / 2304;
+    });
+    return total;
+  }
+
+  function dOpenSummary() {
+    const body = document.getElementById('dSummaryBody');
+    body.innerHTML = '';
+    let grandTotal = 0;
+    let serial = 1;
+
+    ['A', 'B'].forEach(function (which) {
+      const label = dLabel(which);
+      dState[which].rows.forEach(function (row) {
+        const l = parseFloat(row.l) || 0, w = parseFloat(row.w) || 0,
+              t = parseFloat(row.t) || 0, q = parseFloat(row.q) || 1;
+        if (l === 0 && w === 0 && t === 0) return;
+        const cft = (l * w * t * q) / 2304;
+        grandTotal += cft;
+        body.innerHTML += '<tr><td>' + serial + '</td><td class="dual-mat-label">' + label + '</td><td>' + (row.w || '0') + '</td><td>' + (row.t || '0') + '</td><td>' + (row.l || '0') + '</td><td>' + (row.q || '1') + '</td><td>' + cft.toFixed(4) + '</td></tr>';
+        serial++;
+      });
+    });
+
+    if (serial === 1) {
+      body.innerHTML = '<tr><td colspan="7">কোনো মাপ যুক্ত করা হয়নি</td></tr>';
+    }
+
+    document.getElementById('dSummaryGrandTotal').textContent = grandTotal.toFixed(4);
+
+    // Wood type subtotals for dual calc
+    const dTypeBlock = document.getElementById('dWoodTypeSubtotals');
+    if (dTypeBlock) {
+      const totals = { 'U/2': 0, 'BL': 0, 'O/V': 0 };
+      ['A', 'B'].forEach(function(which) {
+        dState[which].rows.forEach(function(row) {
+          const l=parseFloat(row.l)||0, w=parseFloat(row.w)||0, t=parseFloat(row.t)||0, q=parseFloat(row.q)||1;
+          if (l===0&&w===0&&t===0) return;
+          const cft=(l*w*t*q)/2304;
+          if (row.woodType==='U/2') totals['U/2']+=cft;
+          else if (row.woodType==='BL') totals['BL']+=cft;
+          else if (row.woodType==='O/V') totals['O/V']+=cft;
+        });
+      });
+      const hasTypes = totals['U/2']>0||totals['BL']>0||totals['O/V']>0;
+      dTypeBlock.style.display = hasTypes ? 'flex' : 'none';
+      dTypeBlock.innerHTML = '';
+      if (totals['U/2']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-U2"><span>U/2 — ${totals['U/2'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceU2" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+      if (totals['BL']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-BL"><span>BL — ${totals['BL'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceBL" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+      if (totals['O/V']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-OV"><span>O/V — ${totals['O/V'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceOV" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+      if (hasTypes) dTypeBlock.innerHTML += `<div class="type-grand-total" id="dTypeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="dTypeGrandTotalVal">০</span></div>`;
+      dTypeBlock.dataset.u2 = totals['U/2'];
+      dTypeBlock.dataset.bl = totals['BL'];
+      dTypeBlock.dataset.ov = totals['O/V'];
+    }
+    document.getElementById('dPriceLabelA').textContent = dLabel('A');
+    document.getElementById('dPriceLabelB').textContent = dLabel('B');
+    document.getElementById('dTotalLabelA').textContent = dLabel('A');
+    document.getElementById('dTotalLabelB').textContent = dLabel('B');
+
+    // reset price fields
+    document.getElementById('dPriceA').value = '';
+    document.getElementById('dPriceB').value = '';
+    document.getElementById('dPriceBoxA').style.display = 'none';
+    document.getElementById('dPriceBoxB').style.display = 'none';
+    document.getElementById('dGrandCombo').style.display = 'none';
+    document.getElementById('dPaidDueRow').style.display = 'none';
+    document.getElementById('dBokeyaInput').value = '';
+    document.getElementById('dPaidInput').value = '';
+
+    // default date if empty
+    const dateEl = document.getElementById('dCustDate');
     if (!dateEl.value) {
       const now = new Date();
       dateEl.value = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 
-    // Reset mini calculator
-    document.getElementById('memoCalcPanel').style.display = 'none';
-    memoCalcExpr = '0';
-    memoCalcJustEvaled = false;
-    memoCalcRender();
-  }
+    document.getElementById('dualCalcBody').style.display = 'none';
+    document.getElementById('dualMatTabs').style.display = 'none';
+    document.querySelector('.dual-mat-name-row').style.display = 'none';
+    document.getElementById('dualSummaryView').classList.add('active');
+    document.getElementById('dBackToCalcHeaderBtn').style.display = '';
 
-  function closeMemoPage() {
-    document.getElementById('memoPage').classList.remove('active');
-    document.getElementById('calcPage').classList.remove('hidden');
-  }
-
-  // ===== Mini calculator inside Memo page =====
-  let memoCalcExpr = '0';
-  let memoCalcJustEvaled = false;
-
-  function toggleMemoCalc() {
-    const panel = document.getElementById('memoCalcPanel');
-    panel.style.display = panel.style.display === 'none' ? '' : 'none';
-  }
-
-  function memoCalcRender() {
-    // Show with familiar operator symbols
-    const shown = memoCalcExpr.replace(/\*/g, '×').replace(/\//g, '÷');
-    document.getElementById('memoCalcDisplay').textContent = shown;
-  }
-
-  function memoCalcInput(val) {
-    if (memoCalcJustEvaled && !'+-*/%'.includes(val)) {
-      memoCalcExpr = '0';
+    // Show profile badge
+    const p = getProfile();
+    const badgeEl = document.getElementById('dShopBadge');
+    const nameEl = document.getElementById('dShopBadgeName');
+    const subEl = document.getElementById('dShopBadgeSub');
+    if (p && p.name && badgeEl) {
+      nameEl.textContent = '🏪 ' + p.name;
+      let sub = '';
+      if (p.phone) sub += '📞 ' + p.phone;
+      if (p.address) sub += (sub ? '  |  ' : '') + '📍 ' + p.address;
+      subEl.textContent = sub;
+      badgeEl.style.display = 'block';
+    } else if (badgeEl) {
+      badgeEl.style.display = 'none';
     }
-    memoCalcJustEvaled = false;
-    if (memoCalcExpr === '0' && !'+-*/%.'.includes(val)) {
-      memoCalcExpr = val;
+
+    // Reset & init signature pad (after layout is visible so size is correct)
+    dSignTypedValue = '';
+    dSignShiftOn = true;
+    document.getElementById('dSignTypeText').textContent = '';
+    document.getElementById('dSignTypePreview').textContent = '';
+    dSwitchSignMode('draw');
+    setTimeout(() => {
+      dInitSignatureCanvas();
+      dClearSignature();
+    }, 50);
+  }
+
+  function calcDTypeTotal() {
+    const block = document.getElementById('dWoodTypeSubtotals');
+    if (!block) return;
+    const u2 = parseFloat(block.dataset.u2) || 0;
+    const bl = parseFloat(block.dataset.bl) || 0;
+    const ov = parseFloat(block.dataset.ov) || 0;
+    const pu2 = parseFloat((document.getElementById('dPriceU2') || {}).value) || 0;
+    const pbl = parseFloat((document.getElementById('dPriceBL') || {}).value) || 0;
+    const pov = parseFloat((document.getElementById('dPriceOV') || {}).value) || 0;
+    const typeTotal = Math.round(u2 * pu2 + bl * pbl + ov * pov);
+    const el = document.getElementById('dTypeGrandTotal');
+    const valEl = document.getElementById('dTypeGrandTotalVal');
+    const show = (pu2 > 0 || pbl > 0 || pov > 0);
+    if (el && valEl) {
+      el.style.display = show ? 'flex' : 'none';
+      valEl.textContent = typeTotal.toLocaleString('en-IN');
+    }
+    const extraEl = document.getElementById('dTypePriceExtra');
+    const paidDueEl = document.getElementById('dTypePaidDueRow');
+    if (extraEl) extraEl.style.display = show ? 'block' : 'none';
+    if (paidDueEl) paidDueEl.style.display = show ? 'block' : 'none';
+    if (show) {
+      const bokeya = parseFloat((document.getElementById('dTypeBokeyaInput') || {}).value) || 0;
+      const paid = parseFloat((document.getElementById('dTypePaidInput') || {}).value) || 0;
+      const grandTotal = typeTotal + bokeya;
+      const due = Math.max(grandTotal - paid, 0);
+      const gpbEl = document.getElementById('dTypeGrandPlusBokeya');
+      const dueEl = document.getElementById('dTypeDueValue');
+      if (gpbEl) gpbEl.textContent = grandTotal.toLocaleString('en-IN');
+      if (dueEl) dueEl.textContent = due.toLocaleString('en-IN');
+    }
+  }
+
+  function dCalcSummaryPrice() {
+    const priceA = parseFloat(document.getElementById('dPriceA').value) || 0;
+    const priceB = parseFloat(document.getElementById('dPriceB').value) || 0;
+    const totalA = dMaterialTotal('A');
+    const totalB = dMaterialTotal('B');
+
+    const boxA = document.getElementById('dPriceBoxA');
+    const boxB = document.getElementById('dPriceBoxB');
+
+    let takaA = 0, takaB = 0;
+
+    if (priceA > 0) {
+      takaA = totalA * priceA;
+      document.getElementById('dTotalPriceA').textContent = '৳ ' + takaA.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+      boxA.style.display = 'flex';
     } else {
-      memoCalcExpr += val;
+      boxA.style.display = 'none';
     }
-    memoCalcRender();
+
+    if (priceB > 0) {
+      takaB = totalB * priceB;
+      document.getElementById('dTotalPriceB').textContent = '৳ ' + takaB.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+      boxB.style.display = 'flex';
+    } else {
+      boxB.style.display = 'none';
+    }
+
+    const show = priceA > 0 || priceB > 0;
+    document.getElementById('dGrandCombo').style.display = show ? 'block' : 'none';
+    document.getElementById('dPaidDueRow').style.display = show ? 'block' : 'none';
+    dCalcAll();
   }
 
-  function memoCalcBackspace() {
-    memoCalcExpr = memoCalcExpr.slice(0, -1) || '0';
-    memoCalcJustEvaled = false;
-    memoCalcRender();
+  function dCalcAll() {
+    const priceA = parseFloat(document.getElementById('dPriceA').value) || 0;
+    const priceB = parseFloat(document.getElementById('dPriceB').value) || 0;
+    const totalA = dMaterialTotal('A');
+    const totalB = dMaterialTotal('B');
+    const takaA = priceA > 0 ? totalA * priceA : 0;
+    const takaB = priceB > 0 ? totalB * priceB : 0;
+    const grandTaka = Math.round(takaA + takaB);
+    const bokeya = parseFloat(document.getElementById('dBokeyaInput').value) || 0;
+    const paid = parseFloat(document.getElementById('dPaidInput').value) || 0;
+    const grandTotal = grandTaka + bokeya;
+    const due = Math.max(grandTotal - paid, 0);
+    document.getElementById('dGrandTakaDisplay').textContent = grandTaka.toLocaleString('en-IN');
+    document.getElementById('dGrandTotalDisplay').textContent = grandTotal.toLocaleString('en-IN');
+    document.getElementById('dDueValue').textContent = due.toLocaleString('en-IN');
   }
 
-  function memoCalcClear() {
-    memoCalcExpr = '0';
-    memoCalcJustEvaled = false;
-    memoCalcRender();
+  // ===== দুই হিসাব Signature (draw + type) =====
+  let dSignCanvas, dSignCtx, dSignDrawing = false, dSignHasDrawing = false;
+  let dSignLastX = 0, dSignLastY = 0;
+  let dSignTypedValue = '';
+  let dSignShiftOn = true;
+
+  function dInitSignatureCanvas() {
+    dSignCanvas = document.getElementById('dSignCanvas');
+    if (!dSignCanvas) return;
+    const rect = dSignCanvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    dSignCanvas.width = rect.width * dpr;
+    dSignCanvas.height = rect.height * dpr;
+    dSignCtx = dSignCanvas.getContext('2d');
+    dSignCtx.scale(dpr, dpr);
+    dSignCtx.lineWidth = 2.2;
+    dSignCtx.lineCap = 'round';
+    dSignCtx.lineJoin = 'round';
+    dSignCtx.strokeStyle = '#2b3a55';
+
+    const getPos = (e) => {
+      const r = dSignCanvas.getBoundingClientRect();
+      if (e.touches && e.touches[0]) {
+        return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+      }
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    };
+
+    const start = (e) => {
+      e.preventDefault();
+      dSignDrawing = true;
+      const p = getPos(e);
+      dSignLastX = p.x; dSignLastY = p.y;
+    };
+    const move = (e) => {
+      if (!dSignDrawing) return;
+      e.preventDefault();
+      const p = getPos(e);
+      dSignCtx.beginPath();
+      dSignCtx.moveTo(dSignLastX, dSignLastY);
+      dSignCtx.lineTo(p.x, p.y);
+      dSignCtx.stroke();
+      dSignLastX = p.x; dSignLastY = p.y;
+      dSignHasDrawing = true;
+    };
+    const end = () => { dSignDrawing = false; };
+
+    dSignCanvas.addEventListener('mousedown', start);
+    dSignCanvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    dSignCanvas.addEventListener('touchstart', start, { passive: false });
+    dSignCanvas.addEventListener('touchmove', move, { passive: false });
+    dSignCanvas.addEventListener('touchend', end);
   }
 
-  function memoCalcEquals() {
-    try {
-      let expr = memoCalcExpr.replace(/%/g, '/100');
-      if (!/^[0-9+\-*/().]+$/.test(expr)) throw new Error('invalid');
-      let result = Function('"use strict"; return (' + expr + ')')();
-      if (!isFinite(result)) throw new Error('invalid');
-      result = Math.round(result * 10000) / 10000;
-      memoCalcExpr = String(result);
-      memoCalcJustEvaled = true;
-      memoCalcRender();
-    } catch (e) {
-      memoCalcExpr = '0';
-      memoCalcRender();
+  function dClearSignature() {
+    if (dSignCtx && dSignCanvas) {
+      dSignCtx.clearRect(0, 0, dSignCanvas.width, dSignCanvas.height);
+      dSignHasDrawing = false;
     }
   }
 
-  function memoCalcInsert() {
-    // Evaluate first if there's an unfinished expression
-    if (!memoCalcJustEvaled) memoCalcEquals();
-    const textarea = document.getElementById('memoText');
-    const value = memoCalcExpr;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const before = textarea.value.substring(0, start);
-    const after = textarea.value.substring(end);
-    textarea.value = before + value + after;
-    const newPos = start + value.length;
-    textarea.focus();
-    textarea.setSelectionRange(newPos, newPos);
-    memoCalcExpr = '0';
-    memoCalcJustEvaled = false;
-    memoCalcRender();
+  function dSwitchSignMode(mode) {
+    const drawBox = document.getElementById('dSignDrawBox');
+    const typeBox = document.getElementById('dSignTypeBox');
+    const tabDraw = document.getElementById('dSignTabDraw');
+    const tabType = document.getElementById('dSignTabType');
+    if (mode === 'draw') {
+      drawBox.style.display = '';
+      typeBox.style.display = 'none';
+      tabDraw.classList.add('active');
+      tabType.classList.remove('active');
+    } else {
+      drawBox.style.display = 'none';
+      typeBox.style.display = '';
+      tabDraw.classList.remove('active');
+      tabType.classList.add('active');
+      dBuildSignKeyboard();
+    }
   }
 
-  function buildMemoPrintArea() {
+  function dBuildSignKeyboard() {
+    const kb = document.getElementById('dSignKeyboard');
+    if (kb.dataset.built) return;
+    kb.dataset.built = '1';
+    const krows = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
+    let html = '';
+    krows.forEach((row, ri) => {
+      html += '<div class="pr-sign-kb-row">';
+      if (ri === 2) html += '<button type="button" class="pr-sign-key wide" onclick="dSignShiftToggle()">⇧</button>';
+      row.split('').forEach(ch => {
+        html += `<button type="button" class="pr-sign-key" onclick="dSignKeyPress('${ch}')">${ch}</button>`;
+      });
+      if (ri === 2) html += '<button type="button" class="pr-sign-key wide" onclick="dSignBackspace()">⌫</button>';
+      html += '</div>';
+    });
+    html += '<div class="pr-sign-kb-row">';
+    html += '<button type="button" class="pr-sign-key space-key" onclick="dSignKeyPress(\' \')">স্পেস</button>';
+    html += '<button type="button" class="pr-sign-key wide" onclick="dSignClearAll()">✕ মুছুন</button>';
+    html += '</div>';
+    kb.innerHTML = html;
+  }
+
+  function dSignRender() {
+    document.getElementById('dSignTypeText').textContent = dSignTypedValue;
+    document.getElementById('dSignTypePreview').textContent = dSignTypedValue;
+  }
+
+  function dSignKeyPress(ch) {
+    if (dSignShiftOn && ch !== ' ') ch = ch.toUpperCase();
+    dSignTypedValue += ch;
+    if (ch === ' ') dSignShiftOn = true;
+    else dSignShiftOn = false;
+    dSignRender();
+  }
+
+  function dSignShiftToggle() {
+    dSignShiftOn = !dSignShiftOn;
+  }
+
+  function dSignBackspace() {
+    dSignTypedValue = dSignTypedValue.slice(0, -1);
+    dSignRender();
+  }
+
+  function dSignClearAll() {
+    dSignTypedValue = '';
+    dSignRender();
+  }
+
+
+  function dBackToCalc() {
+    document.getElementById('dualSummaryView').classList.remove('active');
+    dShowCalcView();
+    dRenderRows();
+  }
+
+  function dBuildSummaryText() {
+    const totalA = dMaterialTotal('A');
+    const totalB = dMaterialTotal('B');
+
+    const lines = [];
+    ['A', 'B'].forEach(function (which) {
+      const label = '🪵 ' + dLabel(which);
+      const rowLines = [];
+      let total = 0;
+      dState[which].rows.forEach(function (row, idx) {
+        const l = parseFloat(row.l) || 0, w = parseFloat(row.w) || 0,
+              t = parseFloat(row.t) || 0, q = parseFloat(row.q) || 1;
+        if (l === 0 && w === 0 && t === 0) return;
+        const cft = (l * w * t * q) / 2304;
+        total += cft;
+        rowLines.push((idx + 1) + ') ' + (row.w || '0') + '×' + (row.t || '0') + '×' + (row.l || '0') + '×' + (row.q || '1') + ' = ' + cft.toFixed(4) + ' CFT');
+      });
+      if (rowLines.length > 0) {
+        lines.push(label + ':\n' + rowLines.join('\n') + '\nমোট: ' + total.toFixed(4) + ' CFT');
+      }
+    });
+
+    let block = lines.join('\n\n');
+    block += '\n\nসর্বমোট: ' + (totalA + totalB).toFixed(4) + ' CFT';
+
+    const priceA = parseFloat(document.getElementById('dPriceA').value) || 0;
+    const priceB = parseFloat(document.getElementById('dPriceB').value) || 0;
+    let takaA = 0, takaB = 0;
+
+    if (priceA > 0) {
+      takaA = totalA * priceA;
+      block += '\n\n' + dLabel('A') + ' - প্রতি CFT দাম: ৳' + priceA + '\n' + dLabel('A') + ' মোট টাকা: ৳' + takaA.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+    if (priceB > 0) {
+      takaB = totalB * priceB;
+      block += '\n\n' + dLabel('B') + ' - প্রতি CFT দাম: ৳' + priceB + '\n' + dLabel('B') + ' মোট টাকা: ৳' + takaB.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+    if (priceA > 0 && priceB > 0) {
+      block += '\n\nসর্বমোট টাকা: ৳' + (takaA + takaB).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    const bokeya = parseFloat(document.getElementById('dBokeyaInput').value) || 0;
+    const paid = parseFloat(document.getElementById('dPaidInput').value) || 0;
+    if ((priceA > 0 || priceB > 0) && (bokeya > 0 || paid > 0)) {
+      const grandTaka = Math.round(takaA + takaB);
+      const grandTotal = grandTaka + bokeya;
+      const due = Math.max(grandTotal - paid, 0);
+      if (bokeya > 0) {
+        block += '\n\nবকেয়া: ৳' + bokeya.toLocaleString('en-IN') + '\n+ মোট টাকা: ৳' + grandTotal.toLocaleString('en-IN');
+      }
+      block += '\n\nজমা: ৳' + paid.toLocaleString('en-IN') + '\nবাকি: ৳' + due.toLocaleString('en-IN');
+    }
+    return block;
+  }
+
+  function dBuildPrintArea() {
     const profile = getProfile();
-    const shopHeaderEl = document.getElementById('memoShopHeader');
+    const shopHeaderEl = document.getElementById('dShopHeader');
     if (profile && profile.name) {
-      document.getElementById('memoShopName').textContent = profile.name;
+      document.getElementById('dShopName').textContent = profile.name;
       let sub = '';
       if (profile.phone) sub += '📞 ' + profile.phone;
       if (profile.address) sub += (sub ? '  |  ' : '') + '📍 ' + profile.address;
-      document.getElementById('memoShopSub').textContent = sub;
+      document.getElementById('dShopSub').textContent = sub;
       shopHeaderEl.style.display = '';
     } else {
       shopHeaderEl.style.display = 'none';
     }
 
-    const custName = document.getElementById('memoCustName').value.trim();
-    const date = document.getElementById('memoDate').value.trim();
+    const custName = document.getElementById('dCustName').value.trim();
+    const date = document.getElementById('dCustDate').value.trim();
     let meta = '';
     if (custName) meta += '👤 ' + custName;
     if (date) meta += (meta ? '  |  ' : '') + '📅 ' + date;
-    document.getElementById('memoPrMeta').textContent = meta;
+    document.getElementById('dPrMeta').textContent = meta;
+    document.getElementById('dPrintBody').textContent = dBuildSummaryText();
 
-    const text = document.getElementById('memoText').value;
-    document.getElementById('memoPrintBody').textContent = text;
+    const signMode = document.getElementById('dSignTypeBox') && document.getElementById('dSignTypeBox').style.display !== 'none' ? 'type' : 'draw';
+    const signEl = document.getElementById('dPrintSign');
+    if (signMode === 'draw' && dSignCanvas && dSignHasDrawing) {
+      signEl.innerHTML = '<img src="' + dSignCanvas.toDataURL('image/png') + '" style="max-width:200px;height:60px;"><div style="font-size:10px;color:#8a7a68;margin-top:2px;">স্বাক্ষর</div>';
+    } else if (signMode === 'type' && dSignTypedValue.trim()) {
+      signEl.innerHTML = '<div style="font-family:cursive;font-size:26px;color:#2b3a55;">' + dSignTypedValue.trim() + '</div><div style="font-size:10px;color:#8a7a68;margin-top:2px;">স্বাক্ষর</div>';
+    } else {
+      signEl.innerHTML = '';
+    }
   }
 
-  function printMemo() {
-    buildMemoPrintArea();
-    const area = document.getElementById('memoPrintArea');
+  function dPrintSummary() {
+    if (dMaterialTotal('A') === 0 && dMaterialTotal('B') === 0) { alert('হিসাবে কোনো মান নেই।'); return; }
+    dBuildPrintArea();
+    const area = document.getElementById('dPrintArea');
     area.style.display = '';
     window.print();
     setTimeout(() => { area.style.display = 'none'; }, 300);
   }
 
-  function saveMemo() {
-    const text = document.getElementById('memoText').value.trim();
-    if (!text) { alert('মেমোতে কিছু লিখুন।'); return; }
-    const custName = document.getElementById('memoCustName').value.trim() || 'অজ্ঞাত';
-    const date = document.getElementById('memoDate').value.trim() ||
+  function dSaveSummary() {
+    if (dMaterialTotal('A') === 0 && dMaterialTotal('B') === 0) { alert('হিসাবে কোনো মান নেই।'); return; }
+    const text = dBuildSummaryText();
+    const custName = document.getElementById('dCustName').value.trim() || 'অজ্ঞাত';
+    const date = document.getElementById('dCustDate').value.trim() ||
       new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const saved = JSON.parse(store.getItem('woodCalcMemos') || '[]');
@@ -3025,21 +4276,21 @@
     alert('✅ মেমো সেভ হয়েছে!');
   }
 
-  function memoSaveAsPhoto() {
-    buildMemoPrintArea();
+  function dSaveAsPhoto() {
+    if (dMaterialTotal('A') === 0 && dMaterialTotal('B') === 0) { alert('হিসাবে কোনো মান নেই।'); return; }
+    dBuildPrintArea();
 
     const profile = getProfile();
     const shopName = profile ? profile.name : '';
     const shopSub = profile ? [profile.phone ? '📞 '+profile.phone : '', profile.address ? '📍 '+profile.address : ''].filter(Boolean).join('  |  ') : '';
 
-    const custName = document.getElementById('memoCustName').value.trim();
-    const date = document.getElementById('memoDate').value.trim();
+    const custName = document.getElementById('dCustName').value.trim();
+    const date = document.getElementById('dCustDate').value.trim();
     let meta = '';
     if (custName) meta += '👤 ' + custName;
     if (date) meta += (meta ? '  |  ' : '') + '📅 ' + date;
 
-    const text = document.getElementById('memoText').value;
-    if (!text.trim()) { alert('মেমোতে কিছু লিখুন।'); return; }
+    const text = dBuildSummaryText();
 
     const canvas = document.createElement('canvas');
     const scale = 2;
@@ -3050,7 +4301,6 @@
     const ctx0 = canvas.getContext('2d');
     ctx0.font = '14px Arial';
 
-    // Wrap text into lines based on width
     function wrapText(ctx, text, maxWidth) {
       const lines = [];
       text.split('\n').forEach(paragraph => {
@@ -3072,25 +4322,27 @@
 
     const bodyLines = wrapText(ctx0, text, W - padding * 2);
 
+    const dSignMode = document.getElementById('dSignTypeBox') && document.getElementById('dSignTypeBox').style.display !== 'none' ? 'type' : 'draw';
+    const dHasSignature = dSignMode === 'draw' ? dSignHasDrawing : (dSignTypedValue.trim().length > 0);
+    const signBlockH = dHasSignature ? 130 : 0;
+
     const shopHeaderH = shopName ? (shopSub ? 54 : 36) : 0;
     const titleH = 30;
     const metaH = meta ? 24 : 8;
     const bodyH = bodyLines.length * lineHeight + 16;
     const footerH = 26;
-    const totalH = shopHeaderH + titleH + metaH + bodyH + footerH + padding;
+    const totalH = shopHeaderH + titleH + metaH + bodyH + signBlockH + footerH + padding;
 
     canvas.width = W * scale;
     canvas.height = totalH * scale;
     const ctx = canvas.getContext('2d');
     ctx.scale(scale, scale);
 
-    // Background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, totalH);
 
     let y = 0;
 
-    // Shop header
     if (shopName) {
       ctx.fillStyle = '#F5EDE2';
       ctx.fillRect(0, 0, W, shopHeaderH);
@@ -3112,14 +4364,12 @@
       y = shopHeaderH;
     }
 
-    // Title
     ctx.fillStyle = '#8C4A36';
     ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
     ctx.fillText('মেমো', W / 2, y + 24);
     y += titleH;
 
-    // Meta
     if (meta) {
       ctx.fillStyle = '#8a7a68';
       ctx.font = '11px Arial';
@@ -3127,7 +4377,6 @@
     }
     y += metaH;
 
-    // Body
     ctx.fillStyle = '#3E2F26';
     ctx.font = '14px Arial';
     ctx.textAlign = 'left';
@@ -3136,7 +4385,42 @@
     });
     y += bodyH;
 
-    // Download
+    if (dHasSignature) {
+      ctx.strokeStyle = '#D6C5AD';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(padding, y);
+      ctx.lineTo(W - padding, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      y += 14;
+
+      const sigBoxH = 80;
+      ctx.strokeStyle = '#D6C5AD';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(padding, y, W - padding * 2, sigBoxH);
+
+      if (dSignMode === 'draw' && dSignCanvas) {
+        const sw = W - padding * 2 - 16;
+        const sh = sigBoxH - 16;
+        ctx.drawImage(dSignCanvas, padding + 8, y + 8, sw, sh);
+      } else {
+        const typedName = dSignTypedValue.trim();
+        ctx.fillStyle = '#2b3a55';
+        ctx.font = '32px cursive';
+        ctx.textAlign = 'center';
+        ctx.fillText(typedName, W / 2, y + sigBoxH / 2 + 10);
+      }
+
+      y += sigBoxH + 6;
+      ctx.fillStyle = '#8a7a68';
+      ctx.font = '10px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('স্বাক্ষর', W / 2, y);
+      y += 10;
+    }
+
     const link = document.createElement('a');
     const now = new Date();
     const fname = 'memo-' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + now.getHours() + now.getMinutes() + '.png';
