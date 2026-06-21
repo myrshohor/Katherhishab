@@ -2764,9 +2764,10 @@
       const cft = (l * w * t * q) / 2304;
 
       const tr = document.createElement('tr');
-      const typeBadge = row.woodType ? `<span style="font-size:10px;font-weight:700;padding:1px 4px;border-radius:3px;${row.woodType==='U/2'?'background:#d4efdf;color:#1e8449':row.woodType==='BL'?'background:#d6eaf8;color:#1a5276':'background:#fdebd0;color:#a04000'}">${row.woodType}</span>` : '';
+      const typeColor = row.woodType==='U/2'?'color:#1e8449':row.woodType==='BL'?'color:#1a5276':row.woodType==='O/V'?'color:#a04000':'';
+      const typeLabel = row.woodType ? `<span style="font-size:11px;font-weight:800;${typeColor}"> ${row.woodType}</span>` : '';
       tr.innerHTML = `
-        <td>${snLabel}${typeBadge ? '<br>' + typeBadge : ''}</td>
+        <td><span style="font-size:13px;font-weight:700;">${snLabel}.</span>${typeLabel}</td>
         <td>${row.l || '-'}</td>
         <td>${row.w || '-'}</td>
         <td>${row.t || '-'}</td>
@@ -2789,17 +2790,28 @@
         else if (row.woodType === 'BL') totals['BL'] += cft;
         else if (row.woodType === 'O/V') totals['O/V'] += cft;
       });
+      // কোড ছাড়া গাছ হিসাব
+      let noTypeCFT = 0;
+      validRows.forEach(({ row }) => {
+        const l = parseFloat(row.l)||0, w = parseFloat(row.w)||0, t = parseFloat(row.t)||0, q = parseFloat(row.q)||1;
+        const cft = (l*w*t*q)/2304;
+        if (!row.woodType) noTypeCFT += cft;
+      });
       const hasTypes = totals['U/2'] > 0 || totals['BL'] > 0 || totals['O/V'] > 0;
-      typeBlock.style.display = hasTypes ? 'flex' : 'none';
+      const hasNoType = noTypeCFT > 0;
+      const showTypeBlock = hasTypes || (hasTypes && hasNoType);
+      typeBlock.style.display = showTypeBlock ? 'flex' : 'none';
       typeBlock.innerHTML = '';
       if (totals['U/2'] > 0) typeBlock.innerHTML += `<div class="type-subtotal-row ts-U2"><span>U/2 — ${totals['U/2'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="priceU2" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()"></div>`;
       if (totals['BL'] > 0) typeBlock.innerHTML += `<div class="type-subtotal-row ts-BL"><span>BL — ${totals['BL'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="priceBL" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()"></div>`;
       if (totals['O/V'] > 0) typeBlock.innerHTML += `<div class="type-subtotal-row ts-OV"><span>O/V — ${totals['O/V'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="priceOV" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()"></div>`;
-      if (hasTypes) typeBlock.innerHTML += `<div class="type-grand-total" id="typeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="typeGrandTotalVal">০</span></div>`;
+      if (hasTypes && hasNoType) typeBlock.innerHTML += `<div class="type-subtotal-row" style="background:#f0ebe4;color:#5a3e2b;"><span>অন্য — ${noTypeCFT.toFixed(4)} CFT</span><input class="type-price-input" type="number" id="priceNoType" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcTypeTotalPrice()"></div>`;
+      if (showTypeBlock) typeBlock.innerHTML += `<div class="type-grand-total" id="typeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="typeGrandTotalVal">০</span></div>`;
       // store totals for price calc
       typeBlock.dataset.u2 = totals['U/2'];
       typeBlock.dataset.bl = totals['BL'];
       typeBlock.dataset.ov = totals['O/V'];
+      typeBlock.dataset.notype = noTypeCFT;
     }
 
     // Date/time + optional name/note
@@ -2815,6 +2827,13 @@
     document.getElementById('prPaidInput').value = '';
     if (document.getElementById('prBokeyaInput')) document.getElementById('prBokeyaInput').value = '';
     if (document.getElementById('prTotalPriceBottom')) document.getElementById('prTotalPriceBottom').textContent = '০';
+    // Type mode reset
+    if (document.getElementById('typePriceExtra')) document.getElementById('typePriceExtra').style.display = 'none';
+    if (document.getElementById('typePaidDueRow')) document.getElementById('typePaidDueRow').style.display = 'none';
+    if (document.getElementById('typeBokeyaInput')) document.getElementById('typeBokeyaInput').value = '';
+    if (document.getElementById('typePaidInput')) document.getElementById('typePaidInput').value = '';
+    if (document.getElementById('typeGrandPlusBokeya')) document.getElementById('typeGrandPlusBokeya').textContent = '০';
+    if (document.getElementById('typeDueValue')) document.getElementById('typeDueValue').textContent = '০';
 
     applyProfile();
     document.getElementById('calcPage').classList.add('hidden');
@@ -2850,18 +2869,29 @@
     const u2 = parseFloat(block.dataset.u2) || 0;
     const bl = parseFloat(block.dataset.bl) || 0;
     const ov = parseFloat(block.dataset.ov) || 0;
+    const noType = parseFloat(block.dataset.notype) || 0;
     const pu2 = parseFloat((document.getElementById('priceU2') || {}).value) || 0;
     const pbl = parseFloat((document.getElementById('priceBL') || {}).value) || 0;
     const pov = parseFloat((document.getElementById('priceOV') || {}).value) || 0;
-    const typeTotal = Math.round(u2 * pu2 + bl * pbl + ov * pov);
+    const pNoType = parseFloat((document.getElementById('priceNoType') || {}).value) || 0;
+    const typeTotal = Math.round(u2 * pu2 + bl * pbl + ov * pov + noType * pNoType);
     const el = document.getElementById('typeGrandTotal');
     const valEl = document.getElementById('typeGrandTotalVal');
-    const show = (pu2 > 0 || pbl > 0 || pov > 0);
+    const show = (pu2 > 0 || pbl > 0 || pov > 0 || pNoType > 0);
     if (el && valEl) {
       el.style.display = show ? 'flex' : 'none';
       valEl.textContent = typeTotal.toLocaleString('en-IN');
     }
-    // bokeya / joma / baki
+    // Type mode active হলে single-price row লুকাও
+    if (show) {
+      const priceTotalRow = document.getElementById('priceTotalRow');
+      const paidDueRowSingle = document.getElementById('paidDueRow');
+      const priceBox = document.getElementById('priceTotalBox');
+      if (priceTotalRow) priceTotalRow.style.display = 'none';
+      if (paidDueRowSingle) paidDueRowSingle.style.display = 'none';
+      if (priceBox) priceBox.style.display = 'none';
+    }
+    // bokeya / joma / baki (type mode unified)
     const extraEl = document.getElementById('typePriceExtra');
     const paidDueEl = document.getElementById('typePaidDueRow');
     if (extraEl) extraEl.style.display = show ? 'block' : 'none';
@@ -4123,7 +4153,9 @@
         if (l === 0 && w === 0 && t === 0) return;
         const cft = (l * w * t * q) / 2304;
         grandTotal += cft;
-        body.innerHTML += '<tr><td>' + serial + '</td><td class="dual-mat-label">' + label + '</td><td>' + (row.w || '0') + '</td><td>' + (row.t || '0') + '</td><td>' + (row.l || '0') + '</td><td>' + (row.q || '1') + '</td><td>' + cft.toFixed(4) + '</td></tr>';
+        const dTypeColor = row.woodType==='U/2'?'color:#1e8449':row.woodType==='BL'?'color:#1a5276':row.woodType==='O/V'?'color:#a04000':'';
+        const dTypeLabel = row.woodType ? '<span style="font-size:11px;font-weight:800;' + dTypeColor + '"> ' + row.woodType + '</span>' : '';
+        body.innerHTML += '<tr><td><span style="font-size:13px;font-weight:700;">' + serial + '.</span>' + dTypeLabel + '</td><td class="dual-mat-label">' + label + '</td><td>' + (row.w || '0') + '</td><td>' + (row.t || '0') + '</td><td>' + (row.l || '0') + '</td><td>' + (row.q || '1') + '</td><td>' + cft.toFixed(4) + '</td></tr>';
         serial++;
       });
     });
@@ -4148,16 +4180,30 @@
           else if (row.woodType==='O/V') totals['O/V']+=cft;
         });
       });
+      // কোড ছাড়া গাছ
+      let dNoTypeCFT = 0;
+      ['A', 'B'].forEach(function(which) {
+        dState[which].rows.forEach(function(row) {
+          const l=parseFloat(row.l)||0, w=parseFloat(row.w)||0, t=parseFloat(row.t)||0, q=parseFloat(row.q)||1;
+          if (l===0&&w===0&&t===0) return;
+          const cft=(l*w*t*q)/2304;
+          if (!row.woodType) dNoTypeCFT += cft;
+        });
+      });
       const hasTypes = totals['U/2']>0||totals['BL']>0||totals['O/V']>0;
-      dTypeBlock.style.display = hasTypes ? 'flex' : 'none';
+      const dHasNoType = dNoTypeCFT > 0;
+      const dShowTypeBlock = hasTypes;
+      dTypeBlock.style.display = dShowTypeBlock ? 'flex' : 'none';
       dTypeBlock.innerHTML = '';
       if (totals['U/2']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-U2"><span>U/2 — ${totals['U/2'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceU2" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
       if (totals['BL']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-BL"><span>BL — ${totals['BL'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceBL" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
       if (totals['O/V']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-OV"><span>O/V — ${totals['O/V'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceOV" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-      if (hasTypes) dTypeBlock.innerHTML += `<div class="type-grand-total" id="dTypeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="dTypeGrandTotalVal">০</span></div>`;
+      if (hasTypes && dHasNoType) dTypeBlock.innerHTML += `<div class="type-subtotal-row" style="background:#f0ebe4;color:#5a3e2b;"><span>অন্য — ${dNoTypeCFT.toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceNoType" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+      if (dShowTypeBlock) dTypeBlock.innerHTML += `<div class="type-grand-total" id="dTypeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="dTypeGrandTotalVal">০</span></div>`;
       dTypeBlock.dataset.u2 = totals['U/2'];
       dTypeBlock.dataset.bl = totals['BL'];
       dTypeBlock.dataset.ov = totals['O/V'];
+      dTypeBlock.dataset.notype = dNoTypeCFT;
     }
     document.getElementById('dPriceLabelA').textContent = dLabel('A');
     document.getElementById('dPriceLabelB').textContent = dLabel('B');
@@ -4173,6 +4219,12 @@
     document.getElementById('dPaidDueRow').style.display = 'none';
     document.getElementById('dBokeyaInput').value = '';
     document.getElementById('dPaidInput').value = '';
+    if (document.getElementById('dTypePriceExtra')) document.getElementById('dTypePriceExtra').style.display = 'none';
+    if (document.getElementById('dTypePaidDueRow')) document.getElementById('dTypePaidDueRow').style.display = 'none';
+    if (document.getElementById('dTypeBokeyaInput')) document.getElementById('dTypeBokeyaInput').value = '';
+    if (document.getElementById('dTypePaidInput')) document.getElementById('dTypePaidInput').value = '';
+    if (document.getElementById('dTypeGrandPlusBokeya')) document.getElementById('dTypeGrandPlusBokeya').textContent = '০';
+    if (document.getElementById('dTypeDueValue')) document.getElementById('dTypeDueValue').textContent = '০';
 
     // default date if empty
     const dateEl = document.getElementById('dCustDate');
@@ -4221,16 +4273,25 @@
     const u2 = parseFloat(block.dataset.u2) || 0;
     const bl = parseFloat(block.dataset.bl) || 0;
     const ov = parseFloat(block.dataset.ov) || 0;
+    const noType = parseFloat(block.dataset.notype) || 0;
     const pu2 = parseFloat((document.getElementById('dPriceU2') || {}).value) || 0;
     const pbl = parseFloat((document.getElementById('dPriceBL') || {}).value) || 0;
     const pov = parseFloat((document.getElementById('dPriceOV') || {}).value) || 0;
-    const typeTotal = Math.round(u2 * pu2 + bl * pbl + ov * pov);
+    const pNoType = parseFloat((document.getElementById('dPriceNoType') || {}).value) || 0;
+    const typeTotal = Math.round(u2 * pu2 + bl * pbl + ov * pov + noType * pNoType);
     const el = document.getElementById('dTypeGrandTotal');
     const valEl = document.getElementById('dTypeGrandTotalVal');
-    const show = (pu2 > 0 || pbl > 0 || pov > 0);
+    const show = (pu2 > 0 || pbl > 0 || pov > 0 || pNoType > 0);
     if (el && valEl) {
       el.style.display = show ? 'flex' : 'none';
       valEl.textContent = typeTotal.toLocaleString('en-IN');
+    }
+    // Type mode active হলে single-price row লুকাও
+    if (show) {
+      const dGrandCombo = document.getElementById('dGrandCombo');
+      const dPaidDueRow = document.getElementById('dPaidDueRow');
+      if (dGrandCombo) dGrandCombo.style.display = 'none';
+      if (dPaidDueRow) dPaidDueRow.style.display = 'none';
     }
     const extraEl = document.getElementById('dTypePriceExtra');
     const paidDueEl = document.getElementById('dTypePaidDueRow');
