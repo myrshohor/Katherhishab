@@ -164,6 +164,103 @@
     border-top: 1px solid var(--border);
   }
 
+  .menu-footer-btn {
+    margin-top: auto !important;
+    width: 100% !important;
+    background: none !important;
+    border: none !important;
+    border-top: 1px solid var(--border) !important;
+    padding: 14px 20px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #a08e76 !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    display: block !important;
+  }
+  .menu-footer-btn:active { background: var(--sand-light) !important; }
+
+  /* Dev Info Modal */
+  .devinfo-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+    align-items: center;
+    justify-content: center;
+  }
+  .devinfo-modal.open { display: flex; }
+  .devinfo-content {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 28px 24px 22px;
+    margin: 24px;
+    max-width: 340px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(140,74,54,0.25);
+    text-align: center;
+    position: relative;
+  }
+  .devinfo-logo {
+    font-size: 42px;
+    margin-bottom: 10px;
+  }
+  .devinfo-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--brick-dark);
+    margin-bottom: 4px;
+  }
+  .devinfo-sub {
+    font-size: 12px;
+    color: #a08e76;
+    margin-bottom: 18px;
+  }
+  .devinfo-msg {
+    background: var(--sand-light);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--text-dark);
+    line-height: 1.7;
+    text-align: left;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+  }
+  .devinfo-phone {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--brick-dark);
+    background: var(--sand);
+    border-radius: 10px;
+    padding: 10px 16px;
+    margin: 6px 0 16px;
+    letter-spacing: 1px;
+  }
+  .devinfo-note {
+    font-size: 12px;
+    color: #8a7a68;
+    background: #fffbe6;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+    border: 1px solid #f0e0a0;
+    line-height: 1.6;
+  }
+  .devinfo-close {
+    width: 100%;
+    background: var(--brick-dark);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .devinfo-close:active { opacity: 0.85; }
+
   /* Customer page */
   #customerPage {
     display: none;
@@ -1595,8 +1692,8 @@
 
   @media print {
     body * { visibility: hidden; }
-    #printArea, #printArea *, #dPrintArea, #dPrintArea * { visibility: visible; }
-    #printArea, #dPrintArea {
+    #printArea, #printArea *, #dPrintArea, #dPrintArea *, #tbPrintArea, #tbPrintArea * { visibility: visible; }
+    #printArea, #dPrintArea, #tbPrintArea {
       position: absolute;
       top: 0;
       left: 0;
@@ -1609,6 +1706,144 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
+  }
+
+  /* ===== Textbox Page ===== */
+  #textboxPage {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+  }
+  #textboxPage.active {
+    display: flex;
+  }
+  .tb-header {
+    padding: 12px 16px 10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--sand-light);
+  }
+  .tb-header h2 {
+    font-size: 17px;
+    color: var(--brick-dark);
+    flex: 1;
+  }
+  .tb-title-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    background: var(--white);
+    color: var(--text-dark);
+    margin: 10px 16px 0;
+    width: calc(100% - 32px);
+    flex-shrink: 0;
+  }
+  .tb-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px;
+    gap: 8px;
+  }
+  .tb-textarea {
+    flex: 1;
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 15px;
+    font-family: 'Segoe UI', 'Noto Sans Bengali', Arial, sans-serif;
+    background: var(--white);
+    color: var(--text-dark);
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+  }
+  .tb-textarea:focus {
+    border-color: var(--brick);
+  }
+  .tb-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 0 0 10px;
+  }
+  .tb-btn {
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .tb-btn-save { background: var(--brick-dark); color: #fff; }
+  .tb-btn-print { background: #2e7d32; color: #fff; }
+  .tb-btn-dl { background: #1a6fa0; color: #fff; }
+  .tb-btn:active { opacity: 0.82; }
+  .tb-saved-list {
+    flex-shrink: 0;
+    max-height: 180px;
+    overflow-y: auto;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+  .tb-saved-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brick-dark);
+    margin-bottom: 6px;
+  }
+  .tb-saved-item {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 1px 4px rgba(140,74,54,0.07);
+  }
+  .tb-saved-item .tsi-info { flex: 1; min-width: 0; }
+  .tb-saved-item .tsi-name { font-size: 13px; font-weight: 700; color: var(--brick-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tb-saved-item .tsi-date { font-size: 11px; color: #a08e76; }
+  .tb-saved-item button {
+    background: none; border: none; cursor: pointer; font-size: 17px; padding: 4px;
+  }
+  #tbPrintArea {
+    display: none;
+    background: #fff;
+    padding: 20px;
+    font-family: 'Segoe UI', 'Noto Sans Bengali', Arial, sans-serif;
+  }
+  #tbPrintArea .tbpr-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--brick-dark);
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  #tbPrintArea .tbpr-date {
+    font-size: 11px;
+    color: #8a7a68;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  #tbPrintArea .tbpr-body {
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: #3E2F26;
   }
 </style>
 </head>
@@ -1673,18 +1908,19 @@
   <div class="menu-overlay" id="menuOverlay">
     <div class="menu-backdrop" onclick="closeMenu()"></div>
     <div class="menu-panel">
-      <div class="menu-panel-title">☰ মেনু</div>
+      <div class="menu-panel-title">☰</div>
       <button onclick="goHome()">
         <span class="icon">🏠</span> Home
       </button>
       <button onclick="openCustomerPage()"><span class="icon">👤</span> সেভ লিস্ট</button>
       <button onclick="openDualCalcPage()"><span class="icon">🪵</span> দুই হিসাব</button>
       <button onclick="openDigitalCalcPage()"><span class="icon">🔢</span> ক্যালকুলেটর</button>
+      <button onclick="openTextboxPage()"><span class="icon">📝</span> টেক্সটবক্স</button>
       <button onclick="openProfileEdit()"><span class="icon">⚙️</span> আমার প্রোফাইল</button>
       <a id="apkDownloadBtn" href="https://github.com/myrshohor/Katherhishab/raw/main/kathcft.apk" download="kathcft.apk" style="width:100%;background:none;border:none;padding:14px 20px;text-align:left;font-size:15px;font-weight:600;color:#1e8449;cursor:pointer;display:flex;align-items:center;gap:10px;text-decoration:none;transition:background 0.2s;" onmousedown="this.style.background='#eafaf1'" ontouchstart="this.style.background='#eafaf1'" ontouchend="this.style.background=''" onmouseup="this.style.background=''">
         <span class="icon">📲</span> APK ডাউনলোড
       </a>
-      <div class="menu-footer">Developed by Zahin</div>
+      <button class="menu-footer-btn" onclick="openDevInfo()">👨‍💻 Developed by Zahin</button>
     </div>
   </div>
 
@@ -2100,7 +2336,6 @@
           <div class="pr-shop-name" id="dShopName"></div>
           <div class="pr-shop-sub" id="dShopSub"></div>
         </div>
-        <div class="pr-title">মেমো</div>
         <div class="pr-meta" id="dPrMeta"></div>
         <div class="memo-print-body" id="dPrintBody"></div>
         <div id="dPrintSign" style="margin-top:14px;text-align:center;"></div>
@@ -2929,7 +3164,7 @@
     const cardHeights = [cftCardH];
     if (priceRowVisible) { cardHeights.push(greenCardH, blueCardH); }
     // type subtotal cards height
-    const typeRowH = 34;
+    const typeRowH = hasTypePrices ? 42 : 34;
     const typeBlockH = typeVisible && typeRows.length > 0 ? (typeRows.length * (typeRowH + totalsGap)) : 0;
     const typeExtraH = hasTypePrices ? (
       totalsCardH + totalsGap + // মোট টাকা
@@ -3037,8 +3272,10 @@
         ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.font='bold 11px Arial'; ctx.textAlign='left';
         ctx.fillText(tr.label + ' — ' + tr.cft.toFixed(4) + ' CFT', cardX+12, y+typeRowH/2+4);
         if (tr.price > 0) {
+          ctx.fillStyle='rgba(255,255,255,0.8)'; ctx.font='9px Arial'; ctx.textAlign='right';
+          ctx.fillText('৳' + tr.price.toLocaleString('en-IN') + '/CFT', cardX+cardW-12, y+typeRowH/2-8);
           ctx.fillStyle='#fff'; ctx.font='bold 13px Arial'; ctx.textAlign='right';
-          ctx.fillText('৳' + tr.taka.toLocaleString('en-IN'), cardX+cardW-12, y+typeRowH/2+4);
+          ctx.fillText('৳' + tr.taka.toLocaleString('en-IN'), cardX+cardW-12, y+typeRowH/2+11);
         }
         y += typeRowH + totalsGap;
       });
@@ -3494,7 +3731,7 @@
     listEl.innerHTML = saved.map((item, i) => `
       <div class="customer-item">
         <div class="ci-info" onclick="viewCustomer(${i})" style="cursor:pointer">
-          <div class="ci-name">👤 ${item.name}</div>
+          <div class="ci-name">👤 ${item.name}${item.isDual ? ' <span style="font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;background:#fdebd0;color:#a04000;">দুই হিসাব</span>' : ''}</div>
           <div class="ci-meta">📅 ${item.date} &nbsp;|&nbsp; ${item.rowCount} টি সারি</div>
           <div class="ci-total">মোট: ${item.total} CFT${item.note ? ' &nbsp;|&nbsp; ' + item.note : ''}</div>
         </div>
@@ -3518,15 +3755,18 @@
     currentViewIdx = idx;
 
     document.getElementById('detailName').textContent = '👤 ' + item.name;
-    document.getElementById('detailMeta').textContent = '📅 ' + item.date + ' | ' + item.rowCount + ' টি সারি';
+    document.getElementById('detailMeta').textContent = '📅 ' + item.date + ' | ' + item.rowCount + ' টি সারি' + (item.isDual ? ' | 🪵 দুই হিসাব' : '');
 
     const tbody = document.getElementById('detailBody');
     if (item.rows && item.rows.length > 0) {
       tbody.innerHTML = item.rows.map((r, i) => {
         const l = parseFloat(r.l)||0, w = parseFloat(r.w)||0, t = parseFloat(r.t)||0, q = parseFloat(r.q)||1;
         const cft = ((l*w*t*q)/2304).toFixed(4);
+        const snDisplay = item.isDual
+          ? '<span style="font-size:10px;font-weight:700;padding:1px 4px;border-radius:3px;background:' + (r.mat === 'A' ? '#d6eaf8;color:#1a5276' : '#fdebd0;color:#a04000') + ';">' + (r.mat === 'A' ? (item.matLabelA || 'মাল ১') : (item.matLabelB || 'মাল ২')) + '</span><br>' + (r.sn !== undefined && r.sn !== '' ? r.sn : (i+1))
+          : (r.sn !== undefined && r.sn !== '' ? r.sn : (i+1));
         return `<tr>
-          <td>${r.sn !== undefined && r.sn !== '' ? r.sn : (i+1)}</td>
+          <td>${snDisplay}</td>
           <td>${r.l||'-'}</td>
           <td>${r.w||'-'}</td>
           <td>${r.t||'-'}</td>
@@ -3556,6 +3796,12 @@
       return;
     }
     if (!confirm('বর্তমান হিসাব মুছে এই হিসাব লোড করবেন?')) return;
+    if (item.isDual) {
+      closeDetailModal();
+      loadToDualCalc(item);
+      alert('✅ ' + item.name + '-এর হিসাব (দুই হিসাব) লোড হয়েছে!');
+      return;
+    }
     rows = item.rows.map(r => ({...r}));
     rows.push(newRowData()); // লোডের পরে নতুন খালি row
     activeRow = rows.length - 1;
@@ -3564,6 +3810,29 @@
     closeCustomerPage();
     render();
     alert('✅ ' + item.name + '-এর হিসাব লোড হয়েছে!');
+  }
+
+  function loadToDualCalc(item) {
+    const rowsA = item.rows.filter(r => r.mat === 'A').map(r => { const { mat, ...rest } = r; return rest; });
+    const rowsB = item.rows.filter(r => r.mat === 'B').map(r => { const { mat, ...rest } = r; return rest; });
+    dState.A = { rows: rowsA.length ? rowsA : [dNewRowData()], activeRow: 0, activeField: 0, name: (item.matLabelA && item.matLabelA !== 'মাল ১') ? item.matLabelA : '' };
+    dState.B = { rows: rowsB.length ? rowsB : [dNewRowData()], activeRow: 0, activeField: 0, name: (item.matLabelB && item.matLabelB !== 'মাল ২') ? item.matLabelB : '' };
+    dState.A.rows.push(dNewRowData());
+    dState.B.rows.push(dNewRowData());
+
+    document.getElementById('calcPage').classList.add('hidden');
+    document.getElementById('summaryPage').classList.remove('active');
+    document.getElementById('customerPage').classList.remove('active');
+    document.getElementById('dualCalcPage').classList.add('active');
+
+    document.getElementById('dNameA').value = dState.A.name;
+    document.getElementById('dNameB').value = dState.B.name;
+    dActiveCalc = 'A';
+    document.getElementById('dMatTabA').classList.add('active');
+    document.getElementById('dMatTabB').classList.remove('active');
+    document.getElementById('dNextBtn').textContent = '✅ মাল ২ এ যান';
+    dShowCalcView();
+    dRenderRows();
   }
 
   function editCustomer(idx) {
@@ -4218,6 +4487,46 @@
       }
       block += '\n\nজমা: ৳' + paid.toLocaleString('en-IN') + '\nবাকি: ৳' + due.toLocaleString('en-IN');
     }
+
+    // Wood-type based pricing (U/2, BL, O/V) — shown after the type CFT subtotals
+    const dTypeBlock = document.getElementById('dWoodTypeSubtotals');
+    if (dTypeBlock && dTypeBlock.style.display !== 'none') {
+      const tu2 = parseFloat(dTypeBlock.dataset.u2) || 0;
+      const tbl = parseFloat(dTypeBlock.dataset.bl) || 0;
+      const tov = parseFloat(dTypeBlock.dataset.ov) || 0;
+      const ptu2 = parseFloat((document.getElementById('dPriceU2') || {}).value) || 0;
+      const ptbl = parseFloat((document.getElementById('dPriceBL') || {}).value) || 0;
+      const ptov = parseFloat((document.getElementById('dPriceOV') || {}).value) || 0;
+      const typeRowsExport = [];
+      if (tu2 > 0) typeRowsExport.push({ label: 'U/2', cft: tu2, price: ptu2 });
+      if (tbl > 0) typeRowsExport.push({ label: 'BL', cft: tbl, price: ptbl });
+      if (tov > 0) typeRowsExport.push({ label: 'O/V', cft: tov, price: ptov });
+      let typeGrandTaka = 0;
+      let typeHasPrice = false;
+      typeRowsExport.forEach(r => {
+        if (r.price > 0) {
+          typeHasPrice = true;
+          const taka = Math.round(r.cft * r.price);
+          typeGrandTaka += taka;
+          block += '\n\n' + r.label + ' - প্রতি CFT দাম: ৳' + r.price + '\n' + r.label + ' মোট টাকা: ৳' + taka.toLocaleString('en-IN');
+        }
+      });
+      if (typeHasPrice) {
+        if (typeRowsExport.filter(r => r.price > 0).length > 1) {
+          block += '\n\nসর্বমোট টাকা: ৳' + typeGrandTaka.toLocaleString('en-IN');
+        }
+        const typeBokeya = parseFloat((document.getElementById('dTypeBokeyaInput') || {}).value) || 0;
+        const typePaid = parseFloat((document.getElementById('dTypePaidInput') || {}).value) || 0;
+        if (typeBokeya > 0 || typePaid > 0) {
+          const typeGrandTotal = typeGrandTaka + typeBokeya;
+          const typeDue = Math.max(typeGrandTotal - typePaid, 0);
+          if (typeBokeya > 0) {
+            block += '\n\nবকেয়া: ৳' + typeBokeya.toLocaleString('en-IN') + '\n+ মোট টাকা: ৳' + typeGrandTotal.toLocaleString('en-IN');
+          }
+          block += '\n\nজমা: ৳' + typePaid.toLocaleString('en-IN') + '\nবাকি: ৳' + typeDue.toLocaleString('en-IN');
+        }
+      }
+    }
     return block;
   }
 
@@ -4265,15 +4574,37 @@
 
   function dSaveSummary() {
     if (dMaterialTotal('A') === 0 && dMaterialTotal('B') === 0) { alert('হিসাবে কোনো মান নেই।'); return; }
-    const text = dBuildSummaryText();
     const custName = document.getElementById('dCustName').value.trim() || 'অজ্ঞাত';
     const date = document.getElementById('dCustDate').value.trim() ||
       new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    const saved = JSON.parse(store.getItem('woodCalcMemos') || '[]');
-    saved.unshift({ name: custName, date, text, timestamp: Date.now() });
-    store.setItem('woodCalcMemos', JSON.stringify(saved.slice(0, 50)));
-    alert('✅ মেমো সেভ হয়েছে!');
+    const matLabelA = dLabel('A');
+    const matLabelB = dLabel('B');
+    const combinedRows = [];
+    ['A', 'B'].forEach(function (which) {
+      const validRows = dState[which].rows.filter(r => parseFloat(r.l) || parseFloat(r.w) || parseFloat(r.t));
+      validRows.forEach(function (r, i) {
+        combinedRows.push({ ...r, mat: which, sn: (r.sn !== undefined && r.sn !== '') ? r.sn : String(i + 1) });
+      });
+    });
+    const totalA = dMaterialTotal('A');
+    const totalB = dMaterialTotal('B');
+    const grandTotal = totalA + totalB;
+
+    const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
+    saved.unshift({
+      name: custName,
+      date,
+      total: grandTotal.toFixed(4),
+      rowCount: combinedRows.length,
+      timestamp: Date.now(),
+      isDual: true,
+      matLabelA,
+      matLabelB,
+      rows: combinedRows
+    });
+    store.setItem('woodCalcSaved', JSON.stringify(saved.slice(0, 50)));
+    alert('✅ হিসাব সেভ হয়েছে!\nক্রেতা: ' + custName + '\nমোট: ' + grandTotal.toFixed(4) + ' CFT');
   }
 
   function dSaveAsPhoto() {
@@ -4327,7 +4658,7 @@
     const signBlockH = dHasSignature ? 130 : 0;
 
     const shopHeaderH = shopName ? (shopSub ? 54 : 36) : 0;
-    const titleH = 30;
+    const titleH = 10;
     const metaH = meta ? 24 : 8;
     const bodyH = bodyLines.length * lineHeight + 16;
     const footerH = 26;
@@ -4367,7 +4698,6 @@
     ctx.fillStyle = '#8C4A36';
     ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('মেমো', W / 2, y + 24);
     y += titleH;
 
     if (meta) {
@@ -4474,6 +4804,149 @@
     </div>
   </div>
 </div>
+
+<!-- Textbox Page -->
+<div id="textboxPage">
+  <div class="tb-header">
+    <button class="btn-back-sm" onclick="closeTextboxPage()">◀ ফিরে যান</button>
+    <h2>📝 টেক্সটবক্স</h2>
+  </div>
+  <div class="tb-body">
+    <input type="text" id="tbTitle" class="tb-title-input" placeholder="শিরোনাম (ঐচ্ছিক)" style="margin:0;width:100%;">
+    <textarea id="tbContent" class="tb-textarea" placeholder="এখানে বাংলা বা English যেকোনো কিছু লিখুন..."></textarea>
+    <div class="tb-actions">
+      <button class="tb-btn tb-btn-save" onclick="tbSave()">💾 সেভ</button>
+      <button class="tb-btn tb-btn-print" onclick="tbPrint()">🖨️ প্রিন্ট</button>
+      <button class="tb-btn tb-btn-dl" onclick="tbDownload()">⬇️ ডাউনলোড</button>
+    </div>
+    <div class="tb-saved-list" id="tbSavedList"></div>
+  </div>
+</div>
+
+<!-- Textbox Print Area (hidden, only shows on print) -->
+<div id="tbPrintArea">
+  <div class="tbpr-title" id="tbPrTitle"></div>
+  <div class="tbpr-date" id="tbPrDate"></div>
+  <div class="tbpr-body" id="tbPrBody"></div>
+</div>
+
+<script>
+// ===== Textbox Page =====
+function openTextboxPage() {
+  closeMenu();
+  document.querySelectorAll('.container > div, .container > #calcPage').forEach(el => el.classList.remove('active'));
+  document.getElementById('calcPage').classList.add('hidden');
+  document.getElementById('textboxPage').classList.add('active');
+  tbRenderSaved();
+}
+
+function closeTextboxPage() {
+  document.getElementById('textboxPage').classList.remove('active');
+  document.getElementById('calcPage').classList.remove('hidden');
+}
+
+function tbSave() {
+  const title = document.getElementById('tbTitle').value.trim() || 'নোট';
+  const content = document.getElementById('tbContent').value.trim();
+  if (!content) { alert('কিছু লিখুন!'); return; }
+  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
+  saved.unshift({ title, content, date: new Date().toLocaleString('bn-BD'), ts: Date.now() });
+  localStorage.setItem('tbNotes', JSON.stringify(saved.slice(0, 30)));
+  tbRenderSaved();
+  alert('✅ সেভ হয়েছে!');
+}
+
+function tbRenderSaved() {
+  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
+  const el = document.getElementById('tbSavedList');
+  if (!saved.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="tb-saved-title">💾 সেভ করা নোট (' + saved.length + ')</div>' +
+    saved.map((n, i) => `
+      <div class="tb-saved-item">
+        <div class="tsi-info">
+          <div class="tsi-name">${n.title}</div>
+          <div class="tsi-date">${n.date}</div>
+        </div>
+        <button onclick="tbLoad(${i})" title="লোড করুন">📂</button>
+        <button onclick="tbDelete(${i})" title="মুছুন">🗑️</button>
+      </div>`).join('');
+}
+
+function tbLoad(i) {
+  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
+  if (!saved[i]) return;
+  document.getElementById('tbTitle').value = saved[i].title;
+  document.getElementById('tbContent').value = saved[i].content;
+}
+
+function tbDelete(i) {
+  if (!confirm('এই নোট মুছে ফেলবেন?')) return;
+  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
+  saved.splice(i, 1);
+  localStorage.setItem('tbNotes', JSON.stringify(saved));
+  tbRenderSaved();
+}
+
+function tbBuildPrint() {
+  const title = document.getElementById('tbTitle').value.trim() || 'নোট';
+  const content = document.getElementById('tbContent').value;
+  const date = new Date().toLocaleString('bn-BD');
+  document.getElementById('tbPrTitle').textContent = title;
+  document.getElementById('tbPrDate').textContent = '📅 ' + date;
+  document.getElementById('tbPrBody').textContent = content;
+}
+
+function tbPrint() {
+  const content = document.getElementById('tbContent').value.trim();
+  if (!content) { alert('কিছু লিখুন!'); return; }
+  tbBuildPrint();
+  const area = document.getElementById('tbPrintArea');
+  area.style.display = 'block';
+  window.print();
+  setTimeout(() => { area.style.display = 'none'; }, 400);
+}
+
+function tbDownload() {
+  const title = document.getElementById('tbTitle').value.trim() || 'note';
+  const content = document.getElementById('tbContent').value.trim();
+  if (!content) { alert('কিছু লিখুন!'); return; }
+  const full = (title ? title + '\n' + '—'.repeat(title.length) + '\n\n' : '') + content;
+  const blob = new Blob([full], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const fname = title.replace(/[^\w\u0980-\u09FF]/g, '_').slice(0, 30) || 'note';
+  a.href = url;
+  a.download = fname + '_' + Date.now() + '.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+<!-- Dev Info Modal -->
+<div class="devinfo-modal" id="devInfoModal">
+  <div class="devinfo-content">
+    <div class="devinfo-logo">👨‍💻</div>
+    <div class="devinfo-name">Developed by Zahin</div>
+    <div class="devinfo-sub">কাঠ CFT ক্যালকুলেটর</div>
+    <div class="devinfo-msg">যেকোনো আপডেট বা সমস্যার জন্য যোগাযোগ করুন:</div>
+    <div class="devinfo-phone">📞 01707172345</div>
+    <div class="devinfo-note">⚠️ অ্যাপস আপডেট হলে ইন্টারনেট অন করে একবার রিফ্রেশ করুন।</div>
+    <button class="devinfo-close" onclick="closeDevInfo()">✖ বন্ধ করুন</button>
+  </div>
+</div>
+
+<script>
+function openDevInfo() {
+  closeMenu();
+  document.getElementById('devInfoModal').classList.add('open');
+}
+function closeDevInfo() {
+  document.getElementById('devInfoModal').classList.remove('open');
+}
+document.getElementById('devInfoModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDevInfo();
+});
+</script>
 
 </body>
 </html>
