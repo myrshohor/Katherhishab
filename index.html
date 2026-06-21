@@ -4166,44 +4166,71 @@
 
     document.getElementById('dSummaryGrandTotal').textContent = grandTotal.toFixed(4);
 
-    // Wood type subtotals for dual calc
+    // Wood type subtotals for dual calc — প্রতি material আলাদা আলাদা
     const dTypeBlock = document.getElementById('dWoodTypeSubtotals');
     if (dTypeBlock) {
-      const totals = { 'U/2': 0, 'BL': 0, 'O/V': 0 };
+      // প্রতি material (A,B) এর জন্য আলাদা totals
+      const matTotals = {};
       ['A', 'B'].forEach(function(which) {
+        const lbl = dLabel(which);
+        const t = { 'U/2': 0, 'BL': 0, 'O/V': 0, 'other': 0 };
         dState[which].rows.forEach(function(row) {
-          const l=parseFloat(row.l)||0, w=parseFloat(row.w)||0, t=parseFloat(row.t)||0, q=parseFloat(row.q)||1;
-          if (l===0&&w===0&&t===0) return;
-          const cft=(l*w*t*q)/2304;
-          if (row.woodType==='U/2') totals['U/2']+=cft;
-          else if (row.woodType==='BL') totals['BL']+=cft;
-          else if (row.woodType==='O/V') totals['O/V']+=cft;
+          const l=parseFloat(row.l)||0, w=parseFloat(row.w)||0, th=parseFloat(row.t)||0, q=parseFloat(row.q)||1;
+          if (l===0&&w===0&&th===0) return;
+          const cft=(l*w*th*q)/2304;
+          if (row.woodType==='U/2') t['U/2']+=cft;
+          else if (row.woodType==='BL') t['BL']+=cft;
+          else if (row.woodType==='O/V') t['O/V']+=cft;
+          else t['other']+=cft;
         });
+        matTotals[which] = { label: lbl, ...t };
       });
-      // কোড ছাড়া গাছ
-      let dNoTypeCFT = 0;
-      ['A', 'B'].forEach(function(which) {
-        dState[which].rows.forEach(function(row) {
-          const l=parseFloat(row.l)||0, w=parseFloat(row.w)||0, t=parseFloat(row.t)||0, q=parseFloat(row.q)||1;
-          if (l===0&&w===0&&t===0) return;
-          const cft=(l*w*t*q)/2304;
-          if (!row.woodType) dNoTypeCFT += cft;
-        });
-      });
-      const hasTypes = totals['U/2']>0||totals['BL']>0||totals['O/V']>0;
-      const dHasNoType = dNoTypeCFT > 0;
-      const dShowTypeBlock = hasTypes;
-      dTypeBlock.style.display = dShowTypeBlock ? 'flex' : 'none';
+
+      // কোনো type আছে কিনা চেক
+      const anyType = ['A','B'].some(w =>
+        matTotals[w]['U/2']>0 || matTotals[w]['BL']>0 || matTotals[w]['O/V']>0
+      );
+
+      dTypeBlock.style.display = anyType ? 'flex' : 'none';
       dTypeBlock.innerHTML = '';
-      if (totals['U/2']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-U2"><span>U/2 — ${totals['U/2'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceU2" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-      if (totals['BL']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-BL"><span>BL — ${totals['BL'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceBL" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-      if (totals['O/V']>0) dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-OV"><span>O/V — ${totals['O/V'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceOV" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-      if (hasTypes && dHasNoType) dTypeBlock.innerHTML += `<div class="type-subtotal-row" style="background:#f0ebe4;color:#5a3e2b;"><span>অন্য — ${dNoTypeCFT.toFixed(4)} CFT</span><input class="type-price-input" type="number" id="dPriceNoType" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-      if (dShowTypeBlock) dTypeBlock.innerHTML += `<div class="type-grand-total" id="dTypeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="dTypeGrandTotalVal">০</span></div>`;
-      dTypeBlock.dataset.u2 = totals['U/2'];
-      dTypeBlock.dataset.bl = totals['BL'];
-      dTypeBlock.dataset.ov = totals['O/V'];
-      dTypeBlock.dataset.notype = dNoTypeCFT;
+
+      // সব data JSON হিসেবে store করব calcDTypeTotal এর জন্য
+      const storedData = [];
+
+      ['A','B'].forEach(function(which) {
+        const m = matTotals[which];
+        const hasAnyType = m['U/2']>0||m['BL']>0||m['O/V']>0;
+        if (!hasAnyType && m['other']===0) return;
+
+        // material header
+        dTypeBlock.innerHTML += `<div style="width:100%;padding:4px 10px 2px;font-size:11px;font-weight:800;color:#8C4A36;background:#f5ede2;border-radius:6px 6px 0 0;">🪵 ${m.label}</div>`;
+
+        if (m['U/2']>0) {
+          const id = 'dPrice_'+which+'_U2';
+          dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-U2"><span>U/2 — ${m['U/2'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+          storedData.push({ id, cft: m['U/2'] });
+        }
+        if (m['BL']>0) {
+          const id = 'dPrice_'+which+'_BL';
+          dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-BL"><span>BL — ${m['BL'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+          storedData.push({ id, cft: m['BL'] });
+        }
+        if (m['O/V']>0) {
+          const id = 'dPrice_'+which+'_OV';
+          dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-OV"><span>O/V — ${m['O/V'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+          storedData.push({ id, cft: m['O/V'] });
+        }
+        if (hasAnyType && m['other']>0) {
+          const id = 'dPrice_'+which+'_other';
+          dTypeBlock.innerHTML += `<div class="type-subtotal-row" style="background:#f0ebe4;color:#5a3e2b;"><span>অন্য — ${m['other'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
+          storedData.push({ id, cft: m['other'] });
+        }
+      });
+
+      if (anyType) dTypeBlock.innerHTML += `<div class="type-grand-total" id="dTypeGrandTotal" style="display:none"><span>মোট টাকা (৳)</span><span id="dTypeGrandTotalVal">০</span></div>`;
+
+      // store for calcDTypeTotal
+      dTypeBlock.dataset.items = JSON.stringify(storedData);
     }
     document.getElementById('dPriceLabelA').textContent = dLabel('A');
     document.getElementById('dPriceLabelB').textContent = dLabel('B');
@@ -4270,18 +4297,21 @@
   function calcDTypeTotal() {
     const block = document.getElementById('dWoodTypeSubtotals');
     if (!block) return;
-    const u2 = parseFloat(block.dataset.u2) || 0;
-    const bl = parseFloat(block.dataset.bl) || 0;
-    const ov = parseFloat(block.dataset.ov) || 0;
-    const noType = parseFloat(block.dataset.notype) || 0;
-    const pu2 = parseFloat((document.getElementById('dPriceU2') || {}).value) || 0;
-    const pbl = parseFloat((document.getElementById('dPriceBL') || {}).value) || 0;
-    const pov = parseFloat((document.getElementById('dPriceOV') || {}).value) || 0;
-    const pNoType = parseFloat((document.getElementById('dPriceNoType') || {}).value) || 0;
-    const typeTotal = Math.round(u2 * pu2 + bl * pbl + ov * pov + noType * pNoType);
+    // সব item এর CFT × দাম যোগ করো
+    let typeTotal = 0;
+    let anyPrice = false;
+    try {
+      const items = JSON.parse(block.dataset.items || '[]');
+      items.forEach(function(item) {
+        const el = document.getElementById(item.id);
+        const price = el ? (parseFloat(el.value) || 0) : 0;
+        if (price > 0) { anyPrice = true; typeTotal += item.cft * price; }
+      });
+    } catch(e) {}
+    typeTotal = Math.round(typeTotal);
     const el = document.getElementById('dTypeGrandTotal');
     const valEl = document.getElementById('dTypeGrandTotalVal');
-    const show = (pu2 > 0 || pbl > 0 || pov > 0 || pNoType > 0);
+    const show = anyPrice;
     if (el && valEl) {
       el.style.display = show ? 'flex' : 'none';
       valEl.textContent = typeTotal.toLocaleString('en-IN');
@@ -4991,7 +5021,7 @@ function tbDownload() {
     <div class="devinfo-sub">কাঠ CFT ক্যালকুলেটর</div>
     <div class="devinfo-msg">যেকোনো আপডেট বা সমস্যার জন্য যোগাযোগ করুন:</div>
     <div class="devinfo-phone">📞 01707172345</div>
-    <div class="devinfo-note">⚠️ অ্যাপস আপডেট হলে ইন্টারনেট অন করে একবার রিফ্রেশ করুন।</div>
+    <div class="devinfo-note">⚠️ অ্যাপস আপডেট হলে ইন্টারনেট অন করে অ্যাপস ওপেন করুন, অ্যাপস একবার রিফ্রেশ করুন।</div>
     <button class="devinfo-close" onclick="closeDevInfo()">✖ বন্ধ করুন</button>
   </div>
 </div>
