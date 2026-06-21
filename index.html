@@ -3160,12 +3160,15 @@
       const u2 = parseFloat(typeBlock.dataset.u2) || 0;
       const bl = parseFloat(typeBlock.dataset.bl) || 0;
       const ov = parseFloat(typeBlock.dataset.ov) || 0;
+      const noType = parseFloat(typeBlock.dataset.notype) || 0;
       const pu2 = parseFloat((document.getElementById('priceU2') || {}).value) || 0;
       const pbl = parseFloat((document.getElementById('priceBL') || {}).value) || 0;
       const pov = parseFloat((document.getElementById('priceOV') || {}).value) || 0;
+      const pNoType = parseFloat((document.getElementById('priceNoType') || {}).value) || 0;
       if (u2 > 0) typeRows.push({ label: 'U/2', cft: u2, price: pu2, taka: Math.round(u2 * pu2) });
       if (bl > 0) typeRows.push({ label: 'BL', cft: bl, price: pbl, taka: Math.round(bl * pbl) });
       if (ov > 0) typeRows.push({ label: 'O/V', cft: ov, price: pov, taka: Math.round(ov * pov) });
+      if (noType > 0) typeRows.push({ label: 'অন্য', cft: noType, price: pNoType, taka: Math.round(noType * pNoType) });
     }
     const typeGrandTotal = typeRows.reduce((s, r) => s + r.taka, 0);
     const typeBokeyaNum = parseFloat((document.getElementById('typeBokeyaInput') || {}).value) || 0;
@@ -3287,7 +3290,7 @@
 
     // === Wood type subtotals ===
     if (typeVisible && typeRows.length > 0) {
-      const typeColors = { 'U/2': ['#2ea862','#1e8449'], 'BL': ['#3a8fc0','#1a5276'], 'O/V': ['#d68910','#a04000'] };
+      const typeColors = { 'U/2': ['#2ea862','#1e8449'], 'BL': ['#3a8fc0','#1a5276'], 'O/V': ['#d68910','#a04000'], 'অন্য': ['#a89478','#5a3e2b'] };
       typeRows.forEach(tr => {
         const cardX = startX, cardW = W - 32;
         const [c1, c2] = typeColors[tr.label] || ['#888','#555'];
@@ -4208,22 +4211,22 @@
         if (m['U/2']>0) {
           const id = 'dPrice_'+which+'_U2';
           dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-U2"><span>U/2 — ${m['U/2'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-          storedData.push({ id, cft: m['U/2'] });
+          storedData.push({ id, cft: m['U/2'], mat: which, matLabel: m.label, typeLabel: 'U/2' });
         }
         if (m['BL']>0) {
           const id = 'dPrice_'+which+'_BL';
           dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-BL"><span>BL — ${m['BL'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-          storedData.push({ id, cft: m['BL'] });
+          storedData.push({ id, cft: m['BL'], mat: which, matLabel: m.label, typeLabel: 'BL' });
         }
         if (m['O/V']>0) {
           const id = 'dPrice_'+which+'_OV';
           dTypeBlock.innerHTML += `<div class="type-subtotal-row ts-OV"><span>O/V — ${m['O/V'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-          storedData.push({ id, cft: m['O/V'] });
+          storedData.push({ id, cft: m['O/V'], mat: which, matLabel: m.label, typeLabel: 'O/V' });
         }
         if (hasAnyType && m['other']>0) {
           const id = 'dPrice_'+which+'_other';
           dTypeBlock.innerHTML += `<div class="type-subtotal-row" style="background:#f0ebe4;color:#5a3e2b;"><span>অন্য — ${m['other'].toFixed(4)} CFT</span><input class="type-price-input" type="number" id="${id}" placeholder="দাম/CFT" min="0" inputmode="numeric" oninput="calcDTypeTotal()"></div>`;
-          storedData.push({ id, cft: m['other'] });
+          storedData.push({ id, cft: m['other'], mat: which, matLabel: m.label, typeLabel: 'অন্য' });
         }
       });
 
@@ -4579,31 +4582,43 @@
       block += '\n\nজমা: ৳' + paid.toLocaleString('en-IN') + '\nবাকি: ৳' + due.toLocaleString('en-IN');
     }
 
-    // Wood-type based pricing (U/2, BL, O/V) — shown after the type CFT subtotals
+    // Wood-type based pricing (U/2, BL, O/V, অন্য) — per material, shown after the type CFT subtotals
     const dTypeBlock = document.getElementById('dWoodTypeSubtotals');
     if (dTypeBlock && dTypeBlock.style.display !== 'none') {
-      const tu2 = parseFloat(dTypeBlock.dataset.u2) || 0;
-      const tbl = parseFloat(dTypeBlock.dataset.bl) || 0;
-      const tov = parseFloat(dTypeBlock.dataset.ov) || 0;
-      const ptu2 = parseFloat((document.getElementById('dPriceU2') || {}).value) || 0;
-      const ptbl = parseFloat((document.getElementById('dPriceBL') || {}).value) || 0;
-      const ptov = parseFloat((document.getElementById('dPriceOV') || {}).value) || 0;
-      const typeRowsExport = [];
-      if (tu2 > 0) typeRowsExport.push({ label: 'U/2', cft: tu2, price: ptu2 });
-      if (tbl > 0) typeRowsExport.push({ label: 'BL', cft: tbl, price: ptbl });
-      if (tov > 0) typeRowsExport.push({ label: 'O/V', cft: tov, price: ptov });
+      let items = [];
+      try { items = JSON.parse(dTypeBlock.dataset.items || '[]'); } catch(e) {}
+
       let typeGrandTaka = 0;
       let typeHasPrice = false;
-      typeRowsExport.forEach(r => {
-        if (r.price > 0) {
+      const seenMats = [];
+
+      ['A', 'B'].forEach(function(which) {
+        const matItems = items.filter(it => it.mat === which);
+        if (!matItems.length) return;
+        const pricedRows = [];
+        let matTaka = 0;
+        matItems.forEach(it => {
+          const el = document.getElementById(it.id);
+          const price = el ? (parseFloat(el.value) || 0) : 0;
+          if (price > 0) {
+            const taka = Math.round(it.cft * price);
+            matTaka += taka;
+            pricedRows.push(it.typeLabel + ' - প্রতি CFT দাম: ৳' + price + '\n' + it.typeLabel + ' মোট টাকা: ৳' + taka.toLocaleString('en-IN'));
+          }
+        });
+        if (pricedRows.length) {
           typeHasPrice = true;
-          const taka = Math.round(r.cft * r.price);
-          typeGrandTaka += taka;
-          block += '\n\n' + r.label + ' - প্রতি CFT দাম: ৳' + r.price + '\n' + r.label + ' মোট টাকা: ৳' + taka.toLocaleString('en-IN');
+          typeGrandTaka += matTaka;
+          block += '\n\n🪵 ' + matItems[0].matLabel + ':\n' + pricedRows.join('\n');
+          if (pricedRows.length > 1) {
+            block += '\n' + matItems[0].matLabel + ' সর্বমোট: ৳' + matTaka.toLocaleString('en-IN');
+          }
+          seenMats.push(which);
         }
       });
+
       if (typeHasPrice) {
-        if (typeRowsExport.filter(r => r.price > 0).length > 1) {
+        if (seenMats.length > 1) {
           block += '\n\nসর্বমোট টাকা: ৳' + typeGrandTaka.toLocaleString('en-IN');
         }
         const typeBokeya = parseFloat((document.getElementById('dTypeBokeyaInput') || {}).value) || 0;
