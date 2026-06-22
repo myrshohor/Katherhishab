@@ -2437,6 +2437,7 @@
     document.getElementById('profilePage').classList.remove('active');
     applyProfile();
     init();
+    if (typeof fbRegisterUser === "function") fbRegisterUser(name, phone, address);
   }
 
   function applyProfile() {
@@ -2482,6 +2483,7 @@
   }
 
   function checkProfileOnStart() {
+    if (typeof fbOnAppOpen === "function") fbOnAppOpen();
     const p = getProfile();
     if (!p || !p.name) {
       document.getElementById('profilePage').classList.add('active');
@@ -5054,5 +5056,169 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
 });
 </script>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+//  Firebase Integration — কাঠ CFT ক্যালকুলেটর
+// ═══════════════════════════════════════════════
+(function () {
+  const FB_CONFIG = {
+    apiKey:            "AIzaSyBTddK_2tWHyc5bheIAnMukSQGV9JxL754",
+    authDomain:        "katherhishabapp.firebaseapp.com",
+    projectId:         "katherhishabapp",
+    storageBucket:     "katherhishabapp.firebasestorage.app",
+    messagingSenderId: "267868755262",
+    appId:             "1:267868755262:web:f2d69d3fdac3476305486f"
+  };
+
+  let fbdb = null;
+  let fbReady = false;
+
+  function initFB() {
+    try {
+      if (typeof firebase === 'undefined') return;
+      if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+      fbdb = firebase.firestore();
+      fbReady = true;
+    } catch(e) { console.warn('Firebase init:', e.message); }
+  }
+
+  function getDeviceId() {
+    let id = localStorage.getItem('kath_deviceId');
+    if (!id) {
+      id = 'dev_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+      localStorage.setItem('kath_deviceId', id);
+    }
+    return id;
+  }
+
+  // ── ইউজার রেজিস্ট্রেশন ──
+  window.fbRegisterUser = async function(name, phone, address) {
+    if (!fbReady) { initFB(); if (!fbReady) return; }
+    try {
+      const deviceId = getDeviceId();
+      const userId = phone ? phone.replace(/[^0-9]/g, '') : deviceId;
+      await fbdb.collection('users').doc(userId).set({
+        name: name || '',
+        phone: phone || '',
+        address: address || '',
+        deviceId: deviceId,
+        registeredAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+        blocked: false,
+        premium: false
+      }, { merge: true });
+      localStorage.setItem('kath_userId', userId);
+    } catch(e) { console.warn('Register user:', e.message); }
+  };
+
+  // ── অ্যাপ খোলার সময় ──
+  window.fbOnAppOpen = async function() {
+    initFB();
+    if (!fbReady) return;
+
+    // ১. App open count
+    const todayKey = new Date().toISOString().split('T')[0];
+    try {
+      await fbdb.collection('appStats').doc(todayKey).set({
+        opens: firebase.firestore.FieldValue.increment(1),
+        date: todayKey
+      }, { merge: true });
+    } catch(e) {}
+
+    // ২. Last seen
+    const userId = localStorage.getItem('kath_userId');
+    if (userId) {
+      try {
+        await fbdb.collection('users').doc(userId).update({
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch(e) {}
+    }
+
+    if (!userId) return;
+
+    // ৩. ব্লক চেক
+    try {
+      const snap = await fbdb.collection('users').doc(userId).get();
+      if (!snap.exists) return;
+      const userData = snap.data();
+
+      if (userData.blocked === true) {
+        document.body.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;
+            background:#F5EDE2;padding:20px;font-family:'Segoe UI',Arial,sans-serif;">
+            <div style="background:white;border-radius:20px;padding:32px 24px;max-width:360px;
+              width:100%;text-align:center;box-shadow:0 8px 32px rgba(140,74,54,0.2);">
+              <div style="font-size:52px;margin-bottom:12px;">🚫</div>
+              <div style="font-size:20px;font-weight:800;color:#c0392b;margin-bottom:8px;">অ্যাক্সেস বন্ধ</div>
+              <div style="font-size:14px;color:#6a5a4a;line-height:1.7;">
+                আপনার অ্যাপ ব্যবহার করার অনুমতি বন্ধ করা হয়েছে।<br>
+                যোগাযোগ করুন: <strong>01707172345</strong>
+              </div>
+            </div>
+          </div>`;
+        return;
+      }
+
+      // ৪. পার্সোনাল নোটিফিকেশন
+      if (userData.personalNotif && userData.personalNotif.active) {
+        const pn = userData.personalNotif;
+        const seenKey = 'kath_seen_personal_' + (pn.id || 'p');
+        if (!localStorage.getItem(seenKey)) {
+          showNotifModal(pn.title, pn.message, '👤 ব্যক্তিগত বার্তা', async () => {
+            localStorage.setItem(seenKey, '1');
+            try {
+              await fbdb.collection('users').doc(userId).update({ 'personalNotif.active': false });
+            } catch(e) {}
+          });
+          return;
+        }
+      }
+
+      // ৫. সাধারণ / প্রিমিয়াম নোটিফিকেশন
+      const snap2 = await fbdb.collection('notifications').doc('active').get();
+      if (snap2.exists && snap2.data().active) {
+        const d = snap2.data();
+        if (d.type === 'paid' && !userData.premium) return;
+        const seenKey = 'kath_seen_' + (d.id || 'notif');
+        if (!localStorage.getItem(seenKey)) {
+          const badge = d.type === 'paid' ? '👑 প্রিমিয়াম বার্তা' : '📢 নতুন বার্তা';
+          showNotifModal(d.title, d.message, badge, () => {
+            localStorage.setItem(seenKey, '1');
+          });
+        }
+      }
+    } catch(e) { console.warn('App open check:', e.message); }
+  };
+
+  function showNotifModal(title, msg, badge, onClose) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.innerHTML = `
+      <div style="background:white;border-radius:20px;padding:26px 22px;max-width:360px;
+        width:100%;box-shadow:0 12px 40px rgba(0,0,0,0.25);font-family:'Segoe UI','Noto Sans Bengali',Arial,sans-serif;">
+        <div style="font-size:32px;text-align:center;margin-bottom:10px;">📢</div>
+        <div style="font-size:11px;font-weight:700;color:#b8860b;text-align:center;
+          background:#fff8e1;padding:4px 12px;border-radius:20px;margin-bottom:10px;">${escS(badge)}</div>
+        <div style="font-size:17px;font-weight:800;color:#8C4A36;text-align:center;margin-bottom:8px;">${escS(title || 'নতুন বার্তা')}</div>
+        <div style="font-size:14px;color:#3E2F26;line-height:1.7;background:#F5EDE2;
+          border-radius:12px;padding:14px;margin-bottom:16px;">${escS(msg || '')}</div>
+        <button id="fbNotifClose" style="width:100%;padding:13px;background:#8C4A36;color:white;
+          border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;">✅ বুঝেছি</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.getElementById('fbNotifClose').onclick = () => { overlay.remove(); if (onClose) onClose(); };
+  }
+
+  function escS(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // পেজ লোডের সাথে সাথে Firebase শুরু করো
+  initFB();
+})();
+</script>
 </body>
 </html>
