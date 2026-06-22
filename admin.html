@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>অ্যাডমিন প্যানেল | কাঠ CFT</title>
+<style>
+:root {
+  --sand: #E8DCC8; --sand-light: #F5EDE2;
+  --brick: #B5634A; --brick-dark: #8C4A36;
+  --text-dark: #3E2F26; --border: #D6C5AD;
+  --white: #FFFFFF; --green: #2e7d32; --red: #c0392b;
+  --gold: #b8860b; --gold-light: #fff8e1;
+}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI','Noto Sans Bengali',Arial,sans-serif; -webkit-tap-highlight-color:transparent; }
+body { background:linear-gradient(135deg,#F5EDE2,#E8DCC8); min-height:100vh; color:var(--text-dark); }
+
+/* ── Login ── */
+.login-wrap { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+.login-card { background:white; border-radius:20px; padding:32px 28px; max-width:380px; width:100%; box-shadow:0 8px 32px rgba(140,74,54,0.2); text-align:center; }
+.login-logo { font-size:52px; margin-bottom:12px; }
+.login-title { font-size:22px; font-weight:800; color:var(--brick-dark); margin-bottom:4px; }
+.login-sub { font-size:13px; color:#a08e76; margin-bottom:28px; }
+.login-input { width:100%; padding:14px 16px; border:2px solid var(--border); border-radius:12px; font-size:16px; outline:none; margin-bottom:14px; background:var(--sand-light); transition:border-color 0.2s; }
+.login-input:focus { border-color:var(--brick); }
+.login-btn { width:100%; padding:15px; background:var(--brick-dark); color:white; border:none; border-radius:12px; font-size:17px; font-weight:700; cursor:pointer; }
+.login-btn:active { opacity:0.85; }
+.login-err { color:var(--red); font-size:13px; margin-top:10px; display:none; background:#fdecea; padding:8px; border-radius:8px; }
+
+/* ── Dashboard ── */
+#dashboard { display:none; max-width:520px; margin:0 auto; padding-bottom:40px; }
+.admin-header { background:var(--brick-dark); color:white; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:20; }
+.admin-header h1 { font-size:16px; font-weight:800; }
+.logout-btn { background:rgba(255,255,255,0.2); border:none; color:white; padding:7px 14px; border-radius:8px; font-size:13px; cursor:pointer; font-weight:600; }
+.logout-btn:active { background:rgba(255,255,255,0.35); }
+
+/* ── Tabs ── */
+.tabs { display:flex; background:white; border-bottom:2px solid var(--border); position:sticky; top:48px; z-index:10; overflow-x:auto; }
+.tab-btn { flex:1; min-width:72px; padding:11px 4px; background:none; border:none; font-size:11px; font-weight:700; color:#a08e76; cursor:pointer; border-bottom:3px solid transparent; white-space:nowrap; }
+.tab-btn.active { color:var(--brick-dark); border-bottom-color:var(--brick-dark); }
+.tab-content { display:none; padding:16px; }
+.tab-content.active { display:block; }
+
+/* ── Alert box ── */
+.setup-alert { background:#fffbe6; border:1px solid #f0e080; border-radius:12px; padding:14px; margin-bottom:14px; font-size:13px; color:#7a6a00; line-height:1.7; }
+.setup-alert strong { color:var(--brick-dark); display:block; margin-bottom:6px; font-size:14px; }
+.setup-alert ol { padding-left:18px; }
+.setup-alert li { margin-bottom:3px; }
+
+/* ── Stats ── */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.stat-card { background:white; border-radius:14px; padding:16px 12px; text-align:center; box-shadow:0 2px 8px rgba(140,74,54,0.1); }
+.stat-icon { font-size:26px; margin-bottom:6px; }
+.stat-value { font-size:30px; font-weight:800; color:var(--brick-dark); line-height:1; }
+.stat-label { font-size:11px; color:#a08e76; font-weight:600; margin-top:4px; }
+.stat-full { grid-column:1/-1; }
+.refresh-btn { display:block; margin:0 auto; padding:10px 24px; background:var(--sand); border:none; border-radius:10px; font-size:13px; font-weight:700; color:var(--brick-dark); cursor:pointer; }
+.refresh-btn:active { background:var(--border); }
+
+/* ── User list ── */
+.search-box { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:12px; font-size:14px; outline:none; background:white; margin-bottom:12px; }
+.search-box:focus { border-color:var(--brick); }
+.user-count { font-size:12px; color:#a08e76; margin-bottom:10px; font-weight:600; }
+.user-card { background:white; border-radius:12px; padding:14px; margin-bottom:10px; box-shadow:0 2px 6px rgba(140,74,54,0.08); display:flex; align-items:flex-start; gap:12px; }
+.user-avatar { width:44px; height:44px; border-radius:50%; background:var(--brick-dark); color:white; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:800; flex-shrink:0; }
+.user-info { flex:1; min-width:0; }
+.user-name { font-size:14px; font-weight:700; color:var(--text-dark); }
+.user-phone { font-size:13px; color:#6a5a4a; margin-top:2px; }
+.user-addr { font-size:12px; color:#8a7a68; margin-top:2px; }
+.user-date { font-size:11px; color:#b0a090; margin-top:4px; }
+.user-lastseen { font-size:10px; color:#c0b0a0; margin-top:1px; }
+.user-status-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; display:inline-block; margin-top:4px; }
+.status-ok { background:#eafaf1; color:var(--green); }
+.status-blocked { background:#fdecea; color:var(--red); }
+.status-premium { background:var(--gold-light); color:var(--gold); }
+.user-actions { display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
+.btn-block-action { padding:7px 12px; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.btn-do-block { background:#fdecea; color:var(--red); }
+.btn-do-unblock { background:#eafaf1; color:var(--green); }
+.btn-do-block:active { background:#f5b7b1; }
+.btn-do-unblock:active { background:#a9dfbf; }
+.btn-premium-toggle { padding:7px 12px; border:none; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; background:var(--gold-light); color:var(--gold); }
+.btn-premium-toggle:active { opacity:0.8; }
+.user-empty { text-align:center; color:#a08e76; padding:40px 0; font-size:14px; line-height:1.8; }
+
+/* ── Notification ── */
+.section-title { font-size:14px; font-weight:800; color:var(--text-dark); margin-bottom:4px; }
+.section-sub { font-size:12px; color:#a08e76; margin-bottom:12px; line-height:1.5; }
+.notif-input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:10px; font-size:14px; outline:none; background:white; margin-bottom:10px; }
+.notif-textarea { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:10px; font-size:14px; outline:none; background:white; min-height:90px; resize:vertical; margin-bottom:12px; font-family:inherit; }
+.notif-input:focus, .notif-textarea:focus { border-color:var(--brick); }
+
+/* Notification type selector */
+.notif-type-row { display:flex; gap:8px; margin-bottom:12px; }
+.notif-type-btn { flex:1; padding:10px 6px; border:2px solid var(--border); border-radius:10px; background:white; font-size:12px; font-weight:700; color:#a08e76; cursor:pointer; text-align:center; transition:all 0.2s; }
+.notif-type-btn.selected { border-color:var(--brick-dark); background:var(--sand-light); color:var(--brick-dark); }
+.notif-type-btn.selected.premium-type { border-color:var(--gold); background:var(--gold-light); color:var(--gold); }
+
+/* Target user input */
+.target-user-wrap { display:none; margin-bottom:10px; }
+.target-user-wrap.show { display:block; }
+.target-input { width:100%; padding:12px 14px; border:2px solid var(--gold); border-radius:10px; font-size:14px; outline:none; background:var(--gold-light); }
+.target-input:focus { border-color:var(--gold); }
+
+.btn-send { width:100%; padding:14px; background:var(--green); color:white; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; margin-bottom:10px; }
+.btn-send.premium-send { background:var(--gold); }
+.btn-send:active { opacity:0.85; }
+.btn-clear-notif { width:100%; padding:12px; background:#fdecea; color:var(--red); border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; margin-bottom:20px; }
+.btn-clear-notif:active { opacity:0.85; }
+.divider { height:1px; background:var(--border); margin:16px 0; }
+.notif-item { background:white; border-radius:10px; padding:12px 14px; margin-bottom:8px; box-shadow:0 1px 4px rgba(140,74,54,0.08); }
+.notif-item.paid-notif { border-left:3px solid var(--gold); }
+.notif-item-title { font-size:13px; font-weight:700; color:var(--brick-dark); }
+.notif-item-msg { font-size:13px; color:var(--text-dark); margin-top:3px; line-height:1.5; }
+.notif-item-date { font-size:11px; color:#a08e76; margin-top:5px; }
+.notif-item-badge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; display:inline-block; margin-top:4px; }
+.badge-general { background:#eafaf1; color:var(--green); }
+.badge-paid { background:var(--gold-light); color:var(--gold); }
+.badge-target { background:#e8f4fd; color:#1565c0; }
+.current-notif-box { background:var(--sand-light); border:1px solid var(--border); border-radius:12px; padding:14px; margin-bottom:16px; }
+.current-notif-label { font-size:11px; font-weight:700; color:#a08e76; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px; }
+.current-notif-title { font-size:15px; font-weight:800; color:var(--brick-dark); }
+.current-notif-msg { font-size:13px; color:var(--text-dark); margin-top:4px; line-height:1.6; }
+
+/* ── Settings ── */
+.settings-card { background:white; border-radius:14px; padding:18px; margin-bottom:14px; box-shadow:0 2px 8px rgba(140,74,54,0.08); }
+.settings-card-title { font-size:14px; font-weight:800; color:var(--brick-dark); margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:10px; }
+.settings-input { width:100%; padding:12px 14px; border:2px solid var(--border); border-radius:10px; font-size:14px; outline:none; background:var(--sand-light); margin-bottom:10px; }
+.settings-input:focus { border-color:var(--brick); }
+.btn-save-set { width:100%; padding:13px; background:var(--brick-dark); color:white; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; }
+.btn-save-set:active { opacity:0.85; }
+.info-row { font-size:13px; color:#6a5a4a; padding:6px 0; border-bottom:1px solid var(--sand); display:flex; justify-content:space-between; }
+.info-row:last-child { border-bottom:none; }
+.info-row span { font-weight:700; color:var(--brick-dark); }
+
+/* ── Toast ── */
+.toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:12px 22px; border-radius:12px; font-size:14px; font-weight:600; z-index:9999; opacity:0; transition:opacity 0.3s; pointer-events:none; max-width:90vw; text-align:center; }
+.toast.show { opacity:1; }
+
+/* ── Loading ── */
+.loading { text-align:center; color:#a08e76; padding:24px; font-size:13px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">🔐</div>
+    <div class="login-title">অ্যাডমিন প্যানেল</div>
+    <div class="login-sub">কাঠ CFT ক্যালকুলেটর — শুধুমাত্র অ্যাডমিনের জন্য</div>
+    <input class="login-input" type="password" id="adminPassword" placeholder="🔑 পাসওয়ার্ড লিখুন"
+      onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">🔓 লগইন করুন</button>
+    <div class="login-err" id="loginErr">❌ পাসওয়ার্ড ভুল হয়েছে!</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+  <!-- Header -->
+  <div class="admin-header">
+    <h1>🛠️ অ্যাডমিন প্যানেল</h1>
+    <button class="logout-btn" onclick="doLogout()">🔒 লগআউট</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabBar">
+    <button class="tab-btn active" onclick="switchTab('stats',this)">📊 ড্যাশবোর্ড</button>
+    <button class="tab-btn" onclick="switchTab('users',this)">👥 ইউজার</button>
+    <button class="tab-btn" onclick="switchTab('notif',this)">📢 নোটিফিকেশন</button>
+    <button class="tab-btn" onclick="switchTab('settings',this)">⚙️ সেটিং</button>
+  </div>
+
+  <!-- STATS TAB -->
+  <div class="tab-content active" id="tab-stats">
+    <div id="firebaseAlert" class="setup-alert" style="display:none">
+      <strong>⚠️ Firebase এখনো সেটআপ হয়নি</strong>
+      নিচের ধাপ অনুসরণ করুন:
+      <ol>
+        <li>console.firebase.google.com এ যান, Google দিয়ে লগইন করুন</li>
+        <li>"Add project" → প্রজেক্টের নাম দিন → তৈরি করুন</li>
+        <li>Project Settings (⚙️ আইকন) → "Your apps" → Web (&lt;/&gt;) ক্লিক</li>
+        <li>Config কোডের apiKey, projectId ইত্যাদি কপি করুন</li>
+        <li>এই admin.html ফাইলে FIREBASE_CONFIG অংশে বসান</li>
+        <li>Firestore Database → "Create database" → Test mode → Enable</li>
+      </ol>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-label">মোট ইউজার</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-value" id="statActive">—</div>
+        <div class="stat-label">সক্রিয় ইউজার</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🚫</div>
+        <div class="stat-value" id="statBlocked">—</div>
+        <div class="stat-label">ব্লক করা</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👑</div>
+        <div class="stat-value" id="statPremium">—</div>
+        <div class="stat-label">প্রিমিয়াম ইউজার</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🆕</div>
+        <div class="stat-value" id="statToday">—</div>
+        <div class="stat-label">আজকের নতুন ইউজার</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📱</div>
+        <div class="stat-value" id="statOpens">—</div>
+        <div class="stat-label">আজ অ্যাপ খোলা হয়েছে</div>
+      </div>
+    </div>
+    <button class="refresh-btn" onclick="loadAllData()">🔄 রিফ্রেশ করুন</button>
+  </div>
+
+  <!-- USERS TAB -->
+  <div class="tab-content" id="tab-users">
+    <input class="search-box" type="text" id="searchInput"
+      placeholder="🔍 নাম বা ফোন নম্বর দিয়ে খুঁজুন..."
+      oninput="filterUsers()" autocomplete="off">
+    <div id="userCount" class="user-count"></div>
+    <div id="userList"><div class="loading">⏳ লোড হচ্ছে...</div></div>
+  </div>
+
+  <!-- NOTIFICATION TAB -->
+  <div class="tab-content" id="tab-notif">
+
+    <!-- Current active notification -->
+    <div id="currentNotifBox" style="display:none" class="current-notif-box">
+      <div class="current-notif-label">🟢 এখন সক্রিয় নোটিফিকেশন</div>
+      <div class="current-notif-title" id="currentNotifTitle"></div>
+      <div class="current-notif-msg" id="currentNotifMsg"></div>
+    </div>
+
+    <!-- Notification type -->
+    <div class="section-title">📢 নোটিফিকেশন পাঠান</div>
+    <div class="section-sub">ধরন বেছে নিন:</div>
+
+    <div class="notif-type-row">
+      <button class="notif-type-btn selected" id="typeGeneral" onclick="selectNotifType('general')">
+        📣 সবাইকে
+      </button>
+      <button class="notif-type-btn premium-type" id="typePaid" onclick="selectNotifType('paid')">
+        👑 প্রিমিয়াম
+      </button>
+      <button class="notif-type-btn" id="typeTarget" onclick="selectNotifType('target')">
+        🎯 নির্দিষ্ট ইউজার
+      </button>
+    </div>
+
+    <!-- Target user input (shown only for 'target' type) -->
+    <div class="target-user-wrap" id="targetUserWrap">
+      <input class="target-input" type="text" id="targetPhone"
+        placeholder="📞 ফোন নম্বর দিন (যেমন: 01712345678)">
+    </div>
+
+    <input class="notif-input" type="text" id="notifTitle" placeholder="শিরোনাম (যেমন: নতুন আপডেট 🎉)">
+    <textarea class="notif-textarea" id="notifMsg"
+      placeholder="বার্তা লিখুন..."></textarea>
+
+    <button class="btn-send" id="btnSend" onclick="sendNotification()">📤 পাঠান — সবাইকে</button>
+    <button class="btn-clear-notif" onclick="clearNotification()">🗑️ বর্তমান নোটিফিকেশন বন্ধ করুন</button>
+
+    <div class="divider"></div>
+    <div class="section-title" style="margin-bottom:10px">📋 পাঠানো ইতিহাস</div>
+    <div id="notifHistory"><div class="loading">⏳ লোড হচ্ছে...</div></div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div class="tab-content" id="tab-settings">
+
+    <div class="settings-card">
+      <div class="settings-card-title">🔐 পাসওয়ার্ড পরিবর্তন করুন</div>
+      <div style="font-size:12px;color:#a08e76;margin-bottom:10px;">পাসওয়ার্ড Firebase-এ সুরক্ষিতভাবে সেভ হয়</div>
+      <input class="settings-input" type="password" id="currentPass" placeholder="বর্তমান পাসওয়ার্ড">
+      <input class="settings-input" type="password" id="newPass1" placeholder="নতুন পাসওয়ার্ড">
+      <input class="settings-input" type="password" id="newPass2" placeholder="আবার নতুন পাসওয়ার্ড">
+      <button class="btn-save-set" onclick="changePassword()">✅ পাসওয়ার্ড সেভ করুন</button>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-card-title">ℹ️ অ্যাপ তথ্য</div>
+      <div class="info-row">ডেভেলপার <span>Zahin</span></div>
+      <div class="info-row">যোগাযোগ <span>01707172345</span></div>
+      <div class="info-row">অ্যাপ <span>কাঠ CFT ক্যালকুলেটর</span></div>
+      <div class="info-row">SW ভার্সন <span>v34</span></div>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-card-title">🔥 Firebase সংযোগ অবস্থা</div>
+      <div id="fbStatus" class="info-row" style="justify-content:center;font-size:14px;">⏳ পরীক্ষা করছি...</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  ⚙️  FIREBASE CONFIG
+// ════════════════════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBTddK_2tWHyc5bheIAnMukSQGV9JxL754",
+  authDomain:        "katherhishabapp.firebaseapp.com",
+  projectId:         "katherhishabapp",
+  storageBucket:     "katherhishabapp.firebasestorage.app",
+  messagingSenderId: "267868755262",
+  appId:             "1:267868755262:web:f2d69d3fdac3476305486f"
+};
+
+// ════════════════════════════════════════════════════════════
+//  🔑  DEFAULT PASSWORD (শুধু প্রথমবার — Firebase-এ না থাকলে)
+// ════════════════════════════════════════════════════════════
+const DEFAULT_PASSWORD = "admin@123";
+// ════════════════════════════════════════════════════════════
+
+let db = null;
+let isFirebaseReady = false;
+let allUsers = [];
+let currentNotifType = 'general'; // 'general' | 'paid' | 'target'
+
+// ── Firebase Init ──
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    isFirebaseReady = true;
+    document.getElementById('fbStatus').innerHTML = '✅ Firebase সংযুক্ত';
+    return true;
+  } catch(e) {
+    document.getElementById('fbStatus').innerHTML = '❌ সংযোগ ব্যর্থ: ' + e.message;
+    return false;
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  🔐  PASSWORD — Firebase-এ সেভ থাকে
+// ════════════════════════════════════════════════════════════
+async function getAdminPass() {
+  if (!isFirebaseReady) return DEFAULT_PASSWORD;
+  try {
+    const snap = await db.collection('adminConfig').doc('auth').get();
+    if (snap.exists && snap.data().password) return snap.data().password;
+    return DEFAULT_PASSWORD;
+  } catch(e) {
+    return DEFAULT_PASSWORD;
+  }
+}
+
+async function saveAdminPass(newPass) {
+  if (!isFirebaseReady) throw new Error('Firebase সংযুক্ত নয়');
+  await db.collection('adminConfig').doc('auth').set({ password: newPass }, { merge: true });
+}
+
+// ── Login ──
+async function doLogin() {
+  const pw = document.getElementById('adminPassword').value;
+  if (!pw) return;
+
+  // Firebase প্রথমে শুরু করো
+  if (!isFirebaseReady) initFirebase();
+
+  const correctPass = await getAdminPass();
+  if (pw === correctPass) {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    sessionStorage.setItem('kath_adminIn', '1');
+    loadAllData();
+  } else {
+    const el = document.getElementById('loginErr');
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3000);
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('kath_adminIn');
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('adminPassword').value = '';
+}
+
+// Auto-login on reload
+window.addEventListener('load', () => {
+  initFirebase();
+  if (sessionStorage.getItem('kath_adminIn') === '1') {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadAllData();
+  }
+  document.getElementById('adminPassword').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+
+// ── Tabs ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'notif') loadNotifData();
+}
+
+// ── Load All Data ──
+async function loadAllData() {
+  if (!isFirebaseReady) return;
+  loadUsers();
+  loadStats();
+  loadNotifData();
+}
+
+// ── Stats ──
+async function loadStats() {
+  if (!isFirebaseReady) return;
+  try {
+    const snap = await db.collection('users').get();
+    let total = 0, blocked = 0, todayNew = 0, premium = 0;
+    const todayStr = new Date().toDateString();
+    snap.forEach(doc => {
+      total++;
+      const d = doc.data();
+      if (d.blocked) blocked++;
+      if (d.premium) premium++;
+      if (d.registeredAt) {
+        const t = d.registeredAt.toDate ? d.registeredAt.toDate() : new Date(d.registeredAt);
+        if (t.toDateString() === todayStr) todayNew++;
+      }
+    });
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statActive').textContent = total - blocked;
+    document.getElementById('statBlocked').textContent = blocked;
+    document.getElementById('statPremium').textContent = premium;
+    document.getElementById('statToday').textContent = todayNew;
+
+    const todayKey = new Date().toISOString().split('T')[0];
+    try {
+      const oSnap = await db.collection('appStats').doc(todayKey).get();
+      document.getElementById('statOpens').textContent = oSnap.exists ? (oSnap.data().opens || 0) : 0;
+    } catch(e) {
+      document.getElementById('statOpens').textContent = '—';
+    }
+  } catch(e) {
+    showToast('❌ ডেটা লোড হয়নি: ' + e.message);
+  }
+}
+
+// ── Load Users ──
+async function loadUsers() {
+  if (!isFirebaseReady) {
+    document.getElementById('userList').innerHTML = '<div class="user-empty">⚠️ Firebase সেটআপ করুন।</div>';
+    return;
+  }
+  document.getElementById('userList').innerHTML = '<div class="loading">⏳ লোড হচ্ছে...</div>';
+  try {
+    const snap = await db.collection('users').orderBy('registeredAt', 'desc').get();
+    allUsers = [];
+    snap.forEach(doc => allUsers.push({ id: doc.id, ...doc.data() }));
+    renderUsers(allUsers);
+  } catch(e) {
+    document.getElementById('userList').innerHTML = '<div class="user-empty">❌ ডেটা পাওয়া যায়নি।<br>' + e.message + '</div>';
+  }
+}
+
+// ── Render Users ──
+function renderUsers(users) {
+  const listEl = document.getElementById('userList');
+  const countEl = document.getElementById('userCount');
+  countEl.textContent = 'মোট ' + users.length + ' জন ইউজার';
+  if (!users.length) {
+    listEl.innerHTML = '<div class="user-empty">এখনো কোনো ইউজার নেই।<br><small>ইউজাররা প্রথমবার অ্যাপ খুললে এখানে দেখাবে।</small></div>';
+    return;
+  }
+  listEl.innerHTML = users.map(u => {
+    const blocked = u.blocked === true;
+    const isPremium = u.premium === true;
+    const initial = (u.name || '?').charAt(0).toUpperCase();
+    const regDate = u.registeredAt
+      ? new Date(u.registeredAt.toDate ? u.registeredAt.toDate() : u.registeredAt).toLocaleDateString('bn-BD')
+      : '—';
+    const lastSeen = u.lastSeen
+      ? new Date(u.lastSeen.toDate ? u.lastSeen.toDate() : u.lastSeen).toLocaleString('bn-BD')
+      : '—';
+    let avatarBg = isPremium ? 'var(--gold)' : (blocked ? '#c0392b' : 'var(--brick-dark)');
+    return `
+      <div class="user-card">
+        <div class="user-avatar" style="background:${avatarBg}">${isPremium ? '👑' : initial}</div>
+        <div class="user-info">
+          <div class="user-name">${escHtml(u.name || '—')}</div>
+          <div class="user-phone">📞 ${escHtml(u.phone || 'নম্বর নেই')}</div>
+          ${u.address ? `<div class="user-addr">📍 ${escHtml(u.address)}</div>` : ''}
+          <div class="user-date">নিবন্ধন: ${regDate}</div>
+          <div class="user-lastseen">শেষ সক্রিয়: ${lastSeen}</div>
+          ${isPremium ? '<span class="user-status-badge status-premium">👑 প্রিমিয়াম</span>' : ''}
+          <span class="user-status-badge ${blocked ? 'status-blocked' : 'status-ok'}">${blocked ? '🚫 ব্লক' : '✅ সক্রিয়'}</span>
+        </div>
+        <div class="user-actions">
+          <button class="btn-block-action ${blocked ? 'btn-do-unblock' : 'btn-do-block'}"
+            onclick="toggleBlock('${escHtml(u.id)}', ${blocked})">
+            ${blocked ? '✅ আনব্লক' : '🚫 ব্লক'}
+          </button>
+          <button class="btn-premium-toggle"
+            onclick="togglePremium('${escHtml(u.id)}', ${isPremium})">
+            ${isPremium ? '👑 প্রিমিয়াম বাতিল' : '⭐ প্রিমিয়াম দিন'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Filter Users ──
+function filterUsers() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  if (!q) { renderUsers(allUsers); return; }
+  renderUsers(allUsers.filter(u =>
+    (u.name || '').toLowerCase().includes(q) ||
+    (u.phone || '').includes(q)
+  ));
+}
+
+// ── Toggle Block ──
+async function toggleBlock(userId, currentlyBlocked) {
+  if (!isFirebaseReady) { showToast('❌ Firebase সেটআপ করুন'); return; }
+  const newVal = !currentlyBlocked;
+  try {
+    await db.collection('users').doc(userId).update({ blocked: newVal });
+    const u = allUsers.find(x => x.id === userId);
+    if (u) u.blocked = newVal;
+    renderUsers(allUsers.filter(x => {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      if (!q) return true;
+      return (x.name || '').toLowerCase().includes(q) || (x.phone || '').includes(q);
+    }));
+    showToast(newVal ? '🚫 ইউজার ব্লক করা হয়েছে' : '✅ ইউজার আনব্লক করা হয়েছে');
+    loadStats();
+  } catch(e) {
+    showToast('❌ সমস্যা হয়েছে: ' + e.message);
+  }
+}
+
+// ── Toggle Premium ──
+async function togglePremium(userId, currentlyPremium) {
+  if (!isFirebaseReady) { showToast('❌ Firebase সেটআপ করুন'); return; }
+  const newVal = !currentlyPremium;
+  try {
+    await db.collection('users').doc(userId).update({ premium: newVal });
+    const u = allUsers.find(x => x.id === userId);
+    if (u) u.premium = newVal;
+    renderUsers(allUsers.filter(x => {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      if (!q) return true;
+      return (x.name || '').toLowerCase().includes(q) || (x.phone || '').includes(q);
+    }));
+    showToast(newVal ? '👑 প্রিমিয়াম চালু করা হয়েছে!' : '⭐ প্রিমিয়াম বাতিল করা হয়েছে');
+    loadStats();
+  } catch(e) {
+    showToast('❌ সমস্যা: ' + e.message);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  📢  NOTIFICATION TYPE SELECTOR
+// ════════════════════════════════════════════════════════════
+function selectNotifType(type) {
+  currentNotifType = type;
+  document.querySelectorAll('.notif-type-btn').forEach(b => b.classList.remove('selected'));
+
+  const btnSend = document.getElementById('btnSend');
+  const targetWrap = document.getElementById('targetUserWrap');
+
+  if (type === 'general') {
+    document.getElementById('typeGeneral').classList.add('selected');
+    btnSend.textContent = '📤 পাঠান — সবাইকে';
+    btnSend.className = 'btn-send';
+    targetWrap.classList.remove('show');
+  } else if (type === 'paid') {
+    document.getElementById('typePaid').classList.add('selected', 'premium-type');
+    btnSend.textContent = '👑 পাঠান — শুধু প্রিমিয়াম ইউজারকে';
+    btnSend.className = 'btn-send premium-send';
+    targetWrap.classList.remove('show');
+  } else if (type === 'target') {
+    document.getElementById('typeTarget').classList.add('selected');
+    btnSend.textContent = '🎯 পাঠান — নির্দিষ্ট ইউজারকে';
+    btnSend.className = 'btn-send';
+    targetWrap.classList.add('show');
+  }
+}
+
+// ── Notification Data ──
+async function loadNotifData() {
+  if (!isFirebaseReady) return;
+  try {
+    const snap = await db.collection('notifications').doc('active').get();
+    const box = document.getElementById('currentNotifBox');
+    if (snap.exists && snap.data().active) {
+      const d = snap.data();
+      document.getElementById('currentNotifTitle').textContent = d.title || '';
+      document.getElementById('currentNotifMsg').textContent = d.message || '';
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
+    }
+  } catch(e) {}
+
+  try {
+    const snap = await db.collection('notifHistory').orderBy('createdAt', 'desc').limit(20).get();
+    const el = document.getElementById('notifHistory');
+    if (snap.empty) {
+      el.innerHTML = '<div class="user-empty">এখনো কোনো নোটিফিকেশন পাঠানো হয়নি।</div>';
+      return;
+    }
+    let html = '';
+    snap.forEach(doc => {
+      const d = doc.data();
+      const date = d.createdAt ? new Date(d.createdAt.toDate()).toLocaleString('bn-BD') : '—';
+      const typeLabel = d.type === 'paid'
+        ? '<span class="notif-item-badge badge-paid">👑 প্রিমিয়াম</span>'
+        : d.type === 'target'
+          ? `<span class="notif-item-badge badge-target">🎯 ${escHtml(d.targetPhone || '')}</span>`
+          : '<span class="notif-item-badge badge-general">📣 সবাইকে</span>';
+      html += `
+        <div class="notif-item ${d.type === 'paid' ? 'paid-notif' : ''}">
+          <div class="notif-item-title">📢 ${escHtml(d.title || 'নোটিফিকেশন')}</div>
+          <div class="notif-item-msg">${escHtml(d.message || '')}</div>
+          ${typeLabel}
+          <div class="notif-item-date">📅 ${date}</div>
+        </div>`;
+    });
+    el.innerHTML = html;
+  } catch(e) {
+    document.getElementById('notifHistory').innerHTML = '<div class="user-empty">❌ ' + e.message + '</div>';
+  }
+}
+
+// ── Send Notification ──
+async function sendNotification() {
+  if (!isFirebaseReady) { showToast('❌ Firebase সেটআপ করুন'); return; }
+  const title = document.getElementById('notifTitle').value.trim();
+  const msg = document.getElementById('notifMsg').value.trim();
+  if (!msg) { showToast('❌ বার্তা লিখুন!'); return; }
+
+  let targetPhone = '';
+  if (currentNotifType === 'target') {
+    targetPhone = document.getElementById('targetPhone').value.trim();
+    if (!targetPhone) { showToast('❌ ফোন নম্বর দিন!'); return; }
+  }
+
+  try {
+    const ts = firebase.firestore.FieldValue.serverTimestamp();
+    const notifId = Date.now().toString();
+
+    // সবাইকে বা প্রিমিয়ামদের জন্য active নোটিফিকেশন সেট করো
+    if (currentNotifType !== 'target') {
+      await db.collection('notifications').doc('active').set({
+        title: title || 'নতুন বার্তা',
+        message: msg,
+        createdAt: ts,
+        active: true,
+        type: currentNotifType,  // 'general' বা 'paid'
+        id: notifId
+      });
+    } else {
+      // নির্দিষ্ট ইউজারের জন্য
+      const phone = targetPhone.replace(/[^0-9]/g, '');
+      await db.collection('users').doc(phone).update({
+        personalNotif: {
+          title: title || 'নতুন বার্তা',
+          message: msg,
+          id: notifId,
+          createdAt: ts,
+          active: true
+        }
+      });
+    }
+
+    // History-তে সেভ
+    await db.collection('notifHistory').add({
+      title: title || 'নতুন বার্তা',
+      message: msg,
+      type: currentNotifType,
+      targetPhone: targetPhone || '',
+      createdAt: ts
+    });
+
+    document.getElementById('notifTitle').value = '';
+    document.getElementById('notifMsg').value = '';
+    if (currentNotifType === 'target') document.getElementById('targetPhone').value = '';
+
+    const successMsg = currentNotifType === 'paid'
+      ? '👑 প্রিমিয়াম ইউজারদের নোটিফিকেশন পাঠানো হয়েছে!'
+      : currentNotifType === 'target'
+        ? '🎯 নির্দিষ্ট ইউজারকে নোটিফিকেশন পাঠানো হয়েছে!'
+        : '✅ নোটিফিকেশন পাঠানো হয়েছে!';
+
+    showToast(successMsg);
+    loadNotifData();
+  } catch(e) {
+    showToast('❌ সমস্যা: ' + e.message);
+  }
+}
+
+// ── Clear Notification ──
+async function clearNotification() {
+  if (!isFirebaseReady) { showToast('❌ Firebase সেটআপ করুন'); return; }
+  if (!confirm('বর্তমান নোটিফিকেশন বন্ধ করবেন?')) return;
+  try {
+    await db.collection('notifications').doc('active').set({ active: false });
+    document.getElementById('currentNotifBox').style.display = 'none';
+    showToast('🗑️ নোটিফিকেশন বন্ধ হয়েছে');
+  } catch(e) {
+    showToast('❌ সমস্যা: ' + e.message);
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  🔐  CHANGE PASSWORD (Firebase-এ সেভ)
+// ════════════════════════════════════════════════════════════
+async function changePassword() {
+  const current = document.getElementById('currentPass').value;
+  const p1 = document.getElementById('newPass1').value;
+  const p2 = document.getElementById('newPass2').value;
+
+  if (!current) { showToast('❌ বর্তমান পাসওয়ার্ড দিন!'); return; }
+
+  const correctPass = await getAdminPass();
+  if (current !== correctPass) { showToast('❌ বর্তমান পাসওয়ার্ড ভুল!'); return; }
+
+  if (!p1) { showToast('❌ নতুন পাসওয়ার্ড লিখুন!'); return; }
+  if (p1 !== p2) { showToast('❌ দুটো পাসওয়ার্ড মিলছে না!'); return; }
+  if (p1.length < 4) { showToast('❌ কমপক্ষে ৪ অক্ষর দিন!'); return; }
+
+  try {
+    await saveAdminPass(p1);
+    document.getElementById('currentPass').value = '';
+    document.getElementById('newPass1').value = '';
+    document.getElementById('newPass2').value = '';
+    showToast('✅ পাসওয়ার্ড Firebase-এ সেভ হয়েছে!');
+  } catch(e) {
+    showToast('❌ সমস্যা: ' + e.message);
+  }
+}
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── Escape HTML ──
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
