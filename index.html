@@ -2393,6 +2393,24 @@
   </div>
 </div>
 
+<!-- Textbox Page -->
+<div id="textboxPage">
+  <div class="tb-header">
+    <button class="btn-back-sm" onclick="closeTextboxPage()">◀ ফিরে যান</button>
+    <h2>📝 টেক্সটবক্স</h2>
+  </div>
+  <div class="tb-body">
+    <input type="text" id="tbTitle" class="tb-title-input" placeholder="শিরোনাম (ঐচ্ছিক)" style="margin:0;width:100%;">
+    <textarea id="tbContent" class="tb-textarea" placeholder="এখানে বাংলা বা English যেকোনো কিছু লিখুন..."></textarea>
+    <div class="tb-actions">
+      <button class="tb-btn tb-btn-save" onclick="tbSave()">💾 সেভ</button>
+      <button class="tb-btn tb-btn-print" onclick="tbPrint()">🖨️ প্রিন্ট</button>
+      <button class="tb-btn tb-btn-dl" onclick="tbDownload()">⬇️ ডাউনলোড</button>
+    </div>
+    <div class="tb-saved-list" id="tbSavedList"></div>
+  </div>
+</div>
+
 
 
 </div>
@@ -4908,24 +4926,6 @@
       <button class="edit-cancel" onclick="closeEditModal()">বাতিল</button>
       <button class="edit-save" onclick="saveEditName()">সেভ করুন</button>
     </div>
-  </div>
-</div>
-
-<!-- Textbox Page -->
-<div id="textboxPage">
-  <div class="tb-header">
-    <button class="btn-back-sm" onclick="closeTextboxPage()">◀ ফিরে যান</button>
-    <h2>📝 টেক্সটবক্স</h2>
-  </div>
-  <div class="tb-body">
-    <input type="text" id="tbTitle" class="tb-title-input" placeholder="শিরোনাম (ঐচ্ছিক)" style="margin:0;width:100%;">
-    <textarea id="tbContent" class="tb-textarea" placeholder="এখানে বাংলা বা English যেকোনো কিছু লিখুন..."></textarea>
-    <div class="tb-actions">
-      <button class="tb-btn tb-btn-save" onclick="tbSave()">💾 সেভ</button>
-      <button class="tb-btn tb-btn-print" onclick="tbPrint()">🖨️ প্রিন্ট</button>
-      <button class="tb-btn tb-btn-dl" onclick="tbDownload()">⬇️ ডাউনলোড</button>
-    </div>
-    <div class="tb-saved-list" id="tbSavedList"></div>
   </div>
 </div>
 
