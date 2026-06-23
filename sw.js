@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kath-cft-v35';
+const CACHE_NAME = 'kath-cft-v36';
 const ASSETS = [
   './',
   './index.html',
@@ -17,27 +17,31 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activate: পুরনো ক্যাশ মুছে দাও
+// Activate: সব পুরনো ক্যাশ মুছে দাও, সাথে সাথে নতুন SW নাও
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
         keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
       )
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch: আগে Network থেকে নাও, না পেলে Cache থেকে দাও
+// Fetch: সবসময় Network থেকে নাও, offline এ Cache
 self.addEventListener('fetch', event => {
-  // GET ছাড়া অন্য রিকোয়েস্ট (POST ইত্যাদি) ক্যাশ করার চেষ্টা করলে এরর হয়, তাই স্কিপ করো
   if (event.request.method !== 'GET') return;
+
+  // Firebase এবং external requests সরাসরি network এ পাঠাও
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
 
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Network থেকে পেলে Cache-ও update করো
         const responseClone = response.clone();
         caches.open(CACHE_NAME).then(cache => {
           cache.put(event.request, responseClone);
@@ -45,7 +49,6 @@ self.addEventListener('fetch', event => {
         return response;
       })
       .catch(() => {
-        // Network না থাকলে Cache থেকে দাও
         return caches.match(event.request).then(cached => {
           return cached || caches.match('./index.html');
         });
