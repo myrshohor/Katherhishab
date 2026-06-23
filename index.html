@@ -2437,7 +2437,20 @@
     document.getElementById('profilePage').classList.remove('active');
     applyProfile();
     init();
-    if (typeof fbRegisterUser === "function") fbRegisterUser(name, phone, address);
+    // Firebase ready না হলে retry করো
+    if (typeof fbRegisterUser === "function") {
+      fbRegisterUser(name, phone, address);
+    } else {
+      let tries = 0;
+      const retryFb = setInterval(() => {
+        tries++;
+        if (typeof fbRegisterUser === "function") {
+          fbRegisterUser(name, phone, address);
+          clearInterval(retryFb);
+        }
+        if (tries > 20) clearInterval(retryFb);
+      }, 300);
+    }
   }
 
   function applyProfile() {
