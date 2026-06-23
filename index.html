@@ -1922,7 +1922,6 @@
       <a id="apkDownloadBtn" href="https://github.com/myrshohor/Katherhishab/raw/main/kathcft.apk" download="kathcft.apk" style="width:100%;background:none;border:none;padding:14px 20px;text-align:left;font-size:15px;font-weight:600;color:#1e8449;cursor:pointer;display:flex;align-items:center;gap:10px;text-decoration:none;transition:background 0.2s;" onmousedown="this.style.background='#eafaf1'" ontouchstart="this.style.background='#eafaf1'" ontouchend="this.style.background=''" onmouseup="this.style.background=''">
         <span class="icon">📲</span> APK ডাউনলোড
       </a>
-      <button class="menu-footer-btn" onclick="debugInfo()" style="color:#e74c3c;">🔍 Debug Info</button>
       <button class="menu-footer-btn" onclick="openDevInfo()">👨‍💻 Developed by Zahin</button>
     </div>
   </div>
@@ -2437,6 +2436,7 @@
     const phone = document.getElementById('setupPhone').value.trim();
     const address = document.getElementById('setupAddress').value.trim();
     store.setItem('woodCalcProfile', JSON.stringify({ name, phone, address }));
+    if (phone) { const uid = phone.replace(/[^0-9]/g, ''); if (uid) localStorage.setItem('kath_userId', uid); }
     document.getElementById('profilePage').classList.remove('active');
     applyProfile();
     init();
@@ -2483,20 +2483,6 @@
     closeProfileEdit();
     applyProfile();
     alert('✅ প্রোফাইল আপডেট হয়েছে!');
-  }
-
-  function debugInfo() {
-    const userId = localStorage.getItem('kath_userId');
-    const profile = localStorage.getItem('woodCalcProfile');
-    const p = profile ? JSON.parse(profile) : null;
-    const fbStatus = typeof firebase !== 'undefined' ? 'loaded' : 'NOT loaded';
-    const fbReadyStatus = typeof fbReady !== 'undefined' ? fbReady : 'unknown';
-    alert(
-      'userId: ' + userId + '\n' +
-      'phone: ' + (p ? p.phone : 'no profile') + '\n' +
-      'Firebase SDK: ' + fbStatus + '\n' +
-      'fbReady: ' + fbReadyStatus
-    );
   }
 
   function checkProfileOnStart() {
@@ -5078,7 +5064,6 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
 // ═══════════════════════════════════════════════
 //  Firebase Integration — কাঠ CFT ক্যালকুলেটর
 // ═══════════════════════════════════════════════
-(function () {
   const FB_CONFIG = {
     apiKey:            "AIzaSyBTddK_2tWHyc5bheIAnMukSQGV9JxL754",
     authDomain:        "katherhishabapp.firebaseapp.com",
@@ -5088,15 +5073,15 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
     appId:             "1:267868755262:web:f2d69d3fdac3476305486f"
   };
 
-  let fbdb = null;
-  let fbReady = false;
+  window.fbdb = null;
+  window.fbReady = false;
 
   function initFB() {
     try {
       if (typeof firebase === 'undefined') return;
       if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
-      fbdb = firebase.firestore();
-      fbReady = true;
+      window.fbdb = firebase.firestore();
+      window.fbReady = true;
     } catch(e) { console.warn('Firebase init:', e.message); }
   }
 
@@ -5114,14 +5099,14 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
     let tries = 0;
     function attempt() {
       initFB();
-      if (!fbReady) {
+      if (!window.fbReady) {
         tries++;
         if (tries < 15) setTimeout(attempt, 500);
         return;
       }
       const deviceId = getDeviceId();
       const userId = phone ? phone.replace(/[^0-9]/g, '') : deviceId;
-      fbdb.collection('users').doc(userId).set({
+      window.fbdb.collection('users').doc(userId).set({
         name: name || '',
         phone: phone || '',
         address: address || '',
@@ -5146,7 +5131,7 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
     let tries = 0;
     function run() {
       initFB();
-      if (!fbReady) {
+      if (!window.fbReady) {
         tries++;
         if (tries < 15) setTimeout(run, 500);
         return;
@@ -5161,7 +5146,7 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
     // ১. App open count
     const todayKey = new Date().toISOString().split('T')[0];
     try {
-      await fbdb.collection('appStats').doc(todayKey).set({
+      await window.fbdb.collection('appStats').doc(todayKey).set({
         opens: firebase.firestore.FieldValue.increment(1),
         date: todayKey
       }, { merge: true });
@@ -5171,7 +5156,7 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
     const userId = localStorage.getItem('kath_userId');
     if (userId) {
       try {
-        await fbdb.collection('users').doc(userId).update({
+        await window.fbdb.collection('users').doc(userId).update({
           lastSeen: firebase.firestore.FieldValue.serverTimestamp()
         });
       } catch(e) {}
@@ -5181,7 +5166,7 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
 
     // ৩. ব্লক চেক
     try {
-      const snap = await fbdb.collection('users').doc(userId).get();
+      const snap = await window.fbdb.collection('users').doc(userId).get();
       if (!snap.exists) return;
       const userData = snap.data();
 
@@ -5210,7 +5195,7 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
           showNotifModal(pn.title, pn.message, '👤 ব্যক্তিগত বার্তা', async () => {
             localStorage.setItem(seenKey, '1');
             try {
-              await fbdb.collection('users').doc(userId).update({ 'personalNotif.active': false });
+              await window.fbdb.collection('users').doc(userId).update({ 'personalNotif.active': false });
             } catch(e) {}
           });
           return;
@@ -5218,7 +5203,7 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
       }
 
       // ৫. সাধারণ / প্রিমিয়াম নোটিফিকেশন
-      const snap2 = await fbdb.collection('notifications').doc('active').get();
+      const snap2 = await window.fbdb.collection('notifications').doc('active').get();
       if (snap2.exists && snap2.data().active) {
         const d = snap2.data();
         if (d.type === 'paid' && !userData.premium) return;
@@ -5258,7 +5243,6 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
 
   // পেজ লোডের সাথে সাথে Firebase শুরু করো
   initFB();
-})();
 </script>
 </body>
 </html>
