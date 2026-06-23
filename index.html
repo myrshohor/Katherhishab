@@ -1922,6 +1922,7 @@
       <a id="apkDownloadBtn" href="https://github.com/myrshohor/Katherhishab/raw/main/kathcft.apk" download="kathcft.apk" style="width:100%;background:none;border:none;padding:14px 20px;text-align:left;font-size:15px;font-weight:600;color:#1e8449;cursor:pointer;display:flex;align-items:center;gap:10px;text-decoration:none;transition:background 0.2s;" onmousedown="this.style.background='#eafaf1'" ontouchstart="this.style.background='#eafaf1'" ontouchend="this.style.background=''" onmouseup="this.style.background=''">
         <span class="icon">📲</span> APK ডাউনলোড
       </a>
+      <button class="menu-footer-btn" onclick="debugInfo()" style="color:#e74c3c;">🔍 Debug Info</button>
       <button class="menu-footer-btn" onclick="openDevInfo()">👨‍💻 Developed by Zahin</button>
     </div>
   </div>
@@ -2436,11 +2437,6 @@
     const phone = document.getElementById('setupPhone').value.trim();
     const address = document.getElementById('setupAddress').value.trim();
     store.setItem('woodCalcProfile', JSON.stringify({ name, phone, address }));
-    // userId এখনই save করো, Firebase এর জন্য অপেক্ষা না করে
-    if (phone) {
-      const uid = phone.replace(/[^0-9]/g, '');
-      if (uid) localStorage.setItem('kath_userId', uid);
-    }
     document.getElementById('profilePage').classList.remove('active');
     applyProfile();
     init();
@@ -2487,6 +2483,20 @@
     closeProfileEdit();
     applyProfile();
     alert('✅ প্রোফাইল আপডেট হয়েছে!');
+  }
+
+  function debugInfo() {
+    const userId = localStorage.getItem('kath_userId');
+    const profile = localStorage.getItem('woodCalcProfile');
+    const p = profile ? JSON.parse(profile) : null;
+    const fbStatus = typeof firebase !== 'undefined' ? 'loaded' : 'NOT loaded';
+    const fbReadyStatus = typeof fbReady !== 'undefined' ? fbReady : 'unknown';
+    alert(
+      'userId: ' + userId + '\n' +
+      'phone: ' + (p ? p.phone : 'no profile') + '\n' +
+      'Firebase SDK: ' + fbStatus + '\n' +
+      'fbReady: ' + fbReadyStatus
+    );
   }
 
   function checkProfileOnStart() {
@@ -5157,18 +5167,8 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
       }, { merge: true });
     } catch(e) {}
 
-    // ২. Last seen + userId recovery from profile
-    let userId = localStorage.getItem('kath_userId');
-    if (!userId) {
-      // profile থেকে phone নিয়ে userId বানাও
-      try {
-        const p = JSON.parse(localStorage.getItem('woodCalcProfile') || 'null');
-        if (p && p.phone) {
-          userId = p.phone.replace(/[^0-9]/g, '');
-          localStorage.setItem('kath_userId', userId);
-        }
-      } catch(e) {}
-    }
+    // ২. Last seen
+    const userId = localStorage.getItem('kath_userId');
     if (userId) {
       try {
         await fbdb.collection('users').doc(userId).update({
