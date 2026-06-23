@@ -1917,7 +1917,7 @@
       <button onclick="openDigitalCalcPage()"><span class="icon">🔢</span> ক্যালকুলেটর</button>
       <button onclick="openTextboxPage()"><span class="icon">📝</span> টেক্সটবক্স</button>
       <button onclick="openProfileEdit()"><span class="icon">⚙️</span> আমার প্রোফাইল</button>
-      <a id="apkDownloadBtn" href="https://myrshohor.github.io/Katherhishab/kathcft.apk" download="kathcft.apk" style="width:100%;background:none;border:none;padding:14px 20px;text-align:left;font-size:15px;font-weight:600;color:#1e8449;cursor:pointer;display:flex;align-items:center;gap:10px;text-decoration:none;transition:background 0.2s;" onmousedown="this.style.background='#eafaf1'" ontouchstart="this.style.background='#eafaf1'" ontouchend="this.style.background=''" onmouseup="this.style.background=''">
+      <a id="apkDownloadBtn" href="https://github.com/myrshohor/Katherhishab/raw/main/kathcft.apk" download="kathcft.apk" style="width:100%;background:none;border:none;padding:14px 20px;text-align:left;font-size:15px;font-weight:600;color:#1e8449;cursor:pointer;display:flex;align-items:center;gap:10px;text-decoration:none;transition:background 0.2s;" onmousedown="this.style.background='#eafaf1'" ontouchstart="this.style.background='#eafaf1'" ontouchend="this.style.background=''" onmouseup="this.style.background=''">
         <span class="icon">📲</span> APK ডাউনলোড
       </a>
       <button class="menu-footer-btn" onclick="openDevInfo()">👨‍💻 Developed by Zahin</button>
@@ -2437,20 +2437,7 @@
     document.getElementById('profilePage').classList.remove('active');
     applyProfile();
     init();
-    // Firebase ready না হলে retry করো
-    if (typeof fbRegisterUser === "function") {
-      fbRegisterUser(name, phone, address);
-    } else {
-      let tries = 0;
-      const retryFb = setInterval(() => {
-        tries++;
-        if (typeof fbRegisterUser === "function") {
-          fbRegisterUser(name, phone, address);
-          clearInterval(retryFb);
-        }
-        if (tries > 20) clearInterval(retryFb);
-      }, 300);
-    }
+    if (typeof fbRegisterUser === "function") fbRegisterUser(name, phone, address);
   }
 
   function applyProfile() {
@@ -5107,12 +5094,18 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
   }
 
   // ── ইউজার রেজিস্ট্রেশন ──
-  window.fbRegisterUser = async function(name, phone, address) {
-    if (!fbReady) { initFB(); if (!fbReady) return; }
-    try {
+  window.fbRegisterUser = function(name, phone, address) {
+    let tries = 0;
+    function attempt() {
+      initFB();
+      if (!fbReady) {
+        tries++;
+        if (tries < 15) setTimeout(attempt, 500);
+        return;
+      }
       const deviceId = getDeviceId();
       const userId = phone ? phone.replace(/[^0-9]/g, '') : deviceId;
-      await fbdb.collection('users').doc(userId).set({
+      fbdb.collection('users').doc(userId).set({
         name: name || '',
         phone: phone || '',
         address: address || '',
@@ -5121,15 +5114,33 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
         lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
         blocked: false,
         premium: false
-      }, { merge: true });
-      localStorage.setItem('kath_userId', userId);
-    } catch(e) { console.warn('Register user:', e.message); }
+      }, { merge: true }).then(() => {
+        localStorage.setItem('kath_userId', userId);
+      }).catch(e => {
+        tries++;
+        if (tries < 15) setTimeout(attempt, 500);
+        else console.warn('Register failed:', e.message);
+      });
+    }
+    attempt();
   };
 
   // ── অ্যাপ খোলার সময় ──
-  window.fbOnAppOpen = async function() {
-    initFB();
-    if (!fbReady) return;
+  window.fbOnAppOpen = function() {
+    let tries = 0;
+    function run() {
+      initFB();
+      if (!fbReady) {
+        tries++;
+        if (tries < 15) setTimeout(run, 500);
+        return;
+      }
+      doAppOpen();
+    }
+    run();
+  };
+
+  async function doAppOpen() {
 
     // ১. App open count
     const todayKey = new Date().toISOString().split('T')[0];
