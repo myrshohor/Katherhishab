@@ -2436,6 +2436,11 @@
     const phone = document.getElementById('setupPhone').value.trim();
     const address = document.getElementById('setupAddress').value.trim();
     store.setItem('woodCalcProfile', JSON.stringify({ name, phone, address }));
+    // userId এখনই save করো, Firebase এর জন্য অপেক্ষা না করে
+    if (phone) {
+      const uid = phone.replace(/[^0-9]/g, '');
+      if (uid) localStorage.setItem('kath_userId', uid);
+    }
     document.getElementById('profilePage').classList.remove('active');
     applyProfile();
     init();
@@ -5152,8 +5157,18 @@ document.getElementById('devInfoModal').addEventListener('click', function(e) {
       }, { merge: true });
     } catch(e) {}
 
-    // ২. Last seen
-    const userId = localStorage.getItem('kath_userId');
+    // ২. Last seen + userId recovery from profile
+    let userId = localStorage.getItem('kath_userId');
+    if (!userId) {
+      // profile থেকে phone নিয়ে userId বানাও
+      try {
+        const p = JSON.parse(localStorage.getItem('woodCalcProfile') || 'null');
+        if (p && p.phone) {
+          userId = p.phone.replace(/[^0-9]/g, '');
+          localStorage.setItem('kath_userId', userId);
+        }
+      } catch(e) {}
+    }
     if (userId) {
       try {
         await fbdb.collection('users').doc(userId).update({
