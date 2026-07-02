@@ -689,7 +689,7 @@
     line-height: 1;
   }
 
-  /* Wood type toggle */
+  /* Wood type toggle (legacy single-button, kept for compatibility) */
   .wtype-btn {
     font-size: 10px;
     font-weight: 700;
@@ -709,6 +709,34 @@
   .wtype-btn.wt-U2 { background: #d4efdf; color: #1e8449; }
   .wtype-btn.wt-BL { background: #d6eaf8; color: #1a5276; }
   .wtype-btn.wt-OV { background: #fdebd0; color: #a04000; }
+
+  /* Wood type — 3 separate mini toggle buttons */
+  .wtype-group {
+    display: flex;
+    gap: 2px;
+    flex: 0 0 auto;
+  }
+  .wtype-mini {
+    font-size: 8px;
+    font-weight: 700;
+    border: none;
+    border-radius: 4px;
+    width: 20px;
+    height: 22px;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sand);
+    color: #8a7a68;
+    transition: background 0.15s, color 0.15s, transform 0.1s;
+  }
+  .wtype-mini:active {
+    transform: scale(0.92);
+  }
+  .wtype-mini.active { background: #7CB342; color: #fff; }
 
   /* Type subtotals in summary */
   .type-subtotal-row {
@@ -976,14 +1004,14 @@
     padding: 0 16px;
   }
 
-  #printArea {
+  #printArea, #dPrintArea {
     background: var(--white);
     border-radius: 12px;
     padding: 16px;
     box-shadow: 0 2px 8px rgba(140, 74, 54, 0.1);
   }
 
-  #printArea .pr-title {
+  #printArea .pr-title, #dPrintArea .pr-title {
     text-align: center;
     font-size: 17px;
     font-weight: bold;
@@ -991,32 +1019,32 @@
     margin-bottom: 4px;
   }
 
-  #printArea .pr-meta {
+  #printArea .pr-meta, #dPrintArea .pr-meta {
     text-align: center;
     font-size: 12px;
     color: #8a7a68;
     margin-bottom: 10px;
   }
 
-  #printArea table {
+  #printArea table, #dPrintArea table {
     width: 100%;
     border-collapse: collapse;
     font-size: 13px;
   }
 
-  #printArea th, #printArea td {
+  #printArea th, #printArea td, #dPrintArea th, #dPrintArea td {
     border: 1px solid var(--border);
     padding: 6px 4px;
     text-align: center;
   }
 
-  #printArea th {
+  #printArea th, #dPrintArea th {
     background: var(--sand);
     color: var(--brick-dark);
     font-size: 12px;
   }
 
-  #printArea tfoot td {
+  #printArea tfoot td, #dPrintArea tfoot td {
     font-weight: bold;
     background: var(--sand-light);
     color: var(--brick-dark);
@@ -2337,7 +2365,7 @@
           <div class="pr-shop-sub" id="dShopSub"></div>
         </div>
         <div class="pr-meta" id="dPrMeta"></div>
-        <div class="memo-print-body" id="dPrintBody"></div>
+        <div id="dPrintBody"></div>
         <div id="dPrintSign" style="margin-top:14px;text-align:center;"></div>
       </div>
     </div>
@@ -2526,6 +2554,11 @@
     render();
   }
 
+  function setWoodType(rIdx, type) {
+    rows[rIdx].woodType = (rows[rIdx].woodType === type) ? '' : type;
+    render();
+  }
+
 
   let activeSN = -1;
 
@@ -2598,7 +2631,11 @@
 
       rowEl.innerHTML = `
         <div class="sn-input${rIdx === activeRow && activeField === -1 ? ' sn-active' : ''}" onclick="focusSN(${rIdx})">${snLabels[rIdx]}</div>
-        <button class="wtype-btn${row.woodType ? ' wt-' + woodTypeClass(row.woodType) : ''}" onclick="cycleWoodType(${rIdx})">${row.woodType || '—'}</button>
+        <div class="wtype-group">
+          <button class="wtype-mini wt-U2${row.woodType === 'U/2' ? ' active' : ''}" onclick="setWoodType(${rIdx}, 'U/2')">U/2</button>
+          <button class="wtype-mini wt-BL${row.woodType === 'BL' ? ' active' : ''}" onclick="setWoodType(${rIdx}, 'BL')">B/L</button>
+          <button class="wtype-mini wt-OV${row.woodType === 'O/V' ? ' active' : ''}" onclick="setWoodType(${rIdx}, 'O/V')">O/V</button>
+        </div>
         ${fieldsHtml}
         <div class="result">${cft.toFixed(4)}</div>
         <button class="delete-btn" onclick="deleteRow(${rIdx})">✕</button>
@@ -3950,6 +3987,12 @@
     dRenderRows();
   }
 
+  function dSetWoodType(rIdx, type) {
+    const s = dState[dActiveCalc];
+    s.rows[rIdx].woodType = (s.rows[rIdx].woodType === type) ? '' : type;
+    dRenderRows();
+  }
+
   let dActiveSN = -1;
 
   function dFocusSN(rIdx) {
@@ -4022,7 +4065,11 @@
       const snActive = rIdx === s.activeRow && s.activeField === -1;
       rowEl.innerHTML =
         '<div class="sn-input' + (snActive ? ' sn-active' : '') + '" onclick="dFocusSN(' + rIdx + ')">' + snLabels[rIdx] + '</div>' +
-        '<button class="wtype-btn' + (row.woodType ? ' wt-' + woodTypeClass(row.woodType) : '') + '" onclick="dCycleWoodType(' + rIdx + ')">' + (row.woodType || '—') + '</button>' +
+        '<div class="wtype-group">' +
+          '<button class="wtype-mini wt-U2' + (row.woodType === 'U/2' ? ' active' : '') + '" onclick="dSetWoodType(' + rIdx + ', \'U/2\')">U/2</button>' +
+          '<button class="wtype-mini wt-BL' + (row.woodType === 'BL' ? ' active' : '') + '" onclick="dSetWoodType(' + rIdx + ', \'BL\')">B/L</button>' +
+          '<button class="wtype-mini wt-OV' + (row.woodType === 'O/V' ? ' active' : '') + '" onclick="dSetWoodType(' + rIdx + ', \'O/V\')">O/V</button>' +
+        '</div>' +
         fieldsHtml +
         '<div class="result">' + cft.toFixed(4) + '</div>' +
         '<button class="delete-btn" onclick="dDeleteRow(' + rIdx + ')">✕</button>';
@@ -4674,7 +4721,17 @@
     if (custName) meta += '👤 ' + custName;
     if (date) meta += (meta ? '  |  ' : '') + '📅 ' + date;
     document.getElementById('dPrMeta').textContent = meta;
-    document.getElementById('dPrintBody').textContent = dBuildSummaryText();
+
+    // Build a real bordered table — same design as the single calculator's memo table
+    const srcTable = document.querySelector('#dualSummaryView table');
+    const headTr = srcTable ? srcTable.querySelector('thead tr') : null;
+    const bodyEl = document.getElementById('dSummaryBody');
+    const grandTotal = document.getElementById('dSummaryGrandTotal') ? document.getElementById('dSummaryGrandTotal').textContent : '0.0000';
+    const colCount = headTr ? headTr.querySelectorAll('th').length : 7;
+    let tableHTML = '<table><thead><tr>' + (headTr ? headTr.innerHTML : '') + '</tr></thead><tbody>' +
+      (bodyEl ? bodyEl.innerHTML : '') +
+      '</tbody><tfoot><tr><td colspan="' + (colCount - 1) + '">সর্বমোট CFT</td><td>' + grandTotal + '</td></tr></tfoot></table>';
+    document.getElementById('dPrintBody').innerHTML = tableHTML;
 
     const signMode = document.getElementById('dSignTypeBox') && document.getElementById('dSignTypeBox').style.display !== 'none' ? 'type' : 'draw';
     const signEl = document.getElementById('dPrintSign');
@@ -4745,59 +4802,117 @@
     if (custName) meta += '👤 ' + custName;
     if (date) meta += (meta ? '  |  ' : '') + '📅 ' + date;
 
-    const text = dBuildSummaryText();
+    const matLabelA = dLabel('A');
+    const matLabelB = dLabel('B');
 
+    // Table rows — scoped to the dual summary item table only
+    const tableRows = [];
+    const dTable = document.querySelector('#dualSummaryView table');
+    if (dTable) {
+      const headTr = dTable.querySelector('thead tr');
+      if (headTr) {
+        const cells = [];
+        headTr.querySelectorAll('th').forEach(th => cells.push(th.textContent.trim()));
+        if (cells.length) tableRows.push({ cells, isHead: true });
+      }
+      const bodyEl = document.getElementById('dSummaryBody');
+      if (bodyEl) {
+        bodyEl.querySelectorAll('tr').forEach(tr => {
+          const cells = [];
+          tr.querySelectorAll('td').forEach(td => cells.push(td.textContent.trim()));
+          if (cells.length && tr.querySelectorAll('td').length > 1) tableRows.push({ cells, isHead: false });
+        });
+      }
+    }
+
+    // Totals
+    const totalA = dMaterialTotal('A');
+    const totalB = dMaterialTotal('B');
+    const grandTotalCFT = document.getElementById('dSummaryGrandTotal') ? document.getElementById('dSummaryGrandTotal').textContent : (totalA + totalB).toFixed(4);
+
+    const simpleModeActive = document.getElementById('dGrandCombo') && document.getElementById('dGrandCombo').style.display !== 'none';
+    const priceA = parseFloat((document.getElementById('dPriceA') || {}).value) || 0;
+    const priceB = parseFloat((document.getElementById('dPriceB') || {}).value) || 0;
+    const takaA = priceA > 0 ? totalA * priceA : 0;
+    const takaB = priceB > 0 ? totalB * priceB : 0;
+    const grandTakaStr = document.getElementById('dGrandTakaDisplay') ? document.getElementById('dGrandTakaDisplay').textContent : '০';
+    const bokeyaVal = parseFloat((document.getElementById('dBokeyaInput') || {}).value) || 0;
+    const hasBokeya = simpleModeActive && bokeyaVal > 0;
+    const bokeyaStr = Math.round(bokeyaVal).toLocaleString('en-IN');
+    const grandTotalStr = document.getElementById('dGrandTotalDisplay') ? document.getElementById('dGrandTotalDisplay').textContent : grandTakaStr;
+    const paidStr = document.getElementById('dPaidInput') ? Math.round(parseFloat(document.getElementById('dPaidInput').value) || 0).toLocaleString('en-IN') : '০';
+    const dueStr = document.getElementById('dDueValue') ? document.getElementById('dDueValue').textContent : '০';
+
+    // Per wood-type pricing mode (dual)
+    const dTypeBlock = document.getElementById('dWoodTypeSubtotals');
+    const typeModeActive = document.getElementById('dTypePriceExtra') && document.getElementById('dTypePriceExtra').style.display !== 'none';
+    const typeRows = []; // {label, cft, price, taka}
+    if (dTypeBlock) {
+      try {
+        const items = JSON.parse(dTypeBlock.dataset.items || '[]');
+        items.forEach(item => {
+          const el = document.getElementById(item.id);
+          const price = el ? (parseFloat(el.value) || 0) : 0;
+          typeRows.push({ label: item.matLabel + ' ' + item.typeLabel, typeKey: item.typeLabel, cft: item.cft, price, taka: Math.round(item.cft * price) });
+        });
+      } catch (e) {}
+    }
+    const typeGrandTotal = typeRows.reduce((s, r) => s + r.taka, 0);
+    const typeBokeyaNum = parseFloat((document.getElementById('dTypeBokeyaInput') || {}).value) || 0;
+    const typePaidNum = parseFloat((document.getElementById('dTypePaidInput') || {}).value) || 0;
+    const typeGrandPlusBokeya = typeGrandTotal + typeBokeyaNum;
+    const typeDue = Math.max(typeGrandPlusBokeya - typePaidNum, 0);
+
+    // ===== Layout sizing =====
     const canvas = document.createElement('canvas');
     const scale = 2;
     const W = 340;
-    const padding = 16;
-    const lineHeight = 22;
-
-    const ctx0 = canvas.getContext('2d');
-    ctx0.font = '14px Arial';
-
-    function wrapText(ctx, text, maxWidth) {
-      const lines = [];
-      text.split('\n').forEach(paragraph => {
-        if (paragraph === '') { lines.push(''); return; }
-        let current = '';
-        for (const ch of paragraph) {
-          const test = current + ch;
-          if (ctx.measureText(test).width > maxWidth && current !== '') {
-            lines.push(current);
-            current = ch;
-          } else {
-            current = test;
-          }
-        }
-        if (current) lines.push(current);
-      });
-      return lines;
-    }
-
-    const bodyLines = wrapText(ctx0, text, W - padding * 2);
-
-    const dSignMode = document.getElementById('dSignTypeBox') && document.getElementById('dSignTypeBox').style.display !== 'none' ? 'type' : 'draw';
-    const dHasSignature = dSignMode === 'draw' ? dSignHasDrawing : (dSignTypedValue.trim().length > 0);
-    const signBlockH = dHasSignature ? 130 : 0;
-
+    const colCount = tableRows[0] ? tableRows[0].cells.length : 7;
+    const cellW = Math.floor((W - 32) / colCount);
+    const rowH = 28;
     const shopHeaderH = shopName ? (shopSub ? 54 : 36) : 0;
-    const titleH = 10;
-    const metaH = meta ? 24 : 8;
-    const bodyH = bodyLines.length * lineHeight + 16;
-    const footerH = 26;
-    const totalH = shopHeaderH + titleH + metaH + bodyH + signBlockH + footerH + padding;
+    const metaH = 30;
+    const headerH = shopHeaderH + metaH;
+    const totalsCardH = 38;
+    const totalsGap = 5;
+    const comboLineH = 26;
+    const twoColCardH = 50;
+    const typeRowH = 42;
+
+    const bothMats = totalA > 0 && totalB > 0;
+    const matCftCardH = bothMats ? twoColCardH : totalsCardH;
+
+    let totalsBlockH = matCftCardH + totalsGap + totalsCardH + totalsGap; // মাল CFT card + সর্বমোট CFT card
+    if (simpleModeActive) {
+      if (priceA > 0) totalsBlockH += totalsCardH + totalsGap;
+      if (priceB > 0) totalsBlockH += totalsCardH + totalsGap;
+      totalsBlockH += (hasBokeya ? (3 * comboLineH + 12) : totalsCardH) + totalsGap;
+      totalsBlockH += twoColCardH + totalsGap;
+    }
+    if (typeModeActive && typeRows.length > 0) {
+      totalsBlockH += typeRows.length * (typeRowH + totalsGap);
+      totalsBlockH += (typeBokeyaNum > 0 ? (3 * comboLineH + 12) : totalsCardH) + totalsGap;
+      totalsBlockH += twoColCardH + totalsGap;
+    }
+    totalsBlockH += 12;
+
+    const signMode = document.getElementById('dSignTypeBox') && document.getElementById('dSignTypeBox').style.display !== 'none' ? 'type' : 'draw';
+    const hasSignature = signMode === 'draw' ? dSignHasDrawing : (dSignTypedValue.trim().length > 0);
+    const signBlockH = hasSignature ? 130 : 0;
+    const totalH = headerH + tableRows.length * rowH + totalsBlockH + signBlockH + 24;
 
     canvas.width = W * scale;
     canvas.height = totalH * scale;
     const ctx = canvas.getContext('2d');
     ctx.scale(scale, scale);
 
+    // Background
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, totalH);
 
-    let y = 0;
+    let drawY = 0;
 
+    // Shop header
     if (shopName) {
       ctx.fillStyle = '#F5EDE2';
       ctx.fillRect(0, 0, W, shopHeaderH);
@@ -4816,36 +4931,234 @@
       ctx.moveTo(16, shopHeaderH - 1);
       ctx.lineTo(W - 16, shopHeaderH - 1);
       ctx.stroke();
-      y = shopHeaderH;
+      drawY = shopHeaderH;
     }
 
-    ctx.fillStyle = '#8C4A36';
-    ctx.font = 'bold 16px Arial';
+    // Meta
+    ctx.fillStyle = '#8a7a68';
+    ctx.font = '11px Arial';
     ctx.textAlign = 'center';
-    y += titleH;
+    ctx.fillText(meta, W / 2, drawY + 18);
 
-    if (meta) {
-      ctx.fillStyle = '#8a7a68';
-      ctx.font = '11px Arial';
-      ctx.fillText(meta, W / 2, y + 14);
-    }
-    y += metaH;
+    // Table
+    const startX = 16;
+    let y = drawY + metaH;
 
-    ctx.fillStyle = '#3E2F26';
-    ctx.font = '14px Arial';
-    ctx.textAlign = 'left';
-    bodyLines.forEach((line, i) => {
-      ctx.fillText(line, padding, y + 16 + i * lineHeight);
+    tableRows.forEach((row, ri) => {
+      if (row.isHead) ctx.fillStyle = '#E8DCC8';
+      else ctx.fillStyle = ri % 2 === 0 ? '#fdf9f5' : '#ffffff';
+      ctx.fillRect(startX, y, W - 32, rowH);
+
+      ctx.strokeStyle = '#D6C5AD';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(startX, y, W - 32, rowH);
+
+      ctx.fillStyle = row.isHead ? '#8C4A36' : '#3E2F26';
+      ctx.font = row.isHead ? 'bold 11px Arial' : '11px Arial';
+
+      row.cells.forEach((cell, ci) => {
+        ctx.textAlign = 'center';
+        const cx = startX + ci * cellW + cellW / 2;
+        ctx.fillText(cell, cx, y + rowH / 2 + 4);
+        if (ci > 0) {
+          ctx.beginPath();
+          ctx.moveTo(startX + ci * cellW, y);
+          ctx.lineTo(startX + ci * cellW, y + rowH);
+          ctx.stroke();
+        }
+      });
+
+      y += rowH;
     });
-    y += bodyH;
 
-    if (dHasSignature) {
+    y += 10;
+
+    // ===== Card helpers (mirrors single-calculator memo design) =====
+    function drawTotalCard(label, value, colorTop, colorBottom) {
+      const cardX = startX, cardW = W - 32;
+      const grad = ctx.createLinearGradient(cardX, y, cardX + cardW, y + totalsCardH);
+      grad.addColorStop(0, colorTop); grad.addColorStop(1, colorBottom);
+      ctx.fillStyle = grad;
+      const r = 8;
+      ctx.beginPath();
+      ctx.moveTo(cardX + r, y);
+      ctx.arcTo(cardX + cardW, y, cardX + cardW, y + totalsCardH, r);
+      ctx.arcTo(cardX + cardW, y + totalsCardH, cardX, y + totalsCardH, r);
+      ctx.arcTo(cardX, y + totalsCardH, cardX, y, r);
+      ctx.arcTo(cardX, y, cardX + cardW, y, r);
+      ctx.closePath(); ctx.fill();
+
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.font = 'bold 11px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, cardX + 12, y + totalsCardH / 2 + 4);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 15px Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText(value, cardX + cardW - 12, y + totalsCardH / 2 + 5);
+
+      y += totalsCardH + totalsGap;
+    }
+
+    function drawComboCard(lines, colorTop, colorBottom) {
+      const cardX = startX, cardW = W - 32;
+      const cardH = lines.length * comboLineH + 12;
+      const grad = ctx.createLinearGradient(cardX, y, cardX + cardW, y + cardH);
+      grad.addColorStop(0, colorTop); grad.addColorStop(1, colorBottom);
+      ctx.fillStyle = grad;
+      const r = 8;
+      ctx.beginPath();
+      ctx.moveTo(cardX + r, y);
+      ctx.arcTo(cardX + cardW, y, cardX + cardW, y + cardH, r);
+      ctx.arcTo(cardX + cardW, y + cardH, cardX, y + cardH, r);
+      ctx.arcTo(cardX, y + cardH, cardX, y, r);
+      ctx.arcTo(cardX, y, cardX + cardW, y, r);
+      ctx.closePath(); ctx.fill();
+
+      lines.forEach((ln, i) => {
+        const ly = y + 6 + i * comboLineH;
+        if (i > 0) {
+          ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(cardX + 12, ly);
+          ctx.lineTo(cardX + cardW - 12, ly);
+          ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.font = 'bold 11px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(ln.label, cardX + 12, ly + comboLineH / 2 + 3);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'right';
+        ctx.fillText(ln.value, cardX + cardW - 12, ly + comboLineH / 2 + 4);
+      });
+
+      y += cardH + totalsGap;
+    }
+
+    function drawTwoColCard(leftLabel, leftValue, rightLabel, rightValue, colorTop, colorBottom, cardH) {
+      const cardX = startX, cardW = W - 32;
+      const grad = ctx.createLinearGradient(cardX, y, cardX + cardW, y + cardH);
+      grad.addColorStop(0, colorTop); grad.addColorStop(1, colorBottom);
+      ctx.fillStyle = grad;
+      const r = 8;
+      ctx.beginPath();
+      ctx.moveTo(cardX + r, y);
+      ctx.arcTo(cardX + cardW, y, cardX + cardW, y + cardH, r);
+      ctx.arcTo(cardX + cardW, y + cardH, cardX, y + cardH, r);
+      ctx.arcTo(cardX, y + cardH, cardX, y, r);
+      ctx.arcTo(cardX, y, cardX + cardW, y, r);
+      ctx.closePath(); ctx.fill();
+
+      const padX = 14;
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.font = 'bold 11px Arial';
+      ctx.fillText(leftLabel, cardX + padX, y + 18);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px Arial';
+      ctx.fillText(leftValue, cardX + padX, y + 38);
+
+      if (rightLabel) {
+        ctx.textAlign = 'right';
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.font = 'bold 11px Arial';
+        ctx.fillText(rightLabel, cardX + cardW - padX, y + 18);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px Arial';
+        ctx.fillText(rightValue, cardX + cardW - padX, y + 38);
+
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cardX + cardW / 2, y + 8);
+        ctx.lineTo(cardX + cardW / 2, y + cardH - 8);
+        ctx.stroke();
+      }
+
+      y += cardH + totalsGap;
+    }
+
+    function drawTypeRowCard(label, cft, price, taka, colorTop, colorBottom) {
+      const cardX = startX, cardW = W - 32;
+      const grad = ctx.createLinearGradient(cardX, y, cardX + cardW, y + typeRowH);
+      grad.addColorStop(0, colorTop); grad.addColorStop(1, colorBottom);
+      ctx.fillStyle = grad;
+      const r = 7;
+      ctx.beginPath();
+      ctx.moveTo(cardX + r, y);
+      ctx.arcTo(cardX + cardW, y, cardX + cardW, y + typeRowH, r);
+      ctx.arcTo(cardX + cardW, y + typeRowH, cardX, y + typeRowH, r);
+      ctx.arcTo(cardX, y + typeRowH, cardX, y, r);
+      ctx.arcTo(cardX, y, cardX + cardW, y, r);
+      ctx.closePath(); ctx.fill();
+
+      ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.font = 'bold 11px Arial'; ctx.textAlign = 'left';
+      ctx.fillText(label + ' — ' + cft.toFixed(4) + ' CFT', cardX + 12, y + typeRowH / 2 + 4);
+      if (price > 0) {
+        ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.font = '9px Arial'; ctx.textAlign = 'right';
+        ctx.fillText('৳' + price.toLocaleString('en-IN') + '/CFT', cardX + cardW - 12, y + typeRowH / 2 - 8);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 13px Arial'; ctx.textAlign = 'right';
+        ctx.fillText('৳' + taka.toLocaleString('en-IN'), cardX + cardW - 12, y + typeRowH / 2 + 11);
+      }
+      y += typeRowH + totalsGap;
+    }
+
+    // ===== Draw totals =====
+    if (bothMats) {
+      drawTwoColCard(matLabelA, totalA.toFixed(4), matLabelB, totalB.toFixed(4), '#A85D45', '#8C4A36', matCftCardH);
+    } else {
+      drawTotalCard((totalA > 0 ? matLabelA : matLabelB) + ' CFT', (totalA > 0 ? totalA : totalB).toFixed(4), '#A85D45', '#8C4A36');
+    }
+    drawTotalCard('সর্বমোট CFT', grandTotalCFT, '#B5634A', '#8C4A36');
+
+    if (simpleModeActive) {
+      if (priceA > 0) {
+        drawTotalCard(matLabelA + ' মোট টাকা (৳)', Math.round(takaA).toLocaleString('en-IN'), '#3D9468', '#1F5C38');
+      }
+      if (priceB > 0) {
+        drawTotalCard(matLabelB + ' মোট টাকা (৳)', Math.round(takaB).toLocaleString('en-IN'), '#2e7d4f', '#1a4a2c');
+      }
+      if (hasBokeya) {
+        drawComboCard([
+          { label: 'সর্বমোট টাকা (৳)', value: grandTakaStr },
+          { label: 'বকেয়া (৳)', value: bokeyaStr },
+          { label: '+ মোট টাকা (৳)', value: grandTotalStr }
+        ], '#3D9468', '#1F5C38');
+      } else {
+        drawTotalCard('সর্বমোট টাকা (৳)', grandTakaStr, '#3D9468', '#1F5C38');
+      }
+      drawTwoColCard('জমা (৳)', paidStr, 'বাকি (৳)', dueStr, '#4A8FBF', '#2A5D80', twoColCardH);
+    }
+
+    if (typeModeActive && typeRows.length > 0) {
+      const typeColors = { 'U/2': ['#2ea862','#1e8449'], 'BL': ['#3a8fc0','#1a5276'], 'O/V': ['#d68910','#a04000'], 'অন্য': ['#a89478','#5a3e2b'] };
+      typeRows.forEach(tr => {
+        const [c1, c2] = typeColors[tr.typeKey] || ['#888', '#555'];
+        drawTypeRowCard(tr.label, tr.cft, tr.price, tr.taka, c1, c2);
+      });
+      const tLines = [{ label: 'মোট টাকা (৳)', value: typeGrandTotal.toLocaleString('en-IN') }];
+      if (typeBokeyaNum > 0) {
+        tLines.push({ label: 'বকেয়া (৳)', value: Math.round(typeBokeyaNum).toLocaleString('en-IN') });
+        tLines.push({ label: '+ মোট টাকা (৳)', value: typeGrandPlusBokeya.toLocaleString('en-IN') });
+      }
+      drawComboCard(tLines, '#3D9468', '#1F5C38');
+      drawTwoColCard('জমা (৳)', Math.round(typePaidNum).toLocaleString('en-IN'), 'বাকি (৳)', typeDue.toLocaleString('en-IN'), '#4A8FBF', '#2A5D80', twoColCardH);
+    }
+
+    // Signature
+    if (hasSignature) {
+      y += 8;
       ctx.strokeStyle = '#D6C5AD';
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 3]);
       ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(W - padding, y);
+      ctx.moveTo(startX, y);
+      ctx.lineTo(W - startX, y);
       ctx.stroke();
       ctx.setLineDash([]);
       y += 14;
@@ -4853,12 +5166,12 @@
       const sigBoxH = 80;
       ctx.strokeStyle = '#D6C5AD';
       ctx.lineWidth = 1;
-      ctx.strokeRect(padding, y, W - padding * 2, sigBoxH);
+      ctx.strokeRect(startX, y, W - 32, sigBoxH);
 
-      if (dSignMode === 'draw' && dSignCanvas) {
-        const sw = W - padding * 2 - 16;
+      if (signMode === 'draw' && dSignCanvas) {
+        const sw = W - 32 - 16;
         const sh = sigBoxH - 16;
-        ctx.drawImage(dSignCanvas, padding + 8, y + 8, sw, sh);
+        ctx.drawImage(dSignCanvas, startX + 8, y + 8, sw, sh);
       } else {
         const typedName = dSignTypedValue.trim();
         ctx.fillStyle = '#2b3a55';
@@ -4875,9 +5188,10 @@
       y += 10;
     }
 
+    // Download
     const link = document.createElement('a');
     const now = new Date();
-    const fname = 'memo-' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + now.getHours() + now.getMinutes() + '.png';
+    const fname = 'wood-calc-' + now.getFullYear() + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + now.getHours() + now.getMinutes() + '.png';
     link.download = fname;
     link.href = canvas.toDataURL('image/png');
     link.click();
