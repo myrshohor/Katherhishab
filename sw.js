@@ -1,11 +1,5 @@
-// ===== কাঠ CFT ক্যালকুলেটর — Service Worker =====
-// ভার্সন বাড়ালে (CACHE_VERSION) পুরনো cache মুছে নতুন ফাইল লোড হবে
-// এবং index.html এর controllerchange লিসেনার পেজ অটো-রিলোড করবে।
-const CACHE_VERSION = 'v1';
-const CACHE_NAME = 'kathcft-cache-' + CACHE_VERSION;
-
-// অফলাইনে চালানোর জন্য প্রয়োজনীয় সব ফাইল (App Shell)
-const PRECACHE_URLS = [
+const CACHE_NAME = 'kath-cft-v34';
+const ASSETS = [
   './',
   './index.html',
   './manifest.json',
@@ -13,81 +7,48 @@ const PRECACHE_URLS = [
   './icon-512.png'
 ];
 
-// ===== INSTALL: নতুন ফাইল cache করো, সাথে সাথেই activate হওয়ার জন্য skipWaiting =====
-self.addEventListener('install', (event) => {
+// Install: সব ফাইল ক্যাশে রাখো
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_URLS);
-    }).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(ASSETS);
+    })
   );
+  self.skipWaiting();
 });
 
-// ===== ACTIVATE: পুরনো cache ভার্সন মুছে ফেলো, সাথে সাথেই সব ক্লায়েন্ট claim করো =====
-self.addEventListener('activate', (event) => {
+// Activate: পুরনো ক্যাশ মুছে দাও
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys
-          .filter((key) => key.startsWith('kathcft-cache-') && key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      );
-    }).then(() => self.clients.claim())
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      )
+    )
   );
+  self.clients.claim();
 });
 
-// ===== FETCH =====
-// HTML (নেভিগেশন): Network-First — অনলাইন থাকলে সবসময় সর্বশেষ ভার্সন,
-//                    অফলাইনে গেলে cache থেকে সার্ভ হবে।
-// অন্য সব (CSS/JS/ছবি/manifest): Cache-First — দ্রুত লোড, offline-safe,
-//                    ব্যাকগ্রাউন্ডে নতুন ভার্সন থাকলে সেটাও cache-এ আপডেট হয়ে যাবে।
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
+// Fetch: আগে Network থেকে নাও, না পেলে Cache থেকে দাও
+self.addEventListener('fetch', event => {
+  // GET ছাড়া অন্য রিকোয়েস্ট (POST ইত্যাদি) ক্যাশ করার চেষ্টা করলে এরর হয়, তাই স্কিপ করো
+  if (event.request.method !== 'GET') return;
 
-  // শুধু GET রিকোয়েস্ট handle করবো
-  if (req.method !== 'GET') return;
-
-  // শুধু নিজের origin এর রিকোয়েস্ট handle করবো (বাইরের API/CDN নয়)
-  if (new URL(req.url).origin !== self.location.origin) return;
-
-  const isNavigation = req.mode === 'navigate' ||
-    (req.headers.get('accept') || '').includes('text/html');
-
-  if (isNavigation) {
-    // ---- Network First (HTML) ----
-    event.respondWith(
-      fetch(req)
-        .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          return response;
-        })
-        .catch(() => {
-          return caches.match(req).then((cached) => {
-            return cached || caches.match('./index.html');
-          });
-        })
-    );
-  } else {
-    // ---- Cache First (static assets), সাথে ব্যাকগ্রাউন্ড রিভ্যালিডেট ----
-    event.respondWith(
-      caches.match(req).then((cached) => {
-        const fetchPromise = fetch(req).then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          }
-          return response;
-        }).catch(() => cached);
-
-        return cached || fetchPromise;
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Network থেকে পেলে Cache-ও update করো
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+        return response;
       })
-    );
-  }
-});
-
-// ===== MESSAGE: চাইলে পেজ থেকে ম্যানুয়ালি skipWaiting ট্রিগার করা যাবে =====
-self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+      .catch(() => {
+        // Network না থাকলে Cache থেকে দাও
+        return caches.match(event.request).then(cached => {
+          return cached || caches.match('./index.html');
+        });
+      })
+  );
 });
