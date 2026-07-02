@@ -5203,6 +5203,18 @@
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js');
     });
+
+    // ===== অটো-আপডেট: নতুন ভার্সন cache হয়ে activate হলে পেজ নিজে থেকেই রিলোড হবে =====
+    // আগে: নতুন ভার্সন cache-এ জমা হতো, কিন্তু স্ক্রিনে দেখাতে অ্যাপ দ্বিতীয়বার
+    // খুলতে হতো। এখন: নতুন SW activate (clients.claim) হলে controllerchange
+    // ইভেন্ট আসে, আমরা সাথে সাথে পেজ রিলোড করে দিই — একবার ইন্টারনেট অন করে
+    // অ্যাপ খুললেই নতুন ভার্সন দেখা যাবে, দ্বিতীয়বার খোলার দরকার নেই।
+    let swRefreshed = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (swRefreshed) return; // একবারের বেশি রিলোড লুপ আটকাতে
+      swRefreshed = true;
+      window.location.reload();
+    });
   }
 </script>
 
