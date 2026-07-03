@@ -3506,7 +3506,13 @@
     const cellW = Math.floor((W - 32) / colCount);
     const rowH = 28;
     const shopHeaderH = shopName ? (shopSub ? 54 : 36) : 0;
-    const metaH = 30;
+    const metaFont = '11px Arial';
+    const metaLineH = 14;
+    const measureCanvas = document.createElement('canvas');
+    const mctx = measureCanvas.getContext('2d');
+    mctx.font = metaFont;
+    const metaLines = tbWrapText(mctx, meta, W - 32);
+    const metaH = metaLines.length * metaLineH + 16;
     const headerH = shopHeaderH + metaH;
     const totalsCardH = 38;
     const totalsGap = 5;
@@ -3565,11 +3571,13 @@
       drawY = shopHeaderH;
     }
 
-    // Meta (date / customer / note) — no title line
+    // Meta (date / customer / note) — wrapped across multiple lines if needed
     ctx.fillStyle = '#8a7a68';
-    ctx.font = '11px Arial';
+    ctx.font = metaFont;
     ctx.textAlign = 'center';
-    ctx.fillText(meta, W / 2, drawY + 18);
+    metaLines.forEach((line, li) => {
+      ctx.fillText(line, W / 2, drawY + 18 + li * metaLineH);
+    });
 
     // Table
     const startX = 16;
@@ -5408,7 +5416,13 @@
     const cellW = Math.floor((W - 32) / colCount);
     const rowH = 28;
     const shopHeaderH = shopName ? (shopSub ? 54 : 36) : 0;
-    const metaH = 30;
+    const metaFont = '11px Arial';
+    const metaLineH = 14;
+    const measureCanvas = document.createElement('canvas');
+    const mctx = measureCanvas.getContext('2d');
+    mctx.font = metaFont;
+    const metaLines = tbWrapText(mctx, meta, W - 32);
+    const metaH = metaLines.length * metaLineH + 16;
     const headerH = shopHeaderH + metaH;
     const totalsCardH = 38;
     const totalsGap = 5;
@@ -5471,11 +5485,13 @@
       drawY = shopHeaderH;
     }
 
-    // Meta
+    // Meta — wrapped across multiple lines if needed
     ctx.fillStyle = '#8a7a68';
-    ctx.font = '11px Arial';
+    ctx.font = metaFont;
     ctx.textAlign = 'center';
-    ctx.fillText(meta, W / 2, drawY + 18);
+    metaLines.forEach((line, li) => {
+      ctx.fillText(line, W / 2, drawY + 18 + li * metaLineH);
+    });
 
     // Table
     const startX = 16;
