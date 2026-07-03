@@ -2846,6 +2846,7 @@
     const snCount = {};
     const snOrder = [];
     rowsArr.forEach((row, idx) => {
+      if (row.sn === null) { snOrder.push(''); return; } // ব্যবহারকারী নিজে মুছে ফেলেছে - ঘর ফাঁকা থাকবে
       const base = (row.sn !== undefined && row.sn !== '') ? String(row.sn) : String(idx + 1);
       if (!snCount[base]) { snCount[base] = 0; }
       const count = snCount[base];
@@ -2977,7 +2978,8 @@
 
   function backspace() {
     if (activeField === -1) {
-      rows[activeRow].sn = (rows[activeRow].sn || '').slice(0, -1);
+      const v = (rows[activeRow].sn || '').slice(0, -1);
+      rows[activeRow].sn = v === '' ? null : v;
       render();
       return;
     }
@@ -2989,7 +2991,7 @@
 
   function clearField() {
     if (activeField === -1) {
-      rows[activeRow].sn = '';
+      rows[activeRow].sn = null; // ঘর সম্পূর্ণ ফাঁকা দেখাবে, অটো নাম্বারে ফিরে যাবে না
       render();
       return;
     }
@@ -3430,7 +3432,7 @@
       const snB = parseFloat(b.r.sn) || (b.i + 1);
       return snA - snB;
     }).map(({ r }) => r);
-    const serializedRows = sortedRows.map((r, i) => ({...r, sn: (r.sn !== undefined && r.sn !== '') ? r.sn : String(i+1)}));
+    const serializedRows = sortedRows.map((r, i) => ({...r, sn: (r.sn !== undefined && r.sn !== '' && r.sn !== null) ? r.sn : String(i+1)}));
     saved.unshift({ name: custName, phone: custPhone, note: custNote, matName, date: dateStr, total, rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
     store.setItem('woodCalcSaved', JSON.stringify(saved.slice(0, 50)));
     alert('✅ হিসাব সেভ হয়েছে!\nক্রেতা: ' + custName + '\nমোট: ' + total + ' CFT');
@@ -4370,8 +4372,8 @@
         const l = parseFloat(r.l)||0, w = parseFloat(r.w)||0, t = parseFloat(r.t)||0, q = parseFloat(r.q)||1;
         const cft = ((l*w*t*q)/2304).toFixed(4);
         const snDisplay = item.isDual
-          ? '<span style="font-size:10px;font-weight:700;padding:1px 4px;border-radius:3px;background:' + (r.mat === 'A' ? '#d6eaf8;color:#1a5276' : '#fdebd0;color:#a04000') + ';">' + (r.mat === 'A' ? (item.matLabelA || 'মাল ১') : (item.matLabelB || 'মাল ২')) + '</span><br>' + (r.sn !== undefined && r.sn !== '' ? r.sn : (i+1))
-          : (r.sn !== undefined && r.sn !== '' ? r.sn : (i+1));
+          ? '<span style="font-size:10px;font-weight:700;padding:1px 4px;border-radius:3px;background:' + (r.mat === 'A' ? '#d6eaf8;color:#1a5276' : '#fdebd0;color:#a04000') + ';">' + (r.mat === 'A' ? (item.matLabelA || 'মাল ১') : (item.matLabelB || 'মাল ২')) + '</span><br>' + (r.sn !== undefined && r.sn !== '' && r.sn !== null ? r.sn : (i+1))
+          : (r.sn !== undefined && r.sn !== '' && r.sn !== null ? r.sn : (i+1));
         return `<tr>
           <td>${snDisplay}</td>
           <td>${r.l||'-'}</td>
@@ -4680,7 +4682,8 @@
   function dBackspace() {
     const s = dState[dActiveCalc];
     if (s.activeField === -1) {
-      s.rows[s.activeRow].sn = (s.rows[s.activeRow].sn || '').slice(0, -1);
+      const v = (s.rows[s.activeRow].sn || '').slice(0, -1);
+      s.rows[s.activeRow].sn = v === '' ? null : v;
       dRenderRows();
       return;
     }
@@ -4692,7 +4695,7 @@
   function dClearField() {
     const s = dState[dActiveCalc];
     if (s.activeField === -1) {
-      s.rows[s.activeRow].sn = '';
+      s.rows[s.activeRow].sn = null; // ঘর সম্পূর্ণ ফাঁকা দেখাবে, অটো নাম্বারে ফিরে যাবে না
       dRenderRows();
       return;
     }
@@ -5303,7 +5306,7 @@
     ['A', 'B'].forEach(function (which) {
       const validRows = dState[which].rows.filter(r => parseFloat(r.l) || parseFloat(r.w) || parseFloat(r.t));
       validRows.forEach(function (r, i) {
-        combinedRows.push({ ...r, mat: which, sn: (r.sn !== undefined && r.sn !== '') ? r.sn : String(i + 1) });
+        combinedRows.push({ ...r, mat: which, sn: (r.sn !== undefined && r.sn !== '' && r.sn !== null) ? r.sn : String(i + 1) });
       });
     });
     const totalA = dMaterialTotal('A');
