@@ -20,6 +20,8 @@
     --border: #D6C5AD;
     --white: #FFFFFF;
     --key-bg: #fbf6ee;
+    --teal: #0e8388;
+    --teal-dark: #0a6367;
   }
 
   * {
@@ -288,14 +290,38 @@
   }
 
   .btn-back-sm {
-    background: var(--sand);
+    background: var(--teal);
     border: none;
     border-radius: 8px;
     padding: 8px 14px;
     font-size: 13px;
     font-weight: 600;
-    color: var(--brick-dark);
+    color: #fff;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(14,131,136,0.35);
+  }
+
+  .customer-search-wrap {
+    padding: 0 16px 10px;
+    flex-shrink: 0;
+  }
+
+  .customer-search-wrap input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--white);
+    box-sizing: border-box;
+  }
+
+  .customer-search-empty {
+    text-align: center;
+    color: #a08e76;
+    font-size: 14px;
+    margin-top: 40px;
   }
 
   .customer-list {
@@ -478,6 +504,57 @@
     border: none;
     border-radius: 10px;
     font-size: 15px;
+    cursor: pointer;
+  }
+
+  /* Custom confirm modal (replaces native window.confirm) */
+  .app-confirm-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 600;
+    align-items: center;
+    justify-content: center;
+  }
+  .app-confirm-modal.open { display: flex; }
+  .app-confirm-content {
+    background: var(--sand-light);
+    border-radius: 16px;
+    padding: 20px;
+    width: 85%;
+    max-width: 360px;
+  }
+  .app-confirm-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--brick-dark);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .app-confirm-btns {
+    display: flex;
+    gap: 10px;
+  }
+  .app-confirm-cancel {
+    flex: 1;
+    padding: 10px;
+    background: var(--border);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .app-confirm-ok {
+    flex: 1;
+    padding: 10px;
+    background: #c0392b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
   }
 
@@ -840,33 +917,113 @@
     display: flex;
   }
 
+  /* ---- physical-style slide switches (ROUND / DEC) ---- */
+  .dc-switches {
+    flex-shrink: 0;
+    display: flex;
+    gap: 10px;
+    padding: 8px 16px 0;
+  }
+
+  .dc-switch-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .dc-switch-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #8a7a68;
+    letter-spacing: 0.5px;
+    padding-left: 2px;
+  }
+
+  .dc-switch-track {
+    position: relative;
+    display: flex;
+    background: #2a1f18;
+    border-radius: 9px;
+    padding: 3px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+  }
+
+  .dc-switch-thumb {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    background: linear-gradient(160deg, var(--brick), var(--brick-dark));
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    transition: left 0.18s ease;
+  }
+
+  .dc-switch-pos {
+    position: relative;
+    flex: 1;
+    z-index: 1;
+    border: none;
+    background: none;
+    padding: 6px 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: #cbb9a3;
+    cursor: pointer;
+  }
+
+  .dc-switch-pos.dc-switch-on {
+    color: #fff;
+  }
+
   .dc-screen {
     flex-shrink: 0;
-    margin: 14px 16px 10px;
+    margin: 10px 16px 8px;
     background: linear-gradient(160deg, var(--brick-dark), #6e3826);
     border-radius: 18px;
-    padding: 22px 18px 18px;
+    padding: 16px 18px 14px;
     box-shadow: 0 8px 22px rgba(140, 74, 54, 0.28), inset 0 1px 0 rgba(255,255,255,0.08);
     text-align: right;
-    min-height: 108px;
+    min-height: 96px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    gap: 6px;
+    gap: 4px;
+    position: relative;
+  }
+
+  .dc-indicators {
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .dc-ind {
+    font-size: 10px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.18);
+    letter-spacing: 0.5px;
+  }
+
+  .dc-ind.on {
+    color: #ffe1a8;
+    text-shadow: 0 0 6px rgba(255,225,168,0.6);
   }
 
   .dc-expression {
     color: rgba(255,255,255,0.55);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-    min-height: 18px;
+    min-height: 16px;
     word-break: break-all;
     letter-spacing: 0.3px;
   }
 
   .dc-result {
     color: var(--white);
-    font-size: 38px;
+    font-size: 34px;
     font-weight: 700;
     word-break: break-all;
     line-height: 1.1;
@@ -879,22 +1036,22 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 6px 16px max(18px, env(safe-area-inset-bottom));
+    padding: 4px 14px max(14px, env(safe-area-inset-bottom));
   }
 
   .dc-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
   }
 
   .dc-grid button {
     border: none;
-    border-radius: 16px;
-    font-size: 22px;
+    border-radius: 12px;
+    font-size: 16px;
     font-weight: 600;
     padding: 0;
-    aspect-ratio: 1 / 0.8;
+    aspect-ratio: 1 / 0.85;
     background: var(--key-bg);
     color: var(--text-dark);
     cursor: pointer;
@@ -904,13 +1061,13 @@
 
   .dc-grid button:active {
     background: var(--sand);
-    transform: scale(0.96);
+    transform: scale(0.94);
   }
 
   .dc-grid button.dc-op {
     background: var(--sand);
     color: var(--brick-dark);
-    font-size: 24px;
+    font-size: 19px;
   }
 
   .dc-grid button.dc-op:active {
@@ -920,12 +1077,35 @@
   .dc-grid button.dc-func {
     background: #f0ddd5;
     color: var(--brick-dark);
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 700;
+    line-height: 1.15;
   }
 
   .dc-grid button.dc-func:active {
     background: #e6c3b6;
+  }
+
+  .dc-grid button.dc-mem {
+    background: #d9c8ba;
+    color: var(--brick-dark);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .dc-grid button.dc-mem:active {
+    background: #c7b09c;
+  }
+
+  .dc-grid button.dc-ac {
+    background: #e57368;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .dc-grid button.dc-ac:active {
+    background: #cf5b50;
   }
 
   .dc-grid button.dc-equals {
@@ -933,15 +1113,11 @@
     color: var(--white);
     grid-row: span 2;
     aspect-ratio: auto;
+    font-size: 24px;
   }
 
   .dc-grid button.dc-equals:active {
     background: var(--brick-dark);
-  }
-
-  .dc-grid button.dc-zero {
-    grid-column: span 2;
-    aspect-ratio: auto;
   }
 
   /* Summary / Report page */
@@ -1019,7 +1195,7 @@
     margin-bottom: 4px;
   }
 
-  #printArea .pr-meta, #dPrintArea .pr-meta {
+  #printArea .pr-meta, #dPrintArea .pr-meta, #dualSummaryView .pr-meta {
     text-align: center;
     font-size: 12px;
     color: #8a7a68;
@@ -1672,6 +1848,23 @@
     color: var(--text-dark);
   }
 
+  .single-mat-name-row {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+
+  .single-mat-name-row input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    background: var(--white);
+    color: var(--text-dark);
+  }
+
   .summary-meta-row {
     display: flex;
     flex-direction: column;
@@ -1952,6 +2145,10 @@
     </div>
   </div>
 
+  <div class="single-mat-name-row">
+    <input type="text" id="matName" placeholder="🪵 মালের নাম (ঐচ্ছিক)" maxlength="40">
+  </div>
+
   <div class="total-box">
     <div class="label">সর্বমোট</div>
     <div class="value"><span id="grandTotal">0.0000</span> <span>CFT</span></div>
@@ -1999,12 +2196,13 @@
 <div id="summaryPage">
   <div class="summary-header">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <button class="btn-back-sm" onclick="closeSummary()" style="background:#2e7d32;color:#fff;padding:7px 12px;font-size:12px;font-weight:600;border-radius:8px;flex-shrink:0;box-shadow:0 2px 5px rgba(46,125,50,0.35);">◀ ফিরে যান</button>
+      <button class="btn-back-sm" onclick="closeSummary()" style="flex-shrink:0;">◀ ফিরে যান</button>
       <h2 style="flex:1;text-align:center;margin-bottom:0;">📋 হিসাবের কপি</h2>
       <div style="width:74px;flex-shrink:0;"></div>
     </div>
     <div class="summary-meta">
       <input type="text" id="custName" placeholder="ক্রেতার নাম (ঐচ্ছিক)">
+      <input type="tel" id="custPhone" placeholder="📞 মোবাইল নাম্বার (ঐচ্ছিক)" maxlength="20">
       <input type="text" id="custNote" placeholder="নোট / ঠিকানা (ঐচ্ছিক)">
       <div class="price-row">
         <label>প্রতি CFT দাম (৳)</label>
@@ -2154,6 +2352,9 @@
     <button class="btn-back-sm" onclick="closeCustomerPage()">◀ ফিরে যান</button>
     <h2>👤 সেভ লিস্ট</h2>
   </div>
+  <div class="customer-search-wrap">
+    <input type="text" id="customerSearchInput" placeholder="🔍 নাম বা মোবাইল নাম্বার দিয়ে খুঁজুন..." oninput="renderCustomerList()">
+  </div>
   <div class="customer-list" id="customerList">
     <div class="customer-empty">এখনো কোনো হিসাব সেভ করা হয়নি।<br>হিসাব শেষে মেনু থেকে "হিসাব সেভ" করুন।</div>
   </div>
@@ -2162,9 +2363,9 @@
 <!-- Dual CFT Calculator Page (standalone, for two materials at once) -->
 <div id="dualCalcPage">
   <div class="customer-header">
-    <button class="btn-back-sm" id="dBackToCalcHeaderBtn" onclick="dBackToCalc()" style="background:#2e7d32;color:#fff;display:none;padding:7px 12px;font-size:12px;font-weight:700;border-radius:8px;box-shadow:0 2px 5px rgba(46,125,50,0.35);">◀ ফিরে যান</button>
+    <button class="btn-back-sm" id="dBackToCalcHeaderBtn" onclick="dBackToCalc()" style="display:none;">◀ ফিরে যান</button>
     <h2>🪵 দুই হিসাব</h2>
-    <button class="btn-back-sm" onclick="closeDualCalcPage()" style="background:#c0392b;color:#fff;padding:5px 9px;font-size:11px;">◀ হোমে ফিরে যান</button>
+    <button class="btn-back-sm" onclick="closeDualCalcPage()" style="padding:5px 9px;font-size:11px;">◀ হোমে ফিরে যান</button>
   </div>
 
   <!-- Material tabs -->
@@ -2232,7 +2433,8 @@
       </div>
       <div class="summary-meta-row">
         <input type="text" id="dCustName" placeholder="👤 ক্রেতার নাম (ঐচ্ছিক)" maxlength="50">
-        <input type="text" id="dCustDate" placeholder="📅 তারিখ" maxlength="30">
+        <input type="tel" id="dCustPhone" placeholder="📞 মোবাইল নাম্বার (ঐচ্ছিক)" maxlength="20">
+        <input type="text" id="dCustNote" placeholder="নোট / ঠিকানা (ঐচ্ছিক)" maxlength="60">
       </div>
       <div class="summary-meta">
         <div class="price-row">
@@ -2255,6 +2457,7 @@
     </div>
 
     <div class="dual-summary-content">
+      <div class="pr-meta" id="dSummaryMeta"></div>
       <table>
         <thead>
           <tr>
@@ -2383,40 +2586,78 @@
 <!-- Digital Calculator Page -->
 <div id="digitalCalcPage">
   <div class="customer-header">
-    <button class="btn-back-sm" onclick="closeDigitalCalcPage()" style="background:#2e7d32;color:#fff;padding:7px 12px;font-size:12px;font-weight:600;border-radius:8px;box-shadow:0 2px 5px rgba(46,125,50,0.35);">◀ ফিরে যান</button>
+    <button class="btn-back-sm" onclick="closeDigitalCalcPage()">◀ ফিরে যান</button>
     <h2>🔢 ক্যালকুলেটর</h2>
   </div>
 
+  <!-- Physical-style slide switches -->
+  <div class="dc-switches">
+    <div class="dc-switch-group">
+      <div class="dc-switch-label">CUT ↔ UP 5/4</div>
+      <div class="dc-switch-track" id="dcRoundTrack">
+        <div class="dc-switch-thumb" id="dcRoundThumb"></div>
+        <button class="dc-switch-pos" onclick="dcSetRound('cut')">CUT</button>
+        <button class="dc-switch-pos" onclick="dcSetRound('54')">5/4</button>
+        <button class="dc-switch-pos" onclick="dcSetRound('up')">UP</button>
+      </div>
+    </div>
+    <div class="dc-switch-group">
+      <div class="dc-switch-label">F 4 2 0 A</div>
+      <div class="dc-switch-track" id="dcDecTrack">
+        <div class="dc-switch-thumb" id="dcDecThumb"></div>
+        <button class="dc-switch-pos" onclick="dcSetDec('F')">F</button>
+        <button class="dc-switch-pos" onclick="dcSetDec('4')">4</button>
+        <button class="dc-switch-pos" onclick="dcSetDec('2')">2</button>
+        <button class="dc-switch-pos" onclick="dcSetDec('0')">0</button>
+        <button class="dc-switch-pos" onclick="dcSetDec('A')">A</button>
+      </div>
+    </div>
+  </div>
+
   <div class="dc-screen">
+    <div class="dc-indicators">
+      <span class="dc-ind" id="indM">M</span>
+      <span class="dc-ind" id="indGT">GT</span>
+    </div>
     <div class="dc-expression" id="dcExpression">&nbsp;</div>
     <div class="dc-result" id="dcResult">0</div>
   </div>
 
   <div class="dc-grid-wrap">
     <div class="dc-grid">
-      <button class="dc-func" onclick="dcClearAll()">AC</button>
-      <button class="dc-func" onclick="dcBackspace()">⌫</button>
-      <button class="dc-func" onclick="dcPercent()">%</button>
-      <button class="dc-op" onclick="dcOperator('÷')">÷</button>
+      <button class="dc-func" onclick="dcSqrt()">√</button>
+      <button class="dc-mem" onclick="dcGTShow()">GT</button>
+      <button class="dc-mem" onclick="dcMRC()">MRC</button>
+      <button class="dc-mem" onclick="dcMemMinus()">M−</button>
+      <button class="dc-mem" onclick="dcMemPlus()">M+</button>
+      <button class="dc-func" onclick="dcReplay()">রিপ্লে</button>
 
+      <button class="dc-func" onclick="dcSign()">+/−</button>
       <button onclick="dcDigit('7')">৭</button>
       <button onclick="dcDigit('8')">৮</button>
       <button onclick="dcDigit('9')">৯</button>
-      <button class="dc-op" onclick="dcOperator('×')">×</button>
+      <button class="dc-func" onclick="dcPercent()">%</button>
+      <button class="dc-func" onclick="dcMU()">MU</button>
 
+      <button class="dc-func" onclick="dcCE()">CE</button>
       <button onclick="dcDigit('4')">৪</button>
       <button onclick="dcDigit('5')">৫</button>
       <button onclick="dcDigit('6')">৬</button>
-      <button class="dc-op" onclick="dcOperator('−')">−</button>
+      <button class="dc-op" onclick="dcOperator('×')">×</button>
+      <button class="dc-op" onclick="dcOperator('÷')">÷</button>
 
+      <button class="dc-ac" onclick="dcClearAll()">ON/AC</button>
       <button onclick="dcDigit('1')">১</button>
       <button onclick="dcDigit('2')">২</button>
       <button onclick="dcDigit('3')">৩</button>
-      <button class="dc-op" onclick="dcOperator('+')">+</button>
-
-      <button class="dc-zero" onclick="dcDigit('0')">০</button>
-      <button onclick="dcDecimal()">.</button>
+      <button class="dc-op" onclick="dcOperator('−')">−</button>
       <button class="dc-equals" onclick="dcEquals()">=</button>
+
+      <button onclick="dcDigit('0')">০</button>
+      <button onclick="dcDoubleZero()">00</button>
+      <button onclick="dcTripleZero()">000</button>
+      <button onclick="dcDecimal()">.</button>
+      <button class="dc-op" onclick="dcOperator('+')">+</button>
     </div>
   </div>
 </div>
@@ -2450,6 +2691,24 @@
     getItem: (k) => { try { return localStorage.getItem(k); } catch(e) { return _memStore[k] || null; } },
     setItem: (k, v) => { try { localStorage.setItem(k, v); } catch(e) { _memStore[k] = v; } },
   };
+
+  // Custom confirm dialog (native window.confirm can be unreliable inside embedded/webview previews)
+  let _appConfirmCallback = null;
+  function appConfirm(message, callback) {
+    document.getElementById('appConfirmText').textContent = message;
+    _appConfirmCallback = callback;
+    document.getElementById('appConfirmModal').classList.add('open');
+  }
+  function appConfirmCancel() {
+    document.getElementById('appConfirmModal').classList.remove('open');
+    _appConfirmCallback = null;
+  }
+  function appConfirmOk() {
+    const cb = _appConfirmCallback;
+    document.getElementById('appConfirmModal').classList.remove('open');
+    _appConfirmCallback = null;
+    if (cb) cb();
+  }
 
   // ===== Profile / Setup =====
   function getProfile() {
@@ -2870,9 +3129,7 @@
     }
 
     // Date/time + optional name/note
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
-    document.getElementById('prMeta').textContent = `তারিখ: ${dateStr}`;
+    updateMeta();
     document.getElementById('pricePerCft').value = '';
     document.getElementById('priceTotalBox').style.display = 'none';
     document.getElementById('priceTotalRow').style.display = 'none';
@@ -2913,8 +3170,11 @@
 
   // Update meta line whenever name/note changes
   document.addEventListener('input', (e) => {
-    if (e.target.id === 'custName' || e.target.id === 'custNote') {
+    if (e.target.id === 'custName' || e.target.id === 'custPhone' || e.target.id === 'custNote' || e.target.id === 'matName') {
       updateMeta();
+    }
+    if (e.target.id === 'dCustName' || e.target.id === 'dCustPhone' || e.target.id === 'dCustNote') {
+      dUpdateMeta();
     }
   });
 
@@ -3136,10 +3396,14 @@
   function updateMeta() {
     const now = new Date();
     const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+    const timeStr = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+    const matName = document.getElementById('matName') ? document.getElementById('matName').value.trim() : '';
     const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
     const note = document.getElementById('custNote').value.trim();
-    let meta = `তারিখ: ${dateStr}`;
+    let meta = (matName ? `🪵 ${matName}   |   ` : '') + `তারিখ: ${dateStr}, সময়: ${timeStr}`;
     if (name) meta += `   |   ক্রেতা: ${name}`;
+    if (phone) meta += `   |   📞 ${phone}`;
     if (note) meta += `   |   ${note}`;
     document.getElementById('prMeta').textContent = meta;
   }
@@ -3151,7 +3415,9 @@
   function saveSummary() {
     // Save current summary to customer list (rows data সহ)
     const custName = document.getElementById('custName').value.trim() || 'অজ্ঞাত';
+    const custPhone = document.getElementById('custPhone').value.trim();
     const custNote = document.getElementById('custNote').value.trim();
+    const matName = document.getElementById('matName') ? document.getElementById('matName').value.trim() : '';
     const total = document.getElementById('prTotal').textContent;
     const now = new Date();
     const dateStr = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -3165,7 +3431,7 @@
       return snA - snB;
     }).map(({ r }) => r);
     const serializedRows = sortedRows.map((r, i) => ({...r, sn: (r.sn !== undefined && r.sn !== '') ? r.sn : String(i+1)}));
-    saved.unshift({ name: custName, note: custNote, date: dateStr, total, rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
+    saved.unshift({ name: custName, phone: custPhone, note: custNote, matName, date: dateStr, total, rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
     store.setItem('woodCalcSaved', JSON.stringify(saved.slice(0, 50)));
     alert('✅ হিসাব সেভ হয়েছে!\nক্রেতা: ' + custName + '\nমোট: ' + total + ' CFT');
   }
@@ -3598,6 +3864,7 @@
       return;
     }
     const custName = prompt('ক্রেতার নাম লিখুন (ঐচ্ছিক):') || 'অজ্ঞাত';
+    const custPhone = prompt('মোবাইল নাম্বার লিখুন (ঐচ্ছিক):') || '';
     let grandTotal = 0;
     validRows.forEach(r => {
       const l = parseFloat(r.l) || 0;
@@ -3616,7 +3883,7 @@
       return snA - snB;
     });
     const serializedRows = sortedRows.map((r, i) => ({...r, sn: String(i+1)}));
-    saved.unshift({ name: custName, date: dateStr, total: grandTotal.toFixed(4), rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
+    saved.unshift({ name: custName, phone: custPhone, date: dateStr, total: grandTotal.toFixed(4), rowCount: serializedRows.length, timestamp: Date.now(), rows: serializedRows });
     store.setItem('woodCalcSaved', JSON.stringify(saved.slice(0, 50)));
     alert(`✅ হিসাব সেভ হয়েছে!\nক্রেতা: ${custName}\nমোট: ${grandTotal.toFixed(4)} CFT`);
   }
@@ -3626,6 +3893,8 @@
     document.getElementById('calcPage').classList.add('hidden');
     document.getElementById('summaryPage').classList.remove('active');
     document.getElementById('customerPage').classList.add('active');
+    const searchInput = document.getElementById('customerSearchInput');
+    if (searchInput) searchInput.value = '';
     renderCustomerList();
   }
 
@@ -3670,6 +3939,48 @@
   let dcPendingOp = null;   // '+', '−', '×', '÷'
   let dcExpr = '';          // expression trail shown above result
   let dcJustEvaluated = false;
+  let dcMemory = 0;         // M register
+  let dcGT = 0;             // grand total accumulator
+  let dcMRCState = 0;       // 0 = next MRC recalls, 1 = next MRC clears
+  let dcGTState = 0;        // 0 = next GT recalls, 1 = next GT clears
+  let dcAddRaw = '';        // raw digit buffer used only in 'A' (add-mode) decimal setting
+  let dcLastExpr = '';      // last completed calculation, for replay
+  let dcRoundMode = '54';   // 'cut' | '54' | 'up'  -- ROUND switch
+  let dcDecMode = 'F';      // 'F' | '4' | '2' | '0' | 'A'  -- DEC switch
+
+  // ---- ROUND / DEC switches ----
+  function dcSetRound(mode) {
+    dcRoundMode = mode;
+    dcUpdateSwitchUI();
+  }
+  function dcSetDec(mode) {
+    dcDecMode = mode;
+    dcAddRaw = '';
+    dcUpdateSwitchUI();
+    dcUpdateScreen();
+  }
+  function dcUpdateSwitchUI() {
+    const roundOrder = ['cut', '54', 'up'];
+    const decOrder = ['F', '4', '2', '0', 'A'];
+    const rIdx = roundOrder.indexOf(dcRoundMode);
+    const dIdx = decOrder.indexOf(dcDecMode);
+    const rThumb = document.getElementById('dcRoundThumb');
+    const dThumb = document.getElementById('dcDecThumb');
+    if (rThumb) { rThumb.style.width = (100 / roundOrder.length) + '%'; rThumb.style.left = (rIdx * (100 / roundOrder.length)) + '%'; }
+    if (dThumb) { dThumb.style.width = (100 / decOrder.length) + '%'; dThumb.style.left = (dIdx * (100 / decOrder.length)) + '%'; }
+    document.querySelectorAll('#dcRoundTrack .dc-switch-pos').forEach((btn, i) => btn.classList.toggle('dc-switch-on', i === rIdx));
+    document.querySelectorAll('#dcDecTrack .dc-switch-pos').forEach((btn, i) => btn.classList.toggle('dc-switch-on', i === dIdx));
+  }
+
+  // apply the CUT / 5-4 / UP rounding at the DEC switch's decimal-place setting
+  function dcRoundValue(n) {
+    if (dcDecMode === 'F' || !isFinite(n)) return n;
+    const places = dcDecMode === 'A' ? 2 : parseInt(dcDecMode, 10);
+    const factor = Math.pow(10, places);
+    if (dcRoundMode === 'cut') return Math.trunc(n * factor) / factor;
+    if (dcRoundMode === 'up') return (n >= 0 ? Math.ceil(n * factor) : Math.floor(n * factor)) / factor;
+    return Math.round(n * factor) / factor; // 5/4 = standard rounding
+  }
 
   function dcUpdateScreen() {
     let display;
@@ -3683,6 +3994,10 @@
     }
     document.getElementById('dcResult').textContent = display;
     document.getElementById('dcExpression').innerHTML = dcExpr || '&nbsp;';
+    const indM = document.getElementById('indM');
+    const indGT = document.getElementById('indGT');
+    if (indM) indM.classList.toggle('on', dcMemory !== 0);
+    if (indGT) indGT.classList.toggle('on', dcGT !== 0);
   }
 
   function dcClearAll() {
@@ -3691,10 +4006,33 @@
     dcPendingOp = null;
     dcExpr = '';
     dcJustEvaluated = false;
+    dcAddRaw = '';
+    dcMRCState = 0;
+    dcGTState = 0;
+    dcUpdateSwitchUI();
+    dcUpdateScreen();
+  }
+
+  function dcCE() {
+    // clears only the number currently being entered, keeps pending op & memory
+    dcCurrent = '0';
+    dcAddRaw = '';
+    dcJustEvaluated = false;
     dcUpdateScreen();
   }
 
   function dcDigit(d) {
+    dcMRCState = 0;
+    dcGTState = 0;
+    if (dcDecMode === 'A') {
+      // Add-mode: every digit auto-inserts the decimal point (adding-machine style)
+      if (dcCurrent === 'ত্রুটি' || dcJustEvaluated) { dcExpr = ''; dcJustEvaluated = false; dcAddRaw = ''; }
+      if (dcAddRaw.length >= 12) return;
+      dcAddRaw += d;
+      dcCurrent = String(parseInt(dcAddRaw, 10) / 100);
+      dcUpdateScreen();
+      return;
+    }
     if (dcCurrent === 'ত্রুটি' || dcJustEvaluated) {
       dcCurrent = '0';
       dcExpr = '';
@@ -3709,7 +4047,11 @@
     dcUpdateScreen();
   }
 
+  function dcDoubleZero() { dcDigit('0'); if (dcDecMode !== 'A') dcDigit('0'); }
+  function dcTripleZero() { dcDigit('0'); if (dcDecMode !== 'A') { dcDigit('0'); dcDigit('0'); } }
+
   function dcDecimal() {
+    if (dcDecMode === 'A') return; // add-mode inserts the decimal automatically
     if (dcCurrent === 'ত্রুটি' || dcJustEvaluated) {
       dcCurrent = '0';
       dcExpr = '';
@@ -3721,13 +4063,10 @@
     }
   }
 
-  function dcBackspace() {
-    if (dcCurrent === 'ত্রুটি' || dcJustEvaluated) {
-      dcClearAll();
-      return;
-    }
-    dcCurrent = dcCurrent.slice(0, -1);
-    if (dcCurrent === '' || dcCurrent === '-') dcCurrent = '0';
+  function dcSign() {
+    if (dcCurrent === 'ত্রুটি') return;
+    if (parseFloat(dcCurrent) === 0) return;
+    dcCurrent = dcCurrent.startsWith('-') ? dcCurrent.slice(1) : ('-' + dcCurrent);
     dcUpdateScreen();
   }
 
@@ -3742,12 +4081,14 @@
   }
 
   function dcOperator(op) {
+    dcMRCState = 0;
+    dcGTState = 0;
     const cur = parseFloat(dcCurrent);
     if (dcCurrent === 'ত্রুটি') { dcClearAll(); return; }
 
     if (dcPendingOp !== null && !dcJustEvaluated) {
       // chain: evaluate the pending operation first
-      const result = dcApplyOp(dcPrevValue, dcPendingOp, cur);
+      const result = dcRoundValue(dcApplyOp(dcPrevValue, dcPendingOp, cur));
       if (!isFinite(result)) {
         dcCurrent = 'ত্রুটি';
         dcPrevValue = null;
@@ -3763,12 +4104,12 @@
 
     dcPendingOp = op;
     dcExpr = dcFormatNum(dcPrevValue) + ' ' + op;
-    dcCurrent = String(dcPrevValue);
     dcJustEvaluated = false;
     // show the running total while choosing the next number
     document.getElementById('dcResult').textContent = dcFormatNum(dcPrevValue);
     document.getElementById('dcExpression').innerHTML = dcExpr;
     dcCurrent = '0';
+    dcAddRaw = '';
   }
 
   function dcPercent() {
@@ -3776,10 +4117,49 @@
     const cur = parseFloat(dcCurrent) || 0;
     if (dcPendingOp !== null && dcPrevValue !== null) {
       // percentage relative to the left-hand operand, e.g. 200 + 10% = 220
-      dcCurrent = String((dcPrevValue * cur) / 100);
+      dcCurrent = String(dcRoundValue((dcPrevValue * cur) / 100));
     } else {
-      dcCurrent = String(cur / 100);
+      dcCurrent = String(dcRoundValue(cur / 100));
     }
+    dcUpdateScreen();
+  }
+
+  // MU = markup/margin key: cost [+] margin% MU  -> selling price keeping margin% of the SALE price
+  //      cost [−] margin% MU -> marked-down price
+  function dcMU() {
+    if (dcCurrent === 'ত্রুটি') { dcClearAll(); return; }
+    const n = parseFloat(dcCurrent) || 0;
+    let result;
+    if (dcPendingOp !== null && dcPrevValue !== null) {
+      if (dcPendingOp === '−') {
+        result = dcPrevValue * (1 - n / 100);
+      } else {
+        result = dcPrevValue / (1 - n / 100);
+      }
+      dcExpr = dcFormatNum(dcPrevValue) + ' MU ' + dcFormatNum(n) + '% =';
+    } else {
+      result = n / (1 - n / 100);
+      dcExpr = dcFormatNum(n) + '% MU =';
+    }
+    dcCurrent = isFinite(result) ? String(dcRoundValue(result)) : 'ত্রুটি';
+    dcPrevValue = null;
+    dcPendingOp = null;
+    dcJustEvaluated = true;
+    dcLastExpr = dcExpr;
+    dcUpdateScreen();
+  }
+
+  function dcSqrt() {
+    if (dcCurrent === 'ত্রুটি') { dcClearAll(); return; }
+    const val = parseFloat(dcCurrent) || 0;
+    dcExpr = '√(' + dcFormatNum(val) + ') =';
+    if (val < 0) {
+      dcCurrent = 'ত্রুটি';
+    } else {
+      dcCurrent = String(dcRoundValue(Math.sqrt(val)));
+    }
+    dcJustEvaluated = true;
+    dcLastExpr = dcExpr;
     dcUpdateScreen();
   }
 
@@ -3787,40 +4167,148 @@
     if (dcCurrent === 'ত্রুটি') { dcClearAll(); return; }
     if (dcPendingOp === null) return;
     const cur = parseFloat(dcCurrent) || 0;
-    const result = dcApplyOp(dcPrevValue, dcPendingOp, cur);
+    const result = dcRoundValue(dcApplyOp(dcPrevValue, dcPendingOp, cur));
     dcExpr = dcFormatNum(dcPrevValue) + ' ' + dcPendingOp + ' ' + dcFormatNum(cur) + ' =';
     if (!isFinite(result)) {
       dcCurrent = 'ত্রুটি';
     } else {
       dcCurrent = String(result);
+      dcGT += result; // grand-total accumulates every completed calculation
     }
     dcPrevValue = null;
     dcPendingOp = null;
     dcJustEvaluated = true;
+    dcAddRaw = '';
+    dcLastExpr = dcExpr;
     dcUpdateScreen();
+  }
+
+  // ---- Memory keys ----
+  function dcMemPlus() {
+    if (dcPendingOp !== null) dcEquals();
+    const val = parseFloat(dcCurrent) || 0;
+    dcMemory += val;
+    dcJustEvaluated = true;
+    dcUpdateScreen();
+  }
+  function dcMemMinus() {
+    if (dcPendingOp !== null) dcEquals();
+    const val = parseFloat(dcCurrent) || 0;
+    dcMemory -= val;
+    dcJustEvaluated = true;
+    dcUpdateScreen();
+  }
+  function dcMRC() {
+    // 1st press: recall memory. 2nd consecutive press: clear memory.
+    if (dcMRCState === 1) {
+      dcMemory = 0;
+      dcMRCState = 0;
+      dcCurrent = '0';
+      dcExpr = 'MC';
+    } else {
+      dcCurrent = String(dcMemory);
+      dcMRCState = 1;
+      dcExpr = 'MR';
+    }
+    dcGTState = 0;
+    dcJustEvaluated = true;
+    dcUpdateScreen();
+  }
+
+  // ---- GT (grand total) key ----
+  function dcGTShow() {
+    // 1st press: show grand total. 2nd consecutive press: clear it.
+    if (dcGTState === 1) {
+      dcGT = 0;
+      dcGTState = 0;
+      dcCurrent = '0';
+      dcExpr = 'GT CLEAR';
+    } else {
+      dcCurrent = String(dcGT);
+      dcGTState = 1;
+      dcExpr = 'GT';
+    }
+    dcMRCState = 0;
+    dcJustEvaluated = true;
+    dcUpdateScreen();
+  }
+
+  // ---- AUTO REPLAY: re-plays the last completed calculation on the expression line ----
+  let dcReplayTimer = null;
+  function dcReplay() {
+    if (!dcLastExpr) return;
+    if (dcReplayTimer) clearInterval(dcReplayTimer);
+    const el = document.getElementById('dcExpression');
+    const txt = dcLastExpr;
+    let i = 0;
+    dcReplayTimer = setInterval(() => {
+      i++;
+      el.textContent = txt.slice(0, i);
+      if (i >= txt.length) {
+        clearInterval(dcReplayTimer);
+        dcReplayTimer = null;
+        setTimeout(dcUpdateScreen, 500);
+      }
+    }, 70);
   }
 
 
   function deleteCustomer(idx) {
-    if (!confirm("এই হিসাব ডিলেট করবেন?")) return;
-    const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
-    saved.splice(idx, 1);
-    store.setItem('woodCalcSaved', JSON.stringify(saved));
-    renderCustomerList();
+    appConfirm('এই হিসাব ডিলেট করবেন?', function() {
+      const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
+      saved.splice(idx, 1);
+      store.setItem('woodCalcSaved', JSON.stringify(saved));
+      renderCustomerList();
+    });
   }
 
   function renderCustomerList() {
     const listEl = document.getElementById('customerList');
-    const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
-    if (saved.length === 0) {
+    const calcs = JSON.parse(store.getItem('woodCalcSaved') || '[]').map((item, i) => ({ item, i, kind: 'calc' }));
+    const notes = JSON.parse(store.getItem('tbNotes') || '[]').map((item, i) => ({ item, i, kind: 'note' }));
+    const combined = calcs.concat(notes).sort((a, b) => (b.item.timestamp || b.item.ts || 0) - (a.item.timestamp || a.item.ts || 0));
+    if (combined.length === 0) {
       listEl.innerHTML = '<div class="customer-empty">এখনো কোনো হিসাব সেভ করা হয়নি।<br>হিসাব শেষে মেনু থেকে "হিসাব সেভ" করুন।</div>';
       return;
     }
-    listEl.innerHTML = saved.map((item, i) => `
+    const searchInput = document.getElementById('customerSearchInput');
+    const q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    const filtered = combined.filter(({ item, kind }) => {
+      if (!q) return true;
+      if (kind === 'calc') {
+        const name = (item.name || '').toLowerCase();
+        const phone = (item.phone || '').toLowerCase();
+        return name.includes(q) || phone.includes(q);
+      }
+      const title = (item.title || '').toLowerCase();
+      const content = (item.content || '').toLowerCase();
+      return title.includes(q) || content.includes(q);
+    });
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<div class="customer-search-empty">কোনো ফলাফল পাওয়া যায়নি।</div>';
+      return;
+    }
+    listEl.innerHTML = filtered.map(({ item, i, kind }) => {
+      if (kind === 'note') {
+        const snippet = (item.content || '').slice(0, 40) + ((item.content || '').length > 40 ? '…' : '');
+        return `
+      <div class="customer-item">
+        <div class="ci-info" onclick="tbOpenFromList(${i})" style="cursor:pointer">
+          <div class="ci-name">📝 ${item.title} <span style="font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;background:#eaf4fb;color:#1a6fa0;">নোট</span></div>
+          <div class="ci-meta">📅 ${item.date}</div>
+          <div class="ci-total" style="font-size:13px;font-weight:normal;color:#6b5d4f;">${snippet}</div>
+        </div>
+        <div class="ci-actions">
+          <button class="ci-view" onclick="tbOpenFromList(${i})" title="দেখুন">👁️</button>
+          <button class="ci-delete" onclick="tbDeleteFromList(${i})" title="ডিলেট করুন">🗑️</button>
+        </div>
+      </div>`;
+      }
+      return `
       <div class="customer-item">
         <div class="ci-info" onclick="viewCustomer(${i})" style="cursor:pointer">
           <div class="ci-name">👤 ${item.name}${item.isDual ? ' <span style="font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;background:#fdebd0;color:#a04000;">দুই হিসাব</span>' : ''}</div>
-          <div class="ci-meta">📅 ${item.date} &nbsp;|&nbsp; ${item.rowCount} টি সারি</div>
+          <div class="ci-meta">📅 ${item.date} &nbsp;|&nbsp; ${item.rowCount} টি সারি${item.phone ? ' &nbsp;|&nbsp; 📞 ' + item.phone : ''}</div>
           <div class="ci-total">মোট: ${item.total} CFT${item.note ? ' &nbsp;|&nbsp; ' + item.note : ''}</div>
         </div>
         <div class="ci-actions">
@@ -3828,8 +4316,29 @@
           <button class="ci-edit" onclick="editCustomer(${i})" title="এডিট করুন">✏️</button>
           <button class="ci-delete" onclick="deleteCustomer(${i})" title="ডিলেট করুন">🗑️</button>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
+  }
+
+  function tbOpenFromList(idx) {
+    const saved = JSON.parse(store.getItem('tbNotes') || '[]');
+    const item = saved[idx];
+    if (!item) return;
+    document.querySelectorAll('.container > div, .container > #calcPage').forEach(el => el.classList.remove('active'));
+    document.getElementById('calcPage').classList.add('hidden');
+    document.getElementById('textboxPage').classList.add('active');
+    document.getElementById('tbTitle').value = item.title;
+    document.getElementById('tbContent').value = item.content;
+    tbRenderSaved();
+  }
+
+  function tbDeleteFromList(idx) {
+    appConfirm('এই নোট মুছে ফেলবেন?', function() {
+      const saved = JSON.parse(store.getItem('tbNotes') || '[]');
+      saved.splice(idx, 1);
+      store.setItem('tbNotes', JSON.stringify(saved));
+      renderCustomerList();
+    });
   }
 
 
@@ -3883,21 +4392,23 @@
       alert('এই হিসাবে বিস্তারিত সারি data নেই।\n(পুরনো সেভ — নতুন করে হিসাব করে সেভ করুন।)');
       return;
     }
-    if (!confirm('বর্তমান হিসাব মুছে এই হিসাব লোড করবেন?')) return;
-    if (item.isDual) {
+    appConfirm('বর্তমান হিসাব মুছে এই হিসাব লোড করবেন?', function() {
+      if (item.isDual) {
+        closeDetailModal();
+        loadToDualCalc(item);
+        alert('✅ ' + item.name + '-এর হিসাব (দুই হিসাব) লোড হয়েছে!');
+        return;
+      }
+      rows = item.rows.map(r => ({...r}));
+      rows.push(newRowData()); // লোডের পরে নতুন খালি row
+      activeRow = rows.length - 1;
+      activeField = 0;
+      if (document.getElementById('matName')) document.getElementById('matName').value = item.matName || '';
       closeDetailModal();
-      loadToDualCalc(item);
-      alert('✅ ' + item.name + '-এর হিসাব (দুই হিসাব) লোড হয়েছে!');
-      return;
-    }
-    rows = item.rows.map(r => ({...r}));
-    rows.push(newRowData()); // লোডের পরে নতুন খালি row
-    activeRow = rows.length - 1;
-    activeField = 0;
-    closeDetailModal();
-    closeCustomerPage();
-    render();
-    alert('✅ ' + item.name + '-এর হিসাব লোড হয়েছে!');
+      closeCustomerPage();
+      render();
+      alert('✅ ' + item.name + '-এর হিসাব লোড হয়েছে!');
+    });
   }
 
   function loadToDualCalc(item) {
@@ -3929,6 +4440,7 @@
     if (!item) return;
     currentEditIdx = idx;
     document.getElementById('editNameInput').value = item.name;
+    document.getElementById('editPhoneInput').value = item.phone || '';
     document.getElementById('editModal').classList.add('open');
   }
 
@@ -3940,9 +4452,11 @@
   function saveEditName() {
     const newName = document.getElementById('editNameInput').value.trim();
     if (!newName) { alert('নাম লিখুন।'); return; }
+    const newPhone = document.getElementById('editPhoneInput').value.trim();
     const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
     if (currentEditIdx < 0 || currentEditIdx >= saved.length) return;
     saved[currentEditIdx].name = newName;
+    saved[currentEditIdx].phone = newPhone;
     store.setItem('woodCalcSaved', JSON.stringify(saved));
     closeEditModal();
     renderCustomerList();
@@ -4208,6 +4722,7 @@
   }
 
   function dOpenSummary() {
+    dUpdateMeta();
     const body = document.getElementById('dSummaryBody');
     body.innerHTML = '';
     let grandTotal = 0;
@@ -4320,13 +4835,6 @@
     if (document.getElementById('dTypePaidInput')) document.getElementById('dTypePaidInput').value = '';
     if (document.getElementById('dTypeGrandPlusBokeya')) document.getElementById('dTypeGrandPlusBokeya').textContent = '০';
     if (document.getElementById('dTypeDueValue')) document.getElementById('dTypeDueValue').textContent = '০';
-
-    // default date if empty
-    const dateEl = document.getElementById('dCustDate');
-    if (!dateEl.value) {
-      const now = new Date();
-      dateEl.value = now.toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
-    }
 
     document.getElementById('dualCalcBody').style.display = 'none';
     document.getElementById('dualMatTabs').style.display = 'none';
@@ -4715,12 +5223,7 @@
       shopHeaderEl.style.display = 'none';
     }
 
-    const custName = document.getElementById('dCustName').value.trim();
-    const date = document.getElementById('dCustDate').value.trim();
-    let meta = '';
-    if (custName) meta += '👤 ' + custName;
-    if (date) meta += (meta ? '  |  ' : '') + '📅 ' + date;
-    document.getElementById('dPrMeta').textContent = meta;
+    dUpdateMeta();
 
     // Build a real bordered table — same design as the single calculator's memo table
     const srcTable = document.querySelector('#dualSummaryView table');
@@ -4753,11 +5256,36 @@
     setTimeout(() => { area.style.display = 'none'; }, 300);
   }
 
+  function dAutoDateStr() {
+    return new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  function dAutoTimeStr() {
+    return new Date().toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function dUpdateMeta() {
+    const custName = document.getElementById('dCustName').value.trim();
+    const custPhone = document.getElementById('dCustPhone').value.trim();
+    const custNote = document.getElementById('dCustNote').value.trim();
+    const date = dAutoDateStr();
+    const time = dAutoTimeStr();
+    let meta = '';
+    if (custName) meta += '👤 ' + custName;
+    if (custPhone) meta += (meta ? '  |  ' : '') + '📞 ' + custPhone;
+    meta += (meta ? '  |  ' : '') + date + ', ' + time;
+    if (custNote) meta += (meta ? '  |  ' : '') + custNote;
+    document.getElementById('dPrMeta').textContent = meta;
+    const dSummaryMetaEl = document.getElementById('dSummaryMeta');
+    if (dSummaryMetaEl) dSummaryMetaEl.textContent = meta;
+  }
+
   function dSaveSummary() {
     if (dMaterialTotal('A') === 0 && dMaterialTotal('B') === 0) { alert('হিসাবে কোনো মান নেই।'); return; }
     const custName = document.getElementById('dCustName').value.trim() || 'অজ্ঞাত';
-    const date = document.getElementById('dCustDate').value.trim() ||
-      new Date().toLocaleDateString('bn-BD', { year: 'numeric', month: 'long', day: 'numeric' });
+    const custPhone = document.getElementById('dCustPhone').value.trim();
+    const custNote = document.getElementById('dCustNote').value.trim();
+    const date = dAutoDateStr();
 
     const matLabelA = dLabel('A');
     const matLabelB = dLabel('B');
@@ -4775,6 +5303,8 @@
     const saved = JSON.parse(store.getItem('woodCalcSaved') || '[]');
     saved.unshift({
       name: custName,
+      phone: custPhone,
+      note: custNote,
       date,
       total: grandTotal.toFixed(4),
       rowCount: combinedRows.length,
@@ -4797,10 +5327,15 @@
     const shopSub = profile ? [profile.phone ? '📞 '+profile.phone : '', profile.address ? '📍 '+profile.address : ''].filter(Boolean).join('  |  ') : '';
 
     const custName = document.getElementById('dCustName').value.trim();
-    const date = document.getElementById('dCustDate').value.trim();
+    const custPhone2 = document.getElementById('dCustPhone').value.trim();
+    const custNote2 = document.getElementById('dCustNote').value.trim();
+    const date = dAutoDateStr();
+    const time = dAutoTimeStr();
     let meta = '';
     if (custName) meta += '👤 ' + custName;
-    if (date) meta += (meta ? '  |  ' : '') + '📅 ' + date;
+    if (custPhone2) meta += (meta ? '  |  ' : '') + '📞 ' + custPhone2;
+    meta += (meta ? '  |  ' : '') + date + ', ' + time;
+    if (custNote2) meta += (meta ? '  |  ' : '') + custNote2;
 
     const matLabelA = dLabel('A');
     const matLabelB = dLabel('B');
@@ -5243,11 +5778,23 @@
   </div>
 </div>
 
+<!-- Custom Confirm Modal (replaces native confirm()) -->
+<div class="app-confirm-modal" id="appConfirmModal">
+  <div class="app-confirm-content">
+    <div class="app-confirm-text" id="appConfirmText"></div>
+    <div class="app-confirm-btns">
+      <button class="app-confirm-cancel" onclick="appConfirmCancel()">বাতিল</button>
+      <button class="app-confirm-ok" onclick="appConfirmOk()">নিশ্চিত করুন</button>
+    </div>
+  </div>
+</div>
+
 <!-- Edit Name Modal -->
 <div class="edit-modal" id="editModal">
   <div class="edit-content">
-    <div class="edit-title">✏️ নাম এডিট করুন</div>
+    <div class="edit-title">✏️ তথ্য এডিট করুন</div>
     <input class="edit-input" id="editNameInput" type="text" placeholder="ক্রেতার নাম">
+    <input class="edit-input" id="editPhoneInput" type="tel" placeholder="📞 মোবাইল নাম্বার" style="margin-top:8px;">
     <div class="edit-btns">
       <button class="edit-cancel" onclick="closeEditModal()">বাতিল</button>
       <button class="edit-save" onclick="saveEditName()">সেভ করুন</button>
@@ -5281,15 +5828,15 @@ function tbSave() {
   const title = document.getElementById('tbTitle').value.trim() || 'নোট';
   const content = document.getElementById('tbContent').value.trim();
   if (!content) { alert('কিছু লিখুন!'); return; }
-  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
+  const saved = JSON.parse(store.getItem('tbNotes') || '[]');
   saved.unshift({ title, content, date: new Date().toLocaleString('bn-BD'), ts: Date.now() });
-  localStorage.setItem('tbNotes', JSON.stringify(saved.slice(0, 30)));
+  store.setItem('tbNotes', JSON.stringify(saved.slice(0, 30)));
   tbRenderSaved();
   alert('✅ সেভ হয়েছে!');
 }
 
 function tbRenderSaved() {
-  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
+  const saved = JSON.parse(store.getItem('tbNotes') || '[]');
   const el = document.getElementById('tbSavedList');
   if (!saved.length) { el.innerHTML = ''; return; }
   el.innerHTML = '<div class="tb-saved-title">💾 সেভ করা নোট (' + saved.length + ')</div>' +
@@ -5305,18 +5852,20 @@ function tbRenderSaved() {
 }
 
 function tbLoad(i) {
-  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
+  const saved = JSON.parse(store.getItem('tbNotes') || '[]');
   if (!saved[i]) return;
   document.getElementById('tbTitle').value = saved[i].title;
   document.getElementById('tbContent').value = saved[i].content;
 }
 
 function tbDelete(i) {
-  if (!confirm('এই নোট মুছে ফেলবেন?')) return;
-  const saved = JSON.parse(localStorage.getItem('tbNotes') || '[]');
-  saved.splice(i, 1);
-  localStorage.setItem('tbNotes', JSON.stringify(saved));
-  tbRenderSaved();
+  appConfirm('এই নোট মুছে ফেলবেন?', function() {
+    const saved = JSON.parse(store.getItem('tbNotes') || '[]');
+    saved.splice(i, 1);
+    store.setItem('tbNotes', JSON.stringify(saved));
+    tbRenderSaved();
+    if (document.getElementById('customerList')) renderCustomerList();
+  });
 }
 
 function tbBuildPrint() {
@@ -5338,19 +5887,96 @@ function tbPrint() {
   setTimeout(() => { area.style.display = 'none'; }, 400);
 }
 
+function tbWrapText(ctx, text, maxWidth) {
+  const paragraphs = text.split('\n');
+  const lines = [];
+  paragraphs.forEach(p => {
+    if (p === '') { lines.push(''); return; }
+    const words = p.split(' ');
+    let line = '';
+    words.forEach(word => {
+      const testLine = line ? line + ' ' + word : word;
+      if (ctx.measureText(testLine).width > maxWidth && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = testLine;
+      }
+    });
+    if (line) lines.push(line);
+  });
+  return lines;
+}
+
 function tbDownload() {
-  const title = document.getElementById('tbTitle').value.trim() || 'note';
+  const title = document.getElementById('tbTitle').value.trim();
   const content = document.getElementById('tbContent').value.trim();
   if (!content) { alert('কিছু লিখুন!'); return; }
-  const full = (title ? title + '\n' + '—'.repeat(title.length) + '\n\n' : '') + content;
-  const blob = new Blob([full], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  const fname = title.replace(/[^\w\u0980-\u09FF]/g, '_').slice(0, 30) || 'note';
-  a.href = url;
-  a.download = fname + '_' + Date.now() + '.txt';
-  a.click();
-  URL.revokeObjectURL(url);
+  const date = new Date().toLocaleString('bn-BD');
+  const fontStack = '"Segoe UI","Noto Sans Bengali",Arial,sans-serif';
+
+  const scale = 2;
+  const W = 360;
+  const padding = 20;
+  const titleFontSize = 20;
+  const dateFontSize = 12;
+  const contentFontSize = 16;
+  const lineHeight = 26;
+
+  const measureCanvas = document.createElement('canvas');
+  const mctx = measureCanvas.getContext('2d');
+  mctx.font = contentFontSize + 'px ' + fontStack;
+  const maxLineWidth = W - padding * 2;
+  const contentLines = tbWrapText(mctx, content, maxLineWidth);
+
+  const titleH = title ? (titleFontSize + 10) : 0;
+  const dateH = dateFontSize + 12;
+  const dividerH = 14;
+  const contentH = contentLines.length * lineHeight;
+  const totalH = padding * 2 + titleH + dateH + dividerH + contentH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W * scale;
+  canvas.height = totalH * scale;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, totalH);
+  ctx.textBaseline = 'top';
+
+  let cy = padding;
+  if (title) {
+    ctx.fillStyle = '#1e3a5f';
+    ctx.font = 'bold ' + titleFontSize + 'px ' + fontStack;
+    ctx.fillText(title, padding, cy);
+    cy += titleH;
+  }
+
+  ctx.fillStyle = '#8a7a68';
+  ctx.font = dateFontSize + 'px ' + fontStack;
+  ctx.fillText('📅 ' + date, padding, cy);
+  cy += dateH;
+
+  ctx.strokeStyle = '#e0d8cc';
+  ctx.beginPath();
+  ctx.moveTo(padding, cy);
+  ctx.lineTo(W - padding, cy);
+  ctx.stroke();
+  cy += dividerH;
+
+  ctx.fillStyle = '#333333';
+  ctx.font = contentFontSize + 'px ' + fontStack;
+  contentLines.forEach(line => {
+    ctx.fillText(line, padding, cy);
+    cy += lineHeight;
+  });
+
+  const link = document.createElement('a');
+  const fname = (title || 'note').replace(/[^\w\u0980-\u09FF]/g, '_').slice(0, 30) || 'note';
+  link.download = fname + '_' + Date.now() + '.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 }
 </script>
 
