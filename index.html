@@ -3609,6 +3609,13 @@
     // Totals — gradient cards (3 cards)
     y += 10;
 
+    // সর্বমোট CFT — always right after the table, before any wood-type breakdown
+    if (priceRowVisible && perCftPrice) {
+      drawTwoColCard('সর্বমোট CFT', totalCFT, 'প্রতি CFT দাম (৳)', perCftPrice, '#A85D45', '#8C4A36', cftCardH);
+    } else {
+      drawTotalCard('সর্বমোট CFT', totalCFT, '#A85D45', '#8C4A36');
+    }
+
     // === Wood type subtotals ===
     if (typeVisible && typeRows.length > 0) {
       const typeColors = { 'U/2': ['#2ea862','#1e8449'], 'BL': ['#3a8fc0','#1a5276'], 'O/V': ['#d68910','#a04000'], 'অন্য': ['#a89478','#5a3e2b'] };
@@ -3767,11 +3774,6 @@
       y += cardH + totalsGap;
     }
 
-    if (priceRowVisible && perCftPrice) {
-      drawTwoColCard('সর্বমোট CFT', totalCFT, 'প্রতি CFT দাম (৳)', perCftPrice, '#A85D45', '#8C4A36', cftCardH);
-    } else {
-      drawTotalCard('সর্বমোট CFT', totalCFT, '#A85D45', '#8C4A36');
-    }
     if (priceRowVisible) {
       if (hasBokeya) {
         drawComboCard([
@@ -4738,7 +4740,7 @@
         grandTotal += cft;
         const dTypeColor = row.woodType==='U/2'?'color:#1e8449':row.woodType==='BL'?'color:#1a5276':row.woodType==='O/V'?'color:#a04000':'';
         const dTypeLabel = row.woodType ? '<span style="font-size:11px;font-weight:800;' + dTypeColor + '"> ' + row.woodType + '</span>' : '';
-        body.innerHTML += '<tr><td><span style="font-size:13px;font-weight:700;">' + serial + '.</span>' + dTypeLabel + '</td><td class="dual-mat-label">' + label + '</td><td>' + (row.w || '0') + '</td><td>' + (row.t || '0') + '</td><td>' + (row.l || '0') + '</td><td>' + (row.q || '1') + '</td><td>' + cft.toFixed(4) + '</td></tr>';
+        body.innerHTML += '<tr><td><span style="font-size:13px;font-weight:700;">' + serial + '.</span>' + dTypeLabel + '</td><td class="dual-mat-label">' + label + '</td><td>' + (row.l || '0') + '</td><td>' + (row.w || '0') + '</td><td>' + (row.t || '0') + '</td><td>' + (row.q || '1') + '</td><td>' + cft.toFixed(4) + '</td></tr>';
         serial++;
       });
     });
