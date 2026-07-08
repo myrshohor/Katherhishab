@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>অ্যাডমিন প্যানেল - কাঠের হিসাব</title>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: #EEF1F8;
+    min-height: 100vh;
+    color: #1f2430;
+  }
+
+  /* ---------- Login screen ---------- */
+  .login-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; background: linear-gradient(135deg,#7B3FF2,#1E6FEB); }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 18px;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    box-shadow: 0 8px 32px rgba(30,20,80,0.2);
+  }
+  .logo { text-align:center; font-size:40px; margin-bottom:4px; }
+  h2 { text-align:center; font-size:19px; color:#3d2a8c; margin-bottom:4px; }
+  p.sub { text-align:center; font-size:12.5px; color:#8a8a9a; margin-bottom:16px; }
+  .field { margin-bottom: 14px; }
+  .field label { display:block; font-size:12px; color:#8a8a9a; margin-bottom:4px; font-weight:600; }
+  .field input, textarea {
+    width:100%; padding:12px 14px; border:1.5px solid #e2e2ee; border-radius:10px;
+    font-size:14px; background:#F7F7FC; color:#26263a; font-family:inherit;
+  }
+  textarea { resize:vertical; min-height:80px; }
+  .field input:focus, textarea:focus { outline:none; border-color:#7B3FF2; }
+  .btn {
+    width:100%; padding:13px; border:none; border-radius:10px; font-size:15px;
+    font-weight:700; cursor:pointer; margin-top:6px;
+  }
+  .btn-primary { background:#3d2a8c; color:#fff; }
+  .btn-primary:disabled { opacity:0.6; }
+  .btn-small { width:auto; padding:6px 12px; font-size:12px; border-radius:7px; cursor:pointer; border:none; font-weight:700; }
+  .btn-block { background:#e0245e; color:#fff; }
+  .btn-unblock { background:#1e8449; color:#fff; }
+  .btn-del { background:#e0245e; color:#fff; }
+  .msg { text-align:center; font-size:13px; font-weight:600; margin-top:12px; min-height:18px; }
+  .msg.err { color:#e0245e; }
+  .msg.ok { color:#1e8449; }
+  hr { border:none; border-top:1px solid #edf0f7; margin:20px 0; }
+  .section-title { font-size:14px; font-weight:700; color:#26263a; margin-bottom:10px; }
+  .stat-box { background:#F7F7FC; border-radius:12px; padding:14px; text-align:center; margin-bottom:16px; }
+  .stat-num { font-size:28px; font-weight:800; color:#3d2a8c; }
+  .stat-label { font-size:12px; color:#8a8a9a; }
+  .refresh-link { display:inline-block; font-size:12px; color:#3d2a8c; font-weight:700; cursor:pointer; margin-bottom:10px; }
+  .user-row {
+    border:1px solid #edf0f7; border-radius:10px; padding:10px 12px; margin-bottom:8px;
+    font-size:12.5px; background:#FDFDFF;
+  }
+  .user-row-top { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .user-row-name { font-weight:700; color:#26263a; }
+  .user-row-phone { color:#8a8a9a; }
+  .user-row-meta { color:#aeaebe; font-size:11px; margin-top:2px; }
+  .user-row-actions { display:flex; gap:6px; margin-top:8px; align-items:center; }
+  .badge-blocked { background:#e0245e; color:#fff; font-size:10.5px; padding:2px 7px; border-radius:6px; font-weight:700; }
+  .badge-active { background:#1e8449; color:#fff; font-size:10.5px; padding:2px 7px; border-radius:6px; font-weight:700; }
+  .notif-list-item {
+    display:flex; justify-content:space-between; align-items:center; gap:8px;
+    background:#F7F7FC; border-radius:8px; padding:8px 10px; margin-bottom:6px; font-size:12.5px;
+  }
+  .checkbox-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+
+  /* ---------- Dashboard shell ---------- */
+  #dashboard { display:none; padding-bottom:120px; }
+
+  .dash-header {
+    background: linear-gradient(135deg, #7B3FF2 0%, #1E6FEB 100%);
+    border-radius: 0 0 28px 28px;
+    padding: 30px 22px 36px;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .dash-avatar-wrap { position:relative; flex-shrink:0; }
+  .dash-avatar {
+    width:70px; height:70px; border-radius:50%; background:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:34px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .dash-crown { position:absolute; top:-10px; right:-8px; font-size:22px; }
+  .dash-title { font-size:24px; font-weight:800; line-height:1.2; }
+  .dash-sub { font-size:13.5px; opacity:0.92; margin-top:4px; }
+
+  .grid-views { padding: 20px 16px 8px; }
+  .card-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .nav-card {
+    border-radius:20px; padding:20px 14px 18px; color:#fff; text-align:center;
+    cursor:pointer; position:relative; overflow:hidden; min-height:180px;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  }
+  .nav-card::after {
+    content:""; position:absolute; inset:0;
+    background-image: radial-gradient(rgba(255,255,255,0.18) 1.5px, transparent 1.5px);
+    background-size: 14px 14px;
+    -webkit-mask-image: linear-gradient(to bottom left, black 20%, transparent 55%);
+    mask-image: linear-gradient(to bottom left, black 20%, transparent 55%);
+    pointer-events:none;
+  }
+  .nav-card-icon {
+    width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.95);
+    display:flex; align-items:center; justify-content:center; font-size:28px;
+    margin-bottom:12px; position:relative; z-index:1;
+  }
+  .nav-card-title { font-weight:800; font-size:15px; margin-bottom:5px; position:relative; z-index:1; }
+  .nav-card-sub { font-size:11px; opacity:0.95; line-height:1.35; position:relative; z-index:1; }
+  .nav-card-arrow {
+    width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.25);
+    display:flex; align-items:center; justify-content:center; margin-top:auto; margin-top:12px;
+    position:relative; z-index:1; font-size:15px;
+  }
+  .nc-blue   { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
+  .nc-green  { background: linear-gradient(135deg, #22C55E, #0F8A45); }
+  .nc-purple { background: linear-gradient(135deg, #8B3FF2, #5B21C9); }
+  .nc-orange { background: linear-gradient(135deg, #FBA928, #F5760B); }
+  .nc-red    { background: linear-gradient(135deg, #F0175A, #C4003F); }
+  .nc-cyan   { background: linear-gradient(135deg, #22C3E6, #0D93AD); }
+
+  /* ---------- Sub views ---------- */
+  .subview { display:none; padding: 16px 16px 8px; }
+  .subview-back {
+    display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700;
+    color:#3d2a8c; margin-bottom:14px; cursor:pointer;
+  }
+
+  /* ---------- Bottom nav ---------- */
+  .bottom-nav {
+    position:fixed; left:0; right:0; bottom:0; background:#fff;
+    display:flex; justify-content:space-around; align-items:center;
+    padding:10px 0 calc(14px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 18px rgba(30,20,80,0.08);
+    border-radius: 22px 22px 0 0;
+    z-index: 500;
+  }
+  .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; font-size:11px; color:#a3a3b5; font-weight:700; cursor:pointer; }
+  .nav-item .nav-icon { font-size:20px; }
+  .nav-item.active { color:#5B21C9; }
+
+  .profile-info-row { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #edf0f7; font-size:13.5px; }
+  .profile-info-row span:first-child { color:#8a8a9a; }
+  .profile-info-row span:last-child { font-weight:700; color:#26263a; }
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="card" id="loginCard">
+    <div class="logo">🔧</div>
+    <h2>অ্যাডমিন প্যানেল</h2>
+    <p class="sub">কাঠের হিসাব — ব্যবস্থাপনা</p>
+    <div class="field">
+      <label>🔐 অ্যাডমিন পাসওয়ার্ড</label>
+      <input type="password" id="adminPwInput" placeholder="পাসওয়ার্ড দিন" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter') adminUnlock()">
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;font-size:12px;color:#8a8a9a;">
+      <input type="checkbox" id="showPwToggle" onchange="document.getElementById('adminPwInput').type = this.checked ? 'text' : 'password';">
+      <label for="showPwToggle">পাসওয়ার্ড দেখান (টাইপো চেক করতে)</label>
+    </div>
+    <button class="btn btn-primary" onclick="adminUnlock()">🔓 প্রবেশ করুন</button>
+    <div class="msg err" id="loginMsg"></div>
+  </div>
+</div>
+
+<div id="dashboard">
+
+  <div class="dash-header">
+    <div class="dash-avatar-wrap">
+      <div class="dash-avatar">🧑‍💼</div>
+      <div class="dash-crown">👑</div>
+    </div>
+    <div>
+      <div class="dash-title">Admin Dashboard</div>
+      <div class="dash-sub">মোট রেজিস্টার ইউজার: <span id="statTotalUsersHeader">--</span></div>
+    </div>
+  </div>
+
+  <!-- ===== HOME VIEW ===== -->
+  <div class="grid-views" id="view-home">
+    <div class="card-grid">
+      <div class="nav-card nc-blue" onclick="showView('profile')">
+        <div class="nav-card-icon">👤</div>
+        <div class="nav-card-title">এডমিন প্রোফাইল</div>
+        <div class="nav-card-sub">প্রোফাইল দেখুন ও সম্পাদনা করুন</div>
+        <div class="nav-card-arrow">›</div>
+      </div>
+      <div class="nav-card nc-green" onclick="showView('users')">
+        <div class="nav-card-icon">👥</div>
+        <div class="nav-card-title">ইউজার লিস্ট</div>
+        <div class="nav-card-sub">সকল ইউজার দেখুন ও ম্যানেজ করুন</div>
+        <div class="nav-card-arrow">›</div>
+      </div>
+      <div class="nav-card nc-purple" onclick="showView('notif')">
+        <div class="nav-card-icon">🔔</div>
+        <div class="nav-card-title">নোটিফিকেশন পাঠান</div>
+        <div class="nav-card-sub">ইউজারদের নোটিফিকেশন পাঠান</div>
+        <div class="nav-card-arrow">›</div>
+      </div>
+      <div class="nav-card nc-orange" onclick="refreshAll()">
+        <div class="nav-card-icon">🔄</div>
+        <div class="nav-card-title">রিফ্রেশ করুন</div>
+        <div class="nav-card-sub">ডাটা রিফ্রেশ করে নতুন তথ্য আনুন</div>
+        <div class="nav-card-arrow">›</div>
+      </div>
+      <div class="nav-card nc-red" onclick="showView('reset')">
+        <div class="nav-card-icon">🔒</div>
+        <div class="nav-card-title">নির্দিষ্ট ইউজারের পাসওয়ার্ড রিসেট করুন</div>
+        <div class="nav-card-sub">ইউজারের পাসওয়ার্ড রিসেট করুন</div>
+        <div class="nav-card-arrow">›</div>
+      </div>
+      <div class="nav-card nc-cyan" onclick="showView('settings')">
+        <div class="nav-card-icon">⚙️</div>
+        <div class="nav-card-title">অ্যাপ সেটিংস</div>
+        <div class="nav-card-sub">অ্যাপের সকল সেটিংস পরিচলনা করুন</div>
+        <div class="nav-card-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE VIEW ===== -->
+  <div class="subview" id="view-profile">
+    <div class="subview-back" onclick="showView('home')">← হোম</div>
+    <div class="card">
+      <div style="text-align:center;margin-bottom:10px;">
+        <div style="width:76px;height:76px;border-radius:50%;background:#F7F7FC;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 10px;">🧑‍💼</div>
+        <div style="font-weight:800;font-size:16px;">অ্যাডমিন</div>
+        <div style="font-size:12.5px;color:#8a8a9a;">কাঠের হিসাব — সুপার অ্যাডমিন</div>
+      </div>
+      <hr>
+      <div class="profile-info-row"><span>রোল</span><span>সুপার অ্যাডমিন</span></div>
+      <div class="profile-info-row"><span>সেশন</span><span>সক্রিয়</span></div>
+      <button class="btn btn-primary" style="margin-top:16px;background:#e0245e;" onclick="adminLogout()">🚪 লগ আউট</button>
+    </div>
+  </div>
+
+  <!-- ===== USERS VIEW ===== -->
+  <div class="subview" id="view-users">
+    <div class="subview-back" onclick="showView('home')">← হোম</div>
+    <div class="card">
+      <div class="stat-box">
+        <div class="stat-num" id="statTotalUsers">--</div>
+        <div class="stat-label">মোট রেজিস্টার্ড ইউজার</div>
+      </div>
+      <div class="section-title">👥 ইউজার লিস্ট</div>
+      <span class="refresh-link" onclick="loadUsers()">🔄 রিফ্রেশ করুন</span>
+      <span class="refresh-link" id="selectAllUsersBtn" style="margin-left:14px;" onclick="toggleSelectAll('userList', this)">☑️ সব নির্বাচন করুন</span>
+      <div id="userListMsg" class="msg"></div>
+      <div id="userList"></div>
+    </div>
+  </div>
+
+  <!-- ===== RESET PASSWORD VIEW ===== -->
+  <div class="subview" id="view-reset">
+    <div class="subview-back" onclick="showView('home')">← হোম</div>
+    <div class="card">
+      <div class="section-title">🔒 নির্দিষ্ট ইউজারের পাসওয়ার্ড রিসেট</div>
+      <div class="field">
+        <label>ইউজারের ফোন নম্বর</label>
+        <input type="tel" id="targetPhone" placeholder="01712345678" inputmode="numeric" maxlength="15">
+      </div>
+      <div class="field">
+        <label>নতুন পাসওয়ার্ড (শব্দ অথবা নাম্বার)</label>
+        <input type="password" id="newPin" placeholder="নতুন পাসওয়ার্ড দিন" maxlength="20">
+      </div>
+      <div class="field">
+        <label>নতুন পাসওয়ার্ড আবার লিখুন</label>
+        <input type="password" id="newPinConfirm" placeholder="নতুন পাসওয়ার্ড আবার লিখুন" maxlength="20">
+      </div>
+      <button class="btn btn-primary" id="resetBtn" onclick="doReset()">✅ পাসওয়ার্ড রিসেট করুন</button>
+      <div class="msg" id="resetMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== NOTIFICATIONS VIEW ===== -->
+  <div class="subview" id="view-notif">
+    <div class="subview-back" onclick="showView('home')">← হোম</div>
+    <div class="card">
+      <div class="section-title">🔔 নোটিফিকেশন পাঠান</div>
+      <p class="sub" style="margin-bottom:10px;">ইউজার লিস্ট থেকে টিক দিলে শুধু তাদের কাছে যাবে। কাউকে টিক না দিলে সবাই পাবে।</p>
+      <div class="section-title" style="margin-top:14px;">👥 ইউজার বাছাই করুন (ঐচ্ছিক)</div>
+      <span class="refresh-link" onclick="loadNotifUserPicker()">🔄 ইউজার লিস্ট লোড করুন</span>
+      <span class="refresh-link" id="selectAllNotifBtn" style="margin-left:14px;" onclick="toggleSelectAll('notifUserPickList', this)">☑️ সব নির্বাচন করুন</span>
+      <div id="notifUserPickMsg" class="msg"></div>
+      <div id="notifUserPickList" style="max-height:260px;overflow-y:auto;margin-bottom:10px;"></div>
+      <div class="field">
+        <textarea id="notifMsg" placeholder="নোটিফিকেশনের লেখা লিখুন..."></textarea>
+      </div>
+      <button class="btn btn-primary" id="sendNotifBtn" onclick="sendNotification()">📢 পাঠান</button>
+      <div class="msg" id="notifMsgBox"></div>
+      <hr>
+      <div class="section-title">পাঠানো নোটিফিকেশনসমূহ</div>
+      <span class="refresh-link" onclick="loadNotifications()">🔄 রিফ্রেশ করুন</span>
+      <div id="notifList"></div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS VIEW ===== -->
+  <div class="subview" id="view-settings">
+    <div class="subview-back" onclick="showView('home')">← হোম</div>
+    <div class="card">
+      <div class="section-title">⚙️ অ্যাপ সেটিংস</div>
+      <div class="profile-info-row"><span>অ্যাপের নাম</span><span>কাঠের হিসাব</span></div>
+      <div class="profile-info-row"><span>ভার্সন</span><span>1.0.0</span></div>
+      <div class="profile-info-row"><span>ক্লাউড সংযোগ</span><span id="cloudStatusText">--</span></div>
+      <button class="btn btn-primary" style="margin-top:16px;background:#e0245e;" onclick="adminLogout()">🚪 লগ আউট</button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active" id="navbtn-home" onclick="showView('home')">
+      <span class="nav-icon">🏠</span><span>হোম</span>
+    </div>
+    <div class="nav-item" id="navbtn-users" onclick="showView('users')">
+      <span class="nav-icon">👥</span><span>ইউজার লিস্ট</span>
+    </div>
+    <div class="nav-item" id="navbtn-notif" onclick="showView('notif')">
+      <span class="nav-icon">🔔</span><span>নোটিফিকেশন</span>
+    </div>
+    <div class="nav-item" id="navbtn-settings" onclick="showView('settings')">
+      <span class="nav-icon">⚙️</span><span>সেটিংস</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBTddK_2tWHyc5bheIAnMukSQGV9JxL754",
+    authDomain: "katherhishabapp.firebaseapp.com",
+    projectId: "katherhishabapp",
+    storageBucket: "katherhishabapp.firebasestorage.app",
+    messagingSenderId: "267868755262",
+    appId: "1:267868755262:web:f2d69d3fdac3476305486f",
+    measurementId: "G-BZ2WNCSKQY"
+  };
+
+  let db = null;
+  let cloudEnabled = true;
+  try {
+    if (typeof firebase === 'undefined') throw new Error('Firebase SDK লোড হয়নি');
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+  } catch (e) {
+    cloudEnabled = false;
+    console.warn('Firebase init failed:', e);
+  }
+
+  const selectedPhones = new Set();
+  let adminPassword = '';
+
+  function normalizePhone(v) { return (v || '').replace(/\D/g, ''); }
+
+  async function sha256(text) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function getAdminHash() {
+    return sha256('kh_admin_salt::' + adminPassword);
+  }
+
+  // ===== View navigation =====
+  const viewIds = ['home', 'profile', 'users', 'reset', 'notif', 'settings'];
+  const navBtnMap = { home: 'navbtn-home', users: 'navbtn-users', notif: 'navbtn-notif', settings: 'navbtn-settings' };
+
+  function showView(name) {
+    viewIds.forEach(function (v) {
+      const el = document.getElementById('view-' + v);
+      if (!el) return;
+      el.style.display = (v === name) ? (v === 'home' ? 'block' : 'block') : 'none';
+    });
+    Object.keys(navBtnMap).forEach(function (key) {
+      const btn = document.getElementById(navBtnMap[key]);
+      if (btn) btn.classList.toggle('active', key === name);
+    });
+    if (name === 'users') loadUsers();
+    if (name === 'notif') { loadNotifications(); loadNotifUserPicker(); }
+    window.scrollTo(0, 0);
+  }
+
+  function refreshAll() {
+    loadUsers();
+    loadNotifications();
+    showView('home');
+  }
+
+  function adminLogout() {
+    adminPassword = '';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginWrap').style.display = 'flex';
+    document.getElementById('adminPwInput').value = '';
+    document.getElementById('loginMsg').textContent = '';
+    showView('home');
+  }
+
+  function adminUnlock() {
+    const pw = document.getElementById('adminPwInput').value;
+    const msgEl = document.getElementById('loginMsg');
+    if (!pw) { msgEl.textContent = 'পাসওয়ার্ড দিন'; return; }
+    if (!cloudEnabled || !db) { msgEl.textContent = 'ইন্টারনেট সংযোগ নেই। ইন্টারনেট চালু করে আবার চেষ্টা করুন।'; return; }
+    adminPassword = pw;
+    msgEl.textContent = '';
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('cloudStatusText').textContent = cloudEnabled ? 'সংযুক্ত' : 'সংযোগ নেই';
+    showView('home');
+    loadUsers();
+    loadNotifications();
+  }
+
+  function fmtDate(ts) {
+    if (!ts) return '—';
+    try {
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleDateString('bn-BD') + ' ' + d.toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
+    } catch (e) { return '—'; }
+  }
+
+  // ===== Load & render users =====
+  function loadUsers() {
+    if (!cloudEnabled || !db) {
+      const m = document.getElementById('userListMsg');
+      if (m) { m.textContent = 'ইন্টারনেট সংযোগ নেই।'; m.className = 'msg err'; }
+      return;
+    }
+    const msgEl = document.getElementById('userListMsg');
+    if (msgEl) { msgEl.textContent = 'লোড হচ্ছে...'; msgEl.className = 'msg'; }
+    db.collection('users').get().then(function (snap) {
+      document.getElementById('statTotalUsers').textContent = snap.size;
+      document.getElementById('statTotalUsersHeader').textContent = snap.size;
+      const listEl = document.getElementById('userList');
+      listEl.innerHTML = '';
+      selectedPhones.clear();
+      if (snap.empty) {
+        listEl.innerHTML = '<p style="font-size:12.5px;color:#8a8a9a;text-align:center;">কোনো ইউজার নেই।</p>';
+      }
+      snap.forEach(function (doc) {
+        const d = doc.data();
+        const phone = doc.id;
+        const isBlocked = d.blocked === true;
+        const row = document.createElement('div');
+        row.className = 'user-row';
+        row.innerHTML =
+          '<div class="user-row-top">' +
+            '<div>' +
+              '<div class="checkbox-row"><input type="checkbox" data-phone="' + phone + '" onchange="toggleSelect(\'' + phone + '\', this.checked)"> ' +
+              '<span class="user-row-name">' + escapeHtml(d.name || '(নাম নেই)') + '</span></div>' +
+              '<div class="user-row-phone">📞 ' + escapeHtml(phone) + '</div>' +
+              '<div class="user-row-meta">যোগ দিয়েছেন: ' + fmtDate(d.createdAt) + '</div>' +
+              '<div class="user-row-meta">সর্বশেষ ব্যবহার: ' + fmtDate(d.lastActive) + '</div>' +
+            '</div>' +
+            '<span class="' + (isBlocked ? 'badge-blocked' : 'badge-active') + '">' + (isBlocked ? 'ব্লকড' : 'সচল') + '</span>' +
+          '</div>' +
+          '<div class="user-row-actions">' +
+            '<button class="btn-small ' + (isBlocked ? 'btn-unblock' : 'btn-block') + '" onclick="toggleBlock(\'' + phone + '\', ' + isBlocked + ', this)">' +
+              (isBlocked ? '✅ আনব্লক করুন' : '🚫 ব্লক করুন') +
+            '</button>' +
+          '</div>';
+        listEl.appendChild(row);
+      });
+      if (msgEl) msgEl.textContent = '';
+      const selAllBtn = document.getElementById('selectAllUsersBtn');
+      if (selAllBtn) selAllBtn.textContent = '☑️ সব নির্বাচন করুন';
+    }).catch(function (e) {
+      if (msgEl) { msgEl.textContent = 'লোড ব্যর্থ: ' + (e && e.message ? e.message : e); msgEl.className = 'msg err'; }
+    });
+  }
+
+  function loadNotifUserPicker() {
+    const msgEl = document.getElementById('notifUserPickMsg');
+    if (!cloudEnabled || !db) {
+      if (msgEl) { msgEl.textContent = 'ইন্টারনেট সংযোগ নেই।'; msgEl.className = 'msg err'; }
+      return;
+    }
+    if (msgEl) { msgEl.textContent = 'লোড হচ্ছে...'; msgEl.className = 'msg'; }
+    db.collection('users').get().then(function (snap) {
+      const listEl = document.getElementById('notifUserPickList');
+      listEl.innerHTML = '';
+      if (snap.empty) {
+        listEl.innerHTML = '<p style="font-size:12.5px;color:#8a8a9a;text-align:center;">কোনো ইউজার নেই।</p>';
+      }
+      snap.forEach(function (doc) {
+        const d = doc.data();
+        const phone = doc.id;
+        const isChecked = selectedPhones.has(phone);
+        const row = document.createElement('div');
+        row.className = 'checkbox-row';
+        row.innerHTML =
+          '<input type="checkbox" id="notifchk_' + phone + '" data-phone="' + phone + '" ' + (isChecked ? 'checked' : '') +
+          ' onchange="toggleSelect(\'' + phone + '\', this.checked)"> ' +
+          '<label for="notifchk_' + phone + '" style="font-size:12.5px;">' +
+            escapeHtml(d.name || '(নাম নেই)') + ' — 📞 ' + escapeHtml(phone) +
+          '</label>';
+        listEl.appendChild(row);
+      });
+      if (msgEl) msgEl.textContent = '';
+      const selAllBtn = document.getElementById('selectAllNotifBtn');
+      if (selAllBtn) selAllBtn.textContent = '☑️ সব নির্বাচন করুন';
+    }).catch(function (e) {
+      if (msgEl) { msgEl.textContent = 'লোড ব্যর্থ: ' + (e && e.message ? e.message : e); msgEl.className = 'msg err'; }
+    });
+  }
+
+  function escapeHtml(s) {
+    const div = document.createElement('div');
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  function toggleSelect(phone, checked) {
+    if (checked) selectedPhones.add(phone); else selectedPhones.delete(phone);
+  }
+
+  function toggleSelectAll(containerId, btnEl) {
+    const boxes = document.querySelectorAll('#' + containerId + ' input[type=checkbox]');
+    if (!boxes.length) return;
+    const allChecked = Array.prototype.every.call(boxes, function (cb) { return cb.checked; });
+    boxes.forEach(function (cb) {
+      cb.checked = !allChecked;
+      const phone = cb.getAttribute('data-phone');
+      if (phone) {
+        if (!allChecked) selectedPhones.add(phone); else selectedPhones.delete(phone);
+      }
+    });
+    if (btnEl) btnEl.textContent = allChecked ? '☑️ সব নির্বাচন করুন' : '❌ সব বাতিল করুন';
+  }
+
+  async function toggleBlock(phone, currentlyBlocked, btnEl) {
+    btnEl.disabled = true;
+    try {
+      const adminHash = await getAdminHash();
+      await db.collection('adminReset').doc(phone + '_' + adminHash).set({ ts: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('users').doc(phone).update({ blocked: !currentlyBlocked });
+      loadUsers();
+    } catch (e) {
+      if (e && e.code === 'permission-denied') alert('অ্যাডমিন পাসওয়ার্ড ভুল।');
+      else alert('সমস্যা: ' + (e && e.message ? e.message : e));
+      btnEl.disabled = false;
+    }
+  }
+
+  // ===== Reset PIN =====
+  async function doReset() {
+    const msgEl = document.getElementById('resetMsg');
+    msgEl.textContent = ''; msgEl.className = 'msg';
+    if (!cloudEnabled || !db) { msgEl.textContent = 'ইন্টারনেট সংযোগ নেই।'; msgEl.className = 'msg err'; return; }
+
+    const phone = normalizePhone(document.getElementById('targetPhone').value);
+    const pin = document.getElementById('newPin').value.trim();
+    const pinConfirm = document.getElementById('newPinConfirm').value.trim();
+
+    if (phone.length < 6) { msgEl.textContent = 'সঠিক ফোন নম্বর দিন'; msgEl.className = 'msg err'; return; }
+    if (pin.length < 4 || pin.length > 20) { msgEl.textContent = 'পাসওয়ার্ড অন্তত ৪ অক্ষর/সংখ্যা হতে হবে'; msgEl.className = 'msg err'; return; }
+    if (pin !== pinConfirm) { msgEl.textContent = 'দুইবার একই পাসওয়ার্ড দিন'; msgEl.className = 'msg err'; return; }
+
+    const btn = document.getElementById('resetBtn');
+    btn.disabled = true; btn.textContent = 'যাচাই করা হচ্ছে...';
+    try {
+      const userDoc = await db.collection('users').doc(phone).get();
+      if (!userDoc.exists) {
+        msgEl.textContent = 'এই নম্বরে কোনো অ্যাকাউন্ট নেই।'; msgEl.className = 'msg err';
+        btn.disabled = false; btn.textContent = '✅ পাসওয়ার্ড রিসেট করুন'; return;
+      }
+      const adminHash = await getAdminHash();
+      const newPinHash = await sha256(phone + ':' + pin);
+      await db.collection('adminReset').doc(phone + '_' + adminHash).set({ ts: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('users').doc(phone).update({ pinHash: newPinHash });
+      msgEl.textContent = '✅ সফলভাবে পাসওয়ার্ড রিসেট হয়েছে!'; msgEl.className = 'msg ok';
+      document.getElementById('newPin').value = '';
+      document.getElementById('newPinConfirm').value = '';
+    } catch (e) {
+      if (e && e.code === 'permission-denied') { msgEl.textContent = '❌ অ্যাডমিন পাসওয়ার্ড ভুল।'; }
+      else { msgEl.textContent = 'সমস্যা: ' + (e && e.message ? e.message : e); }
+      msgEl.className = 'msg err';
+    }
+    btn.disabled = false; btn.textContent = '✅ পাসওয়ার্ড রিসেট করুন';
+  }
+
+  // ===== Notifications =====
+  async function sendNotification() {
+    const msgEl = document.getElementById('notifMsgBox');
+    msgEl.textContent = ''; msgEl.className = 'msg';
+    if (!cloudEnabled || !db) { msgEl.textContent = 'ইন্টারনেট সংযোগ নেই।'; msgEl.className = 'msg err'; return; }
+
+    const text = document.getElementById('notifMsg').value.trim();
+    if (!text) { msgEl.textContent = 'নোটিফিকেশনের লেখা দিন'; msgEl.className = 'msg err'; return; }
+
+    const btn = document.getElementById('sendNotifBtn');
+    btn.disabled = true; btn.textContent = 'পাঠানো হচ্ছে...';
+    try {
+      const adminHash = await getAdminHash();
+      const targetPhones = Array.from(selectedPhones);
+      await db.collection('adminReset').doc('notif_' + adminHash).set({ ts: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('notifications').add({
+        message: text,
+        targetPhones: targetPhones,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      msgEl.textContent = targetPhones.length > 0
+        ? ('✅ ' + targetPhones.length + ' জন ইউজারকে পাঠানো হয়েছে।')
+        : '✅ সবাইকে পাঠানো হয়েছে।';
+      msgEl.className = 'msg ok';
+      document.getElementById('notifMsg').value = '';
+      loadNotifications();
+    } catch (e) {
+      if (e && e.code === 'permission-denied') { msgEl.textContent = '❌ অ্যাডমিন পাসওয়ার্ড ভুল।'; }
+      else { msgEl.textContent = 'সমস্যা: ' + (e && e.message ? e.message : e); }
+      msgEl.className = 'msg err';
+    }
+    btn.disabled = false; btn.textContent = '📢 পাঠান';
+  }
+
+  function loadNotifications() {
+    if (!cloudEnabled || !db) return;
+    db.collection('notifications').orderBy('createdAt', 'desc').limit(20).get().then(function (snap) {
+      const listEl = document.getElementById('notifList');
+      listEl.innerHTML = '';
+      if (snap.empty) {
+        listEl.innerHTML = '<p style="font-size:12.5px;color:#8a8a9a;">কোনো নোটিফিকেশন নেই।</p>';
+        return;
+      }
+      snap.forEach(function (doc) {
+        const d = doc.data();
+        const item = document.createElement('div');
+        item.className = 'notif-list-item';
+        const targets = (d.targetPhones && d.targetPhones.length > 0) ? (d.targetPhones.length + ' জন নির্দিষ্ট ইউজার') : 'সবাই';
+        item.innerHTML = '<span>🔔 ' + escapeHtml(d.message || '') + '<br><small style="color:#aeaebe;">' + fmtDate(d.createdAt) + ' • ' + targets + '</small></span>' +
+          '<button class="btn-del" onclick="deleteNotification(\'' + doc.id + '\', this)">মুছুন</button>';
+        listEl.appendChild(item);
+      });
+    }).catch(function (e) { console.warn('notif list load failed', e); });
+  }
+
+  async function deleteNotification(id, btnEl) {
+    btnEl.disabled = true;
+    try {
+      const adminHash = await getAdminHash();
+      await db.collection('adminReset').doc('notif_' + adminHash).set({ ts: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('notifications').doc(id).delete();
+      loadNotifications();
+    } catch (e) {
+      if (e && e.code === 'permission-denied') alert('অ্যাডমিন পাসওয়ার্ড ভুল।');
+      else alert('সমস্যা: ' + (e && e.message ? e.message : e));
+      btnEl.disabled = false;
+    }
+  }
+
+</script>
+</body>
+</html>
