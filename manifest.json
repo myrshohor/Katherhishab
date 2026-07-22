@@ -1,0 +1,37 @@
+{
+  "name": "Digital CFT",
+  "short_name": "Digital CFT",
+  "description": "কাঠের সাইজ ও CFT হিসাব করার ক্যালকুলেটর",
+  "start_url": "/Katherhishab/index.html",
+  "scope": "/Katherhishab/",
+  "display": "standalone",
+  "background_color": "#F5EDE2",
+  "theme_color": "#8C4A36",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://myrshohor.github.io/Katherhishab/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://myrshohor.github.io/Katherhishab/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "https://myrshohor.github.io/Katherhishab/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://myrshohor.github.io/Katherhishab/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
