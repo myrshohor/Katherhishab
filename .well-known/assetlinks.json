@@ -1,0 +1,8 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.myrshohor.twa",
+      "sha256_cert_fingerprints": ["35:02:66:2C:B2:CA:E5:20:D5:55:46:05:A6:F3:10:4C:26:54:AB:EC:DD:BF:7E:CB:F4:BE:C3:81:DC:6C:BC:8A"]
+    }
+  }]
